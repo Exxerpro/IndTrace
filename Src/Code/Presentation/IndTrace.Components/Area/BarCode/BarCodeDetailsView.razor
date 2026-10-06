@@ -1,0 +1,170 @@
+@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@inject IDialogService DialogService
+
+@if (HasCycleData)
+{
+          <div>
+        <MudGrid>
+            <MudItem xs="12" sm="12">
+                <MudTable Items="BarCodeDetails?.Cycles ?? Enumerable.Empty<CycleView>()" Bordered="true" Striped="true">
+                  <HeaderContent>
+                      <MudTh>Machine</MudTh>
+                      <MudTh>StartedOn</MudTh>
+                      <MudTh>CycleTime</MudTh>
+                      <MudTh>PartStatus</MudTh>
+                      <MudTh>CycleStatus</MudTh>
+                  </HeaderContent>
+                  <RowTemplate>
+                      <MudTd DataLabel="Machine">@(MachineNames?.TryGetValue(context.MachineId, out var machineName) == true ? machineName : $"Unknown ({context.MachineId})")</MudTd>
+                      <MudTd DataLabel="StartedOn">@context.StartedOn</MudTd>
+                      <MudTd DataLabel="CycleTime">@context.CycleTime</MudTd>
+                      @if(context.PartStatus is not null)
+                      {
+                          <MudTd DataLabel="PartStatus">@context.PartStatus.Name</MudTd>
+                      }
+                      else
+                      {
+                          <MudTd DataLabel="PartStatus">"None"</MudTd>
+                      }
+                      
+                      @if(context.CycleStatus is not null)
+                      {
+                          <MudTd DataLabel="CycleStatus">@context.CycleStatus.Name</MudTd>
+                      }
+                      else
+                      {
+                                <MudTd DataLabel="CycleStatus">"None"</MudTd>
+                      }
+                      
+                  </RowTemplate>
+              </MudTable>
+            </MudItem>
+        </MudGrid>
+          </div>
+}
+
+<MudDivider DividerType="DividerType.Middle" />
+
+<MudFab Color="Color.Tertiary"
+        StartIcon="@Icons.Material.Filled.Factory"
+        Label=@(($"{(BarCodeDetails?.Cycles?.Count ?? 0)} Cycles")) />
+
+<MudFab Color="Color.Tertiary"
+        StartIcon="@Icons.Material.Filled.AddTask"
+        Label=@(($"{(BarCodeDetails?.Registers?.Count ?? 0)} Registers")) />
+
+
+<MudDivider DividerType="DividerType.Middle"  />
+
+<style>
+    .custom-table th, .custom-table td {
+        white-space: nowrap;
+        text-align: left;
+        padding: 8px;
+    }
+
+    .custom-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+        .custom-table th {
+            width: 20%; /* Adjust as necessary */
+        }
+
+</style>
+
+
+@if (BarCodeDetails is not null && BarCodeDetails.Registers is not null && MachineNames is not null)
+{
+    <div>
+
+        <MudTable Items="Elements" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="new Func<RegisterView,bool>(FilterFunc)">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Registers</MudText>
+                <MudSpacer />
+                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+             <HeaderContent>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.MachineId)">Machine Id</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.CycleId)">Cycle Id</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.Description)">Description</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.EnumValue)">Valor</MudTableSortLabel></MudTh>              
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Machine">@(MachineNames?.TryGetValue(context.MachineId, out var m2) == true ? m2 : $"Unknown ({context.MachineId})")</MudTd>
+                <MudTd DataLabel="Cycle Id">@context.CycleId</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Description">@context.Description</MudTd>
+                <MudTd DataLabel="Valor">@context.EnumValue</MudTd>                
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new[] { 10, 20, 50 }" />
+            </PagerContent>
+        </MudTable>
+    </div>
+}
+
+
+
+@code {
+
+    private IEnumerable<RegisterView> Elements = new List<RegisterView>();
+
+    private string searchString = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        // Refresh the register set whenever the BarCodeDetails parameter changes, not only on
+        // first initialization, otherwise a previously-loaded bar code's registers stay on screen.
+        Elements = BarCodeDetails?.Registers ?? Enumerable.Empty<RegisterView>();
+    }
+
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string SelectedBarCode { get; set; } = string.Empty;
+
+    [Parameter]
+    public Dictionary<int, string> MachineNames { get; set; } = new(); 
+
+
+    private bool HasCycleData
+    {
+        get
+        {
+            try
+            {
+                return BarCodeDetails?.Cycles is not null && BarCodeDetails.Cycles.Any();
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+
+
+    [Parameter]
+
+    public BarCodeDetailMonitorVm? BarCodeDetails { get; set; }
+
+    private bool FilterFunc(RegisterView element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.MachineId.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{element.Description} {element.EnumValue} {element.DataType}".Contains(searchString))
+            return true;
+        return false;
+    }
+ 
+}

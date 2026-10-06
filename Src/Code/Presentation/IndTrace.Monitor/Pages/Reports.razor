@@ -1,0 +1,66 @@
+@page "/Barcodes"
+@page "/Reports"
+
+@using System.Timers
+@using BlazorDownloadFile
+@using IndTrace.Application.BarCodes.DTO
+@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Application.Models.RequestHandler
+@using IndTrace.Components.Area
+
+@using MudBlazor
+@using IndTrace.Components.Area.Reports
+@using IndTrace.Components.Area.BarCode
+@using IndTrace.Domain.Interfaces
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@inject PersistentComponentState ApplicationState
+
+@inject IBlazorDownloadFileService BlazorDownloadFileService
+@inject IMonitorRequestDispatcher MonitorRequestDispatcher
+@inject ILogger<Reports> Logger
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IndTraceConfigurationService IndTraceConfigurationService
+@inject IndTrace.Domain.Interfaces.IDateTimeMachine DateTimeMachine
+
+@if (!IsInitialized)
+{
+    <MudProgressLinear Color="Color.Tertiary" Size="Size.Large" Rounded="true" Indeterminate="true" />
+}
+
+else
+{
+
+<MudPaper Class="p-4">
+    @if (reportsListQueryModel is not null)
+    {
+        <ReportsFilterForm model="@reportsListQueryModel"
+                           OnFilterChanged="@GetReportCodeListsAsync">
+        </ReportsFilterForm>
+    }
+</MudPaper>
+
+<MudDivider />
+
+@if (!string.IsNullOrWhiteSpace(LastError))
+{
+    <MudText Typo="Typo.h6" Color="Color.Error">@LastError</MudText>
+}
+
+<MudPaper Class="p-4">
+@if (isJsReady)
+{
+    <MudText Typo="Typo.body1">@countBarCodes Bar Codes Found</MudText>
+}
+@if (countBarCodes > 0)
+    {
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ExportReports(applicationConfiguration?.MachineNames ?? new())">Export</MudButton>
+    }
+    <BarCodeListView BarCodesDtoList="BarCodesDtoList"
+                     SelectedBarCode="@SelectedBarCode"
+                     OnButtonClickedCallback="OnButtonClicked">
+    </BarCodeListView>
+</MudPaper>
+}

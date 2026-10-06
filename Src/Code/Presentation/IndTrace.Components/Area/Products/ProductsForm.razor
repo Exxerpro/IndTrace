@@ -1,0 +1,233 @@
+﻿@using System.Collections
+@using IndTrace.Application.Machines.Commands.Enable
+
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using IndTrace.Application.Customers
+@using IndTrace.Application.Products.Commands.Create
+@using IndTrace.Application.Products.Queries.GetProductDetail
+@using IndTrace.UI.Models.Products
+@using ProductDto = IndTrace.Application.Products.Queries.GetProductDetail.ProductDto
+
+ProductsView
+<AuthorizeView>
+    <Authorized Context="authContext">
+            <EditForm Model="@_newProduct" OnValidSubmit="Submit" OnInvalidSubmit="ErrorForm">
+                <DataAnnotationsValidator />
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudPaper Elevation="4" Class="mt-4">
+                            <MudCard>
+                                <MudCardHeader>
+
+                                  
+                                    @if (!success)
+                                    {
+                                        <MudText Color="@Color.Error">
+                                            <ValidationSummary/>
+                                        </MudText>
+                                    }
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <MudText>
+                                        Submitting this form will Add a New Product.
+                                    </MudText>
+                                    @if(!string.IsNullOrWhiteSpace(SelectedCustomer))
+                                    {
+                                    <MudText>
+                                        Selected Customer: @SelectedCustomer
+                                    </MudText>
+                                    }
+                                    <MudTextField T="string" Label="Product Name"
+                                                  
+                                                  For="@(() => _newProduct.ProductName)" 
+                                                  Immediate="true" 
+                                                  ValueChanged="@(async e => await OnProductNameChanged(e))" />
+                                    
+                                    <MudTextField T="string" Label="Product PartNumber"
+                                                  @bind-Value="_newProduct.PartNumber"
+                                                  For="@(() => _newProduct.PartNumber)" />
+
+                                
+                                    <MudTextField T="string" Label="Alias Part Number"
+                                                  @bind-Value="_newProduct.AliasPartNumber"
+                                                  For="@(() => _newProduct.AliasPartNumber)" />
+
+                                    <MudTextField T="string" Label="Customer Part Number"
+                                                  @bind-Value="_newProduct.CustomerPartNumber"
+                                                  For="@(() => _newProduct.CustomerPartNumber)" />
+
+                                    <MudTextField T="string" Label="Description"
+                                                  @bind-Value="_newProduct.Description"
+                                                  For="@(() => _newProduct.Description)" />
+
+                                    <MudNumericField T="int" Label="Version"
+                                                 @bind-Value="_newProduct.Version"
+                                                     For="@(() => _newProduct.Version)" Min="1" Max="1000" />
+                                
+                                    <MudText Color="Color.Warning">
+                                        @_newProduct.CustomerName
+                                    </MudText>
+
+                                    <MudSelect T="string" Label="Customer" 
+                                                ValueChanged="@OnCustomerNameChanged">
+                                    @if (CustomerFiltered is not null)
+                                        {
+                                        @foreach (var customerName in CustomerFiltered.Select(p => p.Name))
+                                            {
+                                                <MudSelectItem Value="@customerName">@customerName</MudSelectItem>
+                                            }
+                                        }
+                                    </MudSelect>
+
+                                </MudCardContent>
+                                
+                                <MudCardActions>
+
+                                    <MudButton ButtonType="ButtonType.Submit" 
+                                               Variant="Variant.Filled" 
+                                               Color="Color.Primary"
+                                               Class="ml-auto">Submit
+                                    </MudButton>
+
+
+                                <MudButton ButtonType="ButtonType.Reset"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           Class="ml-auto">
+                                    Reset
+                                </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+       
+    </Authorized>
+    <NotAuthorized>
+        <MudText Typo="Typo.h6">Please log in to add products</MudText>
+        <a href="Identity/Account/Login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+
+    
+        bool success;
+    [Parameter]
+    public EventCallback<ProductDto> OnProductAdded { get; set; }
+
+    [Parameter]
+    public IEnumerable<CustomerDto> Customers { get; set; } = new List<CustomerDto>();
+
+    [Parameter] public string SelectedCustomer { get; set; } = string.Empty;
+
+    private IEnumerable<CustomerDto> CustomerFiltered { get; set; } = new List<CustomerDto>();
+
+    private ProductModel _newProduct = new ProductModel();
+
+    protected override void OnParametersSet()
+    {
+
+        if (Customers is null)
+        {
+            CustomerFiltered =  [new()];
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(SelectedCustomer) || Customers is null)
+        {
+            CustomerFiltered = Customers?.ToList() ?? new();
+            return;
+        }
+
+        CustomerFiltered = Customers
+            .Where(c => string.Equals(c.Name, SelectedCustomer, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        InvokeAsync(StateHasChanged); // Optional: ensures async redraw if UI doesn't react
+    }
+
+
+    private async Task Submit()
+    {
+        success = true;
+        var customer = Customers.FirstOrDefault(p => p.Name == _newProduct.CustomerName);
+
+        if (customer is null || customer.CustomerId<= 0)
+        {
+            return;
+        }
+        
+        _newProduct.CustomerId = customer.CustomerId;
+
+
+        var product = new ProductDto()
+            {
+                ProductName = _newProduct.ProductName,
+                PartNumber = _newProduct.PartNumber,
+                AliasPartNumber = _newProduct.AliasPartNumber,
+                CustomerName = _newProduct.CustomerName,
+                CustomerId = _newProduct.CustomerId,
+                CustomerPartNumber = _newProduct.CustomerPartNumber,
+                Description = _newProduct.Description,
+                Version = _newProduct.Version,
+                LineId = 1,
+                IsActive = 1
+            };
+
+        await OnProductAdded.InvokeAsync(product);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public int CustomerId { get; set; }
+
+    private async Task OnCustomerNameChanged(string newCustomerName)
+    {
+        // Update the model with the new customer name
+        _newProduct.CustomerName = newCustomerName;
+
+        var customer = Customers.FirstOrDefault(p => p.Name == _newProduct.CustomerName);
+
+        if (customer is null || customer.CustomerId<= 0)
+        {
+            return;
+        }
+        
+        _newProduct.CustomerId = customer.CustomerId;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnProductNameChanged(string newName)
+    {
+
+        _newProduct.ProductName = newName;
+        // Update all fields with the new ProductName value
+        if (_newProduct.PartNumber == "PartNumber" || _newProduct.ProductName.ToLowerInvariant().Contains(_newProduct.PartNumber.ToLowerInvariant()))
+        {
+            _newProduct.PartNumber = _newProduct.ProductName;
+        }
+
+        if (_newProduct.AliasPartNumber == "AliasPartNumber" || _newProduct.ProductName.ToLowerInvariant().Contains(_newProduct.AliasPartNumber.ToLowerInvariant()))
+        {
+            _newProduct.AliasPartNumber = _newProduct.ProductName;
+        }
+        if (_newProduct.CustomerPartNumber == "CustomerPartNumber" || _newProduct.ProductName.ToLowerInvariant().Contains(_newProduct.CustomerPartNumber.ToLowerInvariant()))
+        {
+            _newProduct.CustomerPartNumber = _newProduct.ProductName;
+        }
+        if (_newProduct.Description == string.Empty || _newProduct.ProductName.ToLowerInvariant().Contains(_newProduct.Description.ToLowerInvariant()))
+        {
+            _newProduct.Description = _newProduct.ProductName;
+        }
+        
+        // Refresh UI
+        await InvokeAsync(StateHasChanged);
+    }
+
+
+    private void ErrorForm(EditContext obj)
+    {
+        success = false;
+    }
+
+}

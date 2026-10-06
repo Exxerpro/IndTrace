@@ -1,0 +1,70 @@
+﻿@using System.Globalization
+@using IndTrace.Application.UI.Models
+@using IndTrace.Domain.Interfaces
+@using IndTrace.Domain.ValueObjects
+@using MudBlazor
+@inject IDateTimeMachine DateTimeMachine
+
+<MudCard>
+    <MudCardContent>
+        
+        
+        <MudText Typo="Typo.body2">Date Time: @(DateTimeMachine.Now.ToString(new CultureInfo("es-MX")))</MudText>
+
+        @*    TODO MAKE THIS WORK
+            25 SEP 24
+            ABR
+     <MudText Typo="Typo.body2">Part Number: @Product?.PartNumber</MudText>
+        <MudText Typo="Typo.body2">Customer: @Product?.Customer</MudText> *@
+        <MudText Typo="Typo.body2">Julian Date: @ConvertToJulianDate(DateTimeMachine.Now)</MudText>
+    </MudCardContent>
+</MudCard>
+
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.body1">Results</MudText>
+        <MudText Typo="Typo.body2">Parts Ok: @Product?.PartsOk</MudText>
+        <MudText Typo="Typo.body2">Rejected Parts: @Product?.PartsNok</MudText>
+        
+        <MudChart ChartType="ChartType.Pie" InputData="@_data" @bind-SelectedIndex="_index" InputLabels="@_labels"  />
+        
+    </MudCardContent>
+    
+    <MudCardContent>
+        <MudText Typo="Typo.body1">Last Shift</MudText>
+        <MudText Typo="Typo.body2">Parts Ok: @Product?.LastShift?.PartsOk</MudText>
+        <MudText Typo="Typo.body2">Rejected Parts: @Product?.LastShift?.PartsNok</MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public required ProductionData Product { get; set; }
+
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private double[] _data = [1,0];
+    private string[] _labels = ["Ok", "Nok"];
+
+    protected  override async  Task OnParametersSetAsync()
+    {
+        if (Product is null) return;
+        
+        _data = [Product.PartsOk, Product.PartsNok];
+        await InvokeAsync(StateHasChanged);
+        
+    }
+
+    /// <summary>
+    /// Converts a DateTime to a Julian date string in the format YYDDD.
+    /// </summary>
+    /// <param name="date">The date to convert.</param>
+    /// <returns>A string representing the Julian date in YYDDD format, where YY is the last two digits of the year and DDD is the day of the year.</returns>
+    public static string ConvertToJulianDate(DateTime date)
+    {
+        var year = date.Year % 100; // Last two digits of the year
+        var dayOfYear = date.DayOfYear; // Day of the year
+
+        return $"{year:D2}{dayOfYear:D3}";
+    }
+
+}

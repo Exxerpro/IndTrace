@@ -1,0 +1,40 @@
+﻿.app-logo {
+    height: 40px; /* Adjust the height as needed */
+    margin-left: 12px; /* Adjust the margin as needed */
+}
+
+
+.custom-drawer {
+    background-color: #3452cf !important;
+    color: white; /* Adjust text color if necessary */
+}
+
+    .custom-drawer .mud-nav-link {
+        color: white;
+        padding: 16px;
+    }
+
+        .custom-drawer .mud-nav-link:hover {
+            background-color: #5a659c;
+        }
+
+        .custom-drawer .mud-nav-link .mud-icon-root {
+            color: #a3aedf; /* Brighter icon color */
+        }
+
+        .custom-drawer .mud-nav-link:hover .mud-icon-root {
+            color: #f0e68c; /* Hover color for icons */
+        }
+
+        .custom-drawer .mud-nav-link .mud-icon-root {
+            margin-right: 8px; /* Add some space between the icon and text */
+        }
+
+    .custom-drawer .mud-nav-link-active {
+        background-color: #5a659c !important;
+        color: #ffffff !important;
+    }
+
+        .custom-drawer .mud-nav-link-active .mud-icon-root {
+            color: #ffffff !important;
+        }

@@ -1,0 +1,87 @@
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Application.Models.RequestHandler
+@using IndTrace.Application.Products.Queries.GetProductDetail
+@using IndTrace.Domain.Interfaces
+@inject IndTraceConfigurationService IndTraceConfigurationService
+
+@inject IMonitorRequestDispatcher MonitorRequestDispatcher
+
+
+@if (Products is null)
+{
+    <MudText Typo="Typo.body1">Loading Products...</MudText>
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12" md="8" lg="6">
+            <MudCard class="mb-4">
+                <MudCardHeader>
+                    <MudGrid  Class="w-100">
+                        <MudItem xs="3">
+                            <MudText Typo="Typo.h6">Products</MudText>
+                        </MudItem>
+                        <MudItem xs="9">
+                            <MudSelect T="string"
+                                       Label="Customer" 
+                                       ValueChanged="OnCustomerChanged"
+                                       Adornment="Adornment.Start"
+                                       AdornmentIcon="@Icons.Material.Filled.Business"
+                                       Clearable="true"
+                                       Dense="true"
+                                       Class="w-100"
+                                       Style="min-width: 200px;">
+                                @if (ApplicationConfiguration?.ActiveCustomer is not null)
+                                {
+                                    @foreach (var customer in ApplicationConfiguration.ActiveCustomer)
+                                    {
+                                        <MudSelectItem Value="@customer.Name">
+                                            
+                                            @customer.Name
+                                        </MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.h4">Products</MudText>
+                    <MudTable T="ProductDto" Items="SelectedProducts"
+                              @ref="mudTable"
+                              RowClass="cursor-pointer"
+                              RowClassFunc="@SelectedRowClassFunc"
+                              OnRowClick="RowClickEvent"
+                              Hover="true"
+                              SelectedItemChanged="SelectedItemChanged"
+                              Filter="new Func<ProductDto,bool>(FilterFunc1)" >
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">@SelectedCustomer</MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                        </ToolBarContent>
+                        <HeaderContent>
+                             <MudTh Style="width: 25%;">Name</MudTh>
+                             <MudTh Style="width: 25%;">Product Id</MudTh>
+                             <MudTh Style="width: 25%;">CustomerName</MudTh>
+                             <MudTh Style="width: 25%;">CustomerPartNumber</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Name">@context.ProductName</MudTd>
+                            <MudTd DataLabel="Product Id">@context.ProductId</MudTd>
+                            <MudTd DataLabel="CustomerName">@context.CustomerName</MudTd>
+                            <MudTd DataLabel="CustomerPartNumber">@context.CustomerPartNumber</MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager />
+                        </PagerContent>
+                    </MudTable>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+
+}
+
+

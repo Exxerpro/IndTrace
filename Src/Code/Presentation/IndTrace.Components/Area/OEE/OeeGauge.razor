@@ -1,0 +1,10 @@
+<svg viewBox="0 0 200 100" class="oee-gauge">
+    <path d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="@GetThemeColor()" stroke-width="10" />
+    @* Value arc *@
+    <path d="@ValueArc" fill="none" stroke="@GaugeColor" stroke-width="10" />
+    @* Needle *@
+    <line x1="100" y1="100" x2="@NeedleXText" y2="@NeedleYText" stroke="black" stroke-width="3" />
+    <circle cx="100" cy="100" r="4" fill="black" />
+    <text x="100" y="90" text-anchor="middle" font-size="16">@Value.ToString("F1")%</text>
+</svg>
+@Theme

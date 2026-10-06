@@ -1,0 +1,106 @@
+﻿
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudPaper Class="pa-4">
+        <MudTabs>
+            <MudTabPanel Text="WorkFlow">
+                <MudTable Items="@ConfigDetails.WorkFlows">
+                    <HeaderContent>
+                        <MudTh>WorkFlow ID</MudTh>
+                        <MudTh>Product ID</MudTh>
+                        <MudTh>Next Machine</MudTh>
+                        <MudTh>Last Machine</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="WorkFlow ID">@context.WorkFlowId</MudTd>
+                        <MudTd DataLabel="Product ID">@context.ProductId</MudTd>
+                        <MudTd DataLabel="Next Machine ID">@(MachineNames?.TryGetValue(context.NextMachineId, out var nextMachine) == true ? nextMachine : $"Unknown ({context.NextMachineId})")</MudTd>
+                        <MudTd DataLabel="Last Machine ID">@(MachineNames?.TryGetValue(context.LastMachineId, out var lastMachine) == true ? lastMachine : $"Unknown ({context.LastMachineId})")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Machine PLCs">
+                <MudTable Items="@ConfigDetails.MachinePlcs">
+                    <HeaderContent>
+                        <MudTh>Machine ID</MudTh>
+                        <MudTh>PLC ID</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Machine">@(MachineNames?.TryGetValue(context.MachineId, out var m1) == true ? m1 : $"Unknown ({context.MachineId})")</MudTd>
+                        <MudTd DataLabel="PLC ID">@context.PlcId</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Machines">
+                <MudTable Items="@ConfigDetails.Machines">
+                    <HeaderContent>
+                        <MudTh>Machine ID</MudTh>
+                        <MudTh>Name</MudTh>
+                        <MudTh>Enable App Traceability</MudTh>
+                        <MudTh>Is Enabled</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Machine">@(MachineNames?.TryGetValue(context.MachineId, out var m2) == true ? m2 : $"Unknown ({context.MachineId})")</MudTd>
+                        <MudTd DataLabel="Name">@context.Name</MudTd>
+                        <MudTd DataLabel="Enable App Traceability">@context.EnableAppTraceability</MudTd>
+                        <MudTd DataLabel="Is Enabled">@context.IsEnabled</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Products">
+                <MudTable Items="@ConfigDetails.Products">
+                    <HeaderContent>
+                        <MudTh>Product ID</MudTh>
+                        <MudTh>Part Number</MudTh>
+                        <MudTh>Product Name</MudTh>
+                        <MudTh colspan="2">Customer</MudTh>  <!-- Merged header for Customer and Logo -->
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Product ID">@context.ProductId</MudTd>
+                        <MudTd DataLabel="Part Number">@context.PartNumber</MudTd>
+                        <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                        <MudTd DataLabel="Customer">@context.CustomerName</MudTd>
+                        <MudTd DataLabel="Logo">
+                            <img class="transparent-image" src="@context.CustomerLogo" alt="@context.CustomerName Logo" style="width:50px;height:50px;" />
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudTabPanel>
+            <MudTabPanel Text="PLCs">
+                <MudTable Items="@ConfigDetails.Plcs">
+                    <HeaderContent>
+                        <MudTh>PLC ID</MudTh>
+                        <MudTh>Machine</MudTh>
+                        <MudTh>IP Address</MudTh>
+                        <MudTh>Name</MudTh>
+                        <MudTh>PLC Type</MudTh>
+                        <MudTh>PLC Brand</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="PLC ID">@context.PlcId</MudTd>
+                        <MudTd DataLabel="Machine">@(MachineNames[context.MachineId])</MudTd>
+                        <MudTd DataLabel="IP Address">@context.IpAddress</MudTd>
+                        <MudTd DataLabel="Name">@context.Name</MudTd>
+                        <MudTd DataLabel="PLC Type">@context.PlcType</MudTd>
+                        <MudTd DataLabel="PLC Brand">@context.PlcBrand</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudTabPanel>
+        </MudTabs>
+    </MudPaper>
+</MudContainer>
+
+
+@code {
+
+    [Parameter] 
+    public required ApplicationConfiguration ConfigDetails { get; set; }
+
+    [Parameter]
+    public Dictionary<int, string> MachineNames { get; set; } = new();
+
+
+
+}

@@ -1,0 +1,159 @@
+﻿@using IndTrace.Application.BarCodes.Commands.Reject
+@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@using IndTrace.Application.Models.RequestHandler
+@using IndTrace.Domain.Interfaces
+
+@using Microsoft.Extensions.Logging
+@inject IMonitorRequestDispatcher MonitorRequestDispatcher
+@inject ILogger<BarCodeReject> Logger
+
+
+<AuthorizeView>
+    <Authorized>
+        @if (!string.IsNullOrWhiteSpace(BarCode))
+        {
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudPaper Elevation="4" Class="mt-4">
+                        <MudCard>
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h6">Selected BarCode @BarCode</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudText>Submit to Reject</MudText>
+                                <MudButton Color="Color.Primary" OnClick="RejectBarcode">Reject</MudButton>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <MudText Typo="Typo.h6"><b>Logging to edit:</b> </MudText>
+    </NotAuthorized>
+</AuthorizeView>
+
+@* #124 F14: three-state UI. Initially no alert is rendered; after the action either the real
+   failure (with its errors) or the success details are shown. Previously the error alert rendered
+   in the initial state and a real failure was indistinguishable from "no action yet". *@
+@if (RejectionState == RejectState.Failure)
+{
+    <MudAlert Severity="Severity.Error" data-testid="reject-failure">Failed to reject BarCode @BarCode: @string.Join("; ", RejectionErrors)</MudAlert>
+}
+else if (RejectionState == RejectState.Success && BarCodeRejected is not null)
+{
+    <MudAlert Severity="Severity.Success" data-testid="reject-success">BarCode Rejected</MudAlert>
+
+    <MudCard Style="max-width: 400px; margin: auto;">
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h6">Machine Information</MudText>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">Machine ID:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">@BarCodeRejected.MachineId</MudText>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">Barcode ID:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">@BarCodeRejected.BarCodeId</MudText>
+                </MudItem>
+
+              <MudItem xs="6">
+                    <MudText Typo="Typo.body1">Flow Status:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">@BarCodeRejected.FlowStatus</MudText>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">Part Status:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">@BarCodeRejected.PartStatus</MudText>
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudDivider />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">Label:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">@BarCodeRejected.Label</MudText>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+
+  
+}
+
+
+
+@code {
+
+    [Parameter]
+    public string BarCode { get; set; } = string.Empty;
+
+    private BarCodeRejectedView? BarCodeRejected;
+
+    // #124 F14: the outcome of the reject action. Initial renders no alert; Success/Failure render
+    // the real result (the old unbound string "Result" field could never reach the markup).
+    private RejectState RejectionState = RejectState.Initial;
+
+    private IReadOnlyList<string> RejectionErrors = [];
+
+    private enum RejectState
+    {
+        Initial,
+        Success,
+        Failure,
+    }
+
+    private async Task RejectBarcode()
+    {
+        try
+        {
+            var request = new RejectBarCodeCommand
+                {
+                    Label = BarCode,
+
+                };
+            var result = await MonitorRequestDispatcher.QueryAsync(request);
+
+            if (result.IsSuccess && result.Value is not null)
+            {
+                BarCodeRejected = result.Value;
+                RejectionState = RejectState.Success;
+                RejectionErrors = [];
+            }
+            else
+            {
+                BarCodeRejected = null;
+                RejectionState = RejectState.Failure;
+                RejectionErrors = result.Errors.ToList();
+                Logger.LogError("Failed to reject barcode {BarCode}: {Errors}", BarCode, string.Join("; ", result.Errors));
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            BarCodeRejected = null;
+            RejectionState = RejectState.Failure;
+            RejectionErrors = [$"Unexpected error: {ex.Message}"];
+            Logger.LogError(ex, "Error while rejecting barcode {BarCode}", BarCode);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+}

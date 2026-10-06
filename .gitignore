@@ -1,0 +1,19 @@
+# Build output
+bin/
+obj/
+artifacts/
+*.user
+.vs/
+.idea/
+.vscode/
+TestResults/
+
+# Local configuration and secrets
+appsettings.*.local.json
+*.pfx
+*.key
+.env
+
+# Database backups
+*.bak
+*.bacpac

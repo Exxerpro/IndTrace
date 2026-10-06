@@ -1,0 +1,121 @@
+@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@using IndTrace.Domain.Enum
+@using MudBlazor
+
+@if (ReportDetailsView is not null && ReportDetailsView.Cycles is not null)
+{
+    <div>
+        <MudTable Items="@ReportDetailsView.Cycles" Bordered="true" Striped="true">
+            <HeaderContent>
+                <MudTh>Machine Id</MudTh>
+                <MudTh>StartedOn</MudTh>
+                <MudTh>CycleTime</MudTh>
+                <MudTh>PartStatus</MudTh>
+                <MudTh>CycleStatus</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Machine Id">@context.MachineId</MudTd>
+                <MudTd DataLabel="StartedOn">@context.StartedOn</MudTd>
+                <MudTd DataLabel="CycleTime">@context.CycleTime</MudTd>
+                <MudTd DataLabel="PartStatus">@(context.PartStatus?.Name ?? "None")</MudTd>
+                <MudTd DataLabel="CycleStatus">@(context.CycleStatus?.Name ?? "None")</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </div>
+}
+
+
+<MudDivider DividerType="DividerType.Middle" />
+
+<MudFab Color="Color.Tertiary"
+        StartIcon="@Icons.Material.Filled.Factory"
+        Label=@(($"{(ReportDetailsView?.Cycles?.Count ?? 0)} Cycles") ) />
+
+<MudFab Color="Color.Tertiary"
+        StartIcon="@Icons.Material.Filled.AddTask"
+        Label=@(($"{(ReportDetailsView?.Registers?.Count ?? 0)} Registers") ) />
+
+
+<MudDivider DividerType="DividerType.Middle" />
+
+<style>
+    .custom-table th, .custom-table td {
+        white-space: nowrap;
+        text-align: left;
+        padding: 8px;
+    }
+
+    .custom-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+        .custom-table th {
+            width: 20%; /* Adjust as necessary */
+        }
+
+</style>
+
+@if (ReportDetailsView is not null && ReportDetailsView.Registers is not null)
+{
+    <div>
+        <MudTable Items="Elements" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="new Func<RegisterView,bool>(FilterFunc)">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Registers</MudText>
+                <MudSpacer />
+                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.MachineId)">Machine Id</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.CycleId)">Cycle Id</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.Description)">Description</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<RegisterView, object>(x=>x.EnumValue)">Valor</MudTableSortLabel></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Machine Id">@context.MachineId</MudTd>
+                <MudTd DataLabel="Cycle Id">@context.CycleId</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Description">@context.Description</MudTd>
+                <MudTd DataLabel="Valor">@context.EnumValue</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </div>
+}
+
+@code {
+
+    private IEnumerable<RegisterView> Elements = new List<RegisterView>();
+    private string searchString = string.Empty;
+
+    protected override Task OnInitializedAsync()
+    {
+        Elements = ReportDetailsView?.Registers ?? new List<RegisterView>();
+        return Task.CompletedTask;
+    }
+
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public string SelectedBarCode { get; set; } = string.Empty;
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public ReportDetailMonitorVm? ReportDetailsView { get; set; }
+
+    private bool FilterFunc(RegisterView element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.MachineId.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{element.Description} {element.EnumValue} {element.DataType}".Contains(searchString))
+            return true;
+        return false;
+    }
+}

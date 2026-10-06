@@ -1,0 +1,88 @@
+@using IndTrace.UI.Models.Performance
+@using MudBlazor
+
+<MudCard Class="details-card">
+    <MudCardHeader>
+        <MudGrid Justify="Justify.FlexStart">
+            <MudItem xs="12" sm="6" md="4">
+                <MudProgressCircular Value="@(Machine.Indicator.Oee)" Color="@GetColor(Machine.Indicator.Oee)"/>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+            <MudText Typo="Typo.body1" Color="@GetColor(Machine.Indicator.Oee)" Class="mb-2">OEE: @(Machine.Indicator.Oee.ToString("F2")) %</MudText>
+            </MudItem>
+        </MudGrid>
+
+    </MudCardHeader>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Class="pa-4">
+                    <MudText Typo="Typo.body2" Color="@GetColor(Machine.Indicator.Availability)" Class="mb-2">Availability: @(Machine.Indicator.Availability.ToString("F2")) %</MudText>
+                    <MudText Typo="Typo.body2" Color="@GetColor(Machine.Indicator.Performance)" Class="mb-2">Performance: @(Machine.Indicator.Performance.ToString("F2")) %</MudText>
+                    <MudText Typo="Typo.body2" Color="@GetColor(Machine.Indicator.Quality)" Class="mb-2">Quality: @(Machine.Indicator.Quality.ToString("F2")) %</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Class="pa-4">
+                    <MudText Typo="Typo.body2" Color="Color.Primary" Class="mb-2">Capacity: @(Machine.Capacity.ToString("F2")) </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mb-2">Produced Pieces: @(Machine.ProductionData.ProducedPieces.ToString("F2"))</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Info" Class="mb-2">Rejected Pieces: @(Machine.ProductionData.RejectedPieces.ToString("F2"))</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Surface" Class="mb-2">Running Time: @(Machine.ProductionData.RunningTime.ToString("F2"))</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Primary" Class="mb-2">Stopping Time: @(Machine.ProductionData.StoppingTime.ToString("F2"))</MudText>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+        <MudChart ChartType="ChartType.Line" LegendPosition="Position.Start"  ChartSeries="@Series" @bind-SelectedIndex="SelectedIndex"  Width="100%" Height="350px" ChartOptions="@Options" CanHideSeries />
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public required PerformanceRecord Machine { get; set; }
+
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private int SelectedIndex = -1;
+
+    public ChartOptions Options = new() 
+        {  
+            YAxisRequireZeroPoint = true, 
+            ShowLegend=true, 
+            YAxisTicks = 20, 
+            XAxisLines=true
+          
+        };
+
+    public List<ChartSeries> Series = [];
+    public string[] XAxisLabels = ["OEE", "Availability", "Performance", "Quality"];
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        UpdateChartData(Machine);
+    }
+
+    private void UpdateChartData(PerformanceRecord machine)
+    {
+        Series.Clear();
+        if (machine == null || !machine.HistoricData.Any()) return;
+
+        Series.Add(new ChartSeries { Name = "OEE", Data = machine.HistoricIndicator.Select(d => d.Oee).ToArray() });
+        Series.Add(new ChartSeries { Name = "Availability", Data = machine.HistoricIndicator.Select(d => d.Availability).ToArray() });
+        Series.Add(new ChartSeries { Name = "Performance", Data = machine.HistoricIndicator.Select(d => d.Performance).ToArray() });
+        Series.Add(new ChartSeries { Name = "Quality", Data = machine.HistoricIndicator.Select(d => d.Quality).ToArray() });
+    }
+
+    private Color GetColor(double value)
+    {
+        return value switch
+        {
+            >= 80 => Color.Success,
+            >= 60 => Color.Warning,
+            _ => Color.Error
+        };
+    }
+}

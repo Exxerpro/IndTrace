@@ -1,0 +1,57 @@
+﻿@page "/shifts"
+@using IndTrace.Application.Models.RequestHandler
+@using IndTrace.Domain.Interfaces
+@using IndTrace.UI.Models.Shifts
+
+@using MudBlazor
+
+@inject IMonitorRequestDispatcher MonitorRequestDispatcher
+@inject ISnackbar Snackbar
+@inject ShiftModel CurrentShiftModel ;
+
+
+@if (CurrentShiftModel is not null)
+{
+    <MudForm Model="CurrentShiftModel" @ref="_form">
+        <MudTextField T="DateTime" Label="Start By" @bind-Value="CurrentShiftModel.StartBy" Required="true" />
+        <MudTextField Label="Duration" @bind-Value="CurrentShiftModel.DurationString" Required="true" />
+        <MudNumericField T="int" Label="Shift Production" @bind-Value="CurrentShiftModel.ShiftProduction" Required="true" />
+
+        <MudButton ButtonType="ButtonType.Submit" OnClick="HandleSubmit" Color="Color.Primary" Variant="Variant.Filled">Submit</MudButton>
+    </MudForm>
+}
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Snackbar.Add(new MarkupString($"<ul><li>Item {++_count}</li><li>Item {++_count}</li></ul>")))">
+    Open Snackbar
+</MudButton>
+@code
+{
+    private int _count = 0;
+}
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await CurrentShiftModel.InitializeAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private MudForm? _form;
+
+    private async Task HandleSubmit()
+    {
+        if (_form is null)
+            return;
+
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            await HandleValidSubmit();
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await CurrentShiftModel.InitializeAsync();
+        Snackbar.Add("Shift Saved Successfully", Severity.Success);
+    }
+}

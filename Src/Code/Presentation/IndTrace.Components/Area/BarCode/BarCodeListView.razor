@@ -1,0 +1,78 @@
+﻿@using IndTrace.Application.BarCodes.DTO
+<MudDivider DividerType="DividerType.Middle" />
+
+<MudGrid>
+    <MudItem xs="12" sm="9">
+        <MudTable T="BarCodeDto" Items="BarCodesDtoList" Dense="true" Hover="true" Bordered="true" Striped="true" Filter="new Func<BarCodeDto,bool>(FilterFunc)">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">BarCodes</MudText>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel SortBy="new Func<BarCodeDto, object>(x=>x.Label)">Code</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<BarCodeDto, object>(x=>x.CreatedOn)">Created</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<BarCodeDto, object>(x=>x.PartStatus.Name)">PartStatus</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<BarCodeDto, object>(x=>x.FlowStatus.Name)">FlowStatus</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<BarCodeDto, object>(x=>x.CycleCount)">CycleCount</MudTableSortLabel></MudTh>
+                </HeaderContent>
+
+
+                <RowTemplate>
+                    <MudTd DataLabel="Code">
+                        <MudButton Color="Color.Info" OnClick="() => HandleButtonClick(context.Label)">@context.Label</MudButton>
+                    </MudTd>
+                    <MudTd DataLabel="Created">@context.CreatedOn</MudTd>
+                    <MudTd DataLabel="PartStatus">@context.PartStatus.Name </MudTd>
+                    <MudTd DataLabel="FlowStatus">@context.FlowStatus.Name</MudTd>
+                    <MudTd DataLabel="CycleCount">@context.CycleCount</MudTd>
+                </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new[] { 10, 20, 50 }" />
+            </PagerContent>
+
+            </MudTable>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string searchString = "";
+
+    //rename back to BarCodesDtoList
+    [Parameter]
+    public List<BarCodeDto>? BarCodesDtoList { get; set; } = new();
+
+    [Parameter]
+    public string SelectedBarCode { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnButtonClickedCallback { get; set; }
+
+    private bool FilterFunc(BarCodeDto element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.MachineId.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Label.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{element.FlowStatus.Name} {element.PartStatus.Name} {element.MachineId}".Contains(searchString))
+            return true;
+        return false;
+    }
+
+    private async Task HandleButtonClick(string? barcode)
+    {
+        if (string.IsNullOrWhiteSpace(barcode)) return;
+
+        SelectedBarCode = barcode;
+        // Invoke the EventCallback, passing in the required function signature
+        await OnButtonClickedCallback.InvokeAsync(barcode);
+    }
+}

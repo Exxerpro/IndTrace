@@ -1,0 +1,146 @@
+﻿@using IndTrace.Application.Machines.Commands.Enable
+
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Application.Machines.Queries.GetMachinesList
+@using IndTrace.Application.Models.RequestHandler
+@using IndTrace.Domain.Enum
+@using IndTrace.Domain.Interfaces
+
+@inject IndTraceConfigurationService IndTraceConfigurationService
+@inject IMonitorRequestDispatcher MonitorRequestDispatcher;
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+
+    </TitleContent>
+    <DialogContent>
+        <MudCard Class="machine-detail-card" Style="background-image: url('/images/machine.png'); padding: 16px;">
+            <MudCardHeader>
+                <MudText Typo="Typo.h4" Align="Align.Center">@Machine.Name</MudText>
+            </MudCardHeader>
+            <MudCardMedia Image=@Machine.ImageName Height="200"/>
+            <MudCardContent Style="background-image: url('/images/machine.png');">
+                <MudText Typo="Typo.h6"><b>ID:</b> @Machine.MachineId</MudText>
+                <MudText Typo="Typo.h6"><b>Status:</b> @(Machine.IsEnabled ? "Enabled" : "Disabled")</MudText>
+                <MudText Typo="Typo.h6"><b>Machine Type:</b> @Machine.MachineType.Name</MudText>
+            </MudCardContent>
+            <MudCardActions Class="justify-center">
+                <AuthorizeView>
+                    <Authorized>
+                        <MudGrid Spacing="3">
+                            <MudItem xs="12">
+                                <MudPaper Elevation="4" Class="mt-4">
+                                    <MudCard Class="mb-4">
+                                        @if (IsEnabled(Machine))
+                                        {
+                                            <MudCardHeader>
+                                                <MudText Typo="Typo.h6">Machine @Machine.MachineId is Enabled</MudText>
+                                            </MudCardHeader>
+                                            <MudCardContent>
+                                                <MudText>Submit to Disable Machine @Machine.MachineId</MudText>
+                                                <MudButton FullWidth="true" Color="Color.Error" OnClick="(() => SetMachineState(Machine.MachineId, false))">Submit</MudButton>
+                                            </MudCardContent>
+                                        }
+                                        else
+                                        {
+                                            <MudCardHeader>
+                                                <MudText Typo="Typo.h6">Machine @Machine.MachineId is Disabled</MudText>
+                                            </MudCardHeader>
+                                            <MudCardContent>
+                                                <MudText>Submit to Enable Machine @Machine.MachineId</MudText>
+                                                <MudButton FullWidth="true" Color="Color.Success" OnClick="(() => SetMachineState(Machine.MachineId, true))">Submit</MudButton>
+                                            </MudCardContent>
+                                        }
+                                        <MudButton Color="Color.Default" OnClick="Close">Close</MudButton>
+                                    </MudCard>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="Identity/Account/Login">Log in</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </MudCardActions>
+        </MudCard>
+
+
+    </DialogContent>
+<DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+    <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+</DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public required MachineDto Machine { get; set; }
+
+    [Parameter]
+    public EventCallback EnableChangedCallback { get; set; }
+
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    private void Submit() => MudDialog?.Close(DialogResult.Ok(true));
+    private void Close() => MudDialog?.Cancel();
+
+
+    private bool IsEnabled(MachineDto machine)
+    {
+        return machine is not null && machine.IsEnabled;
+    }
+
+    private async Task SetMachineState(int machineId, bool enable)
+    {
+        var newCommand = new ToggleEnableMachineCommand()
+        {
+            MachineId = machineId,
+            Enable = enable,
+            Disable = !enable
+        };
+
+        // #124 F5 (SAFETY): capture the toggle Result — a failed toggle of the traceability gate must
+        // never surface as success. Previously the dispatch Result was discarded and the snackbar only
+        // reflected the follow-up configuration fetch.
+        var toggleResult = await MonitorRequestDispatcher.ProcessAsync(newCommand);
+
+        var action = enable ? "Enable" : "Disable";
+
+        if (toggleResult.IsFailure)
+        {
+            Snackbar.Add($"Failed to {action} machine {machineId}: {string.Join("; ", toggleResult.Errors)}", Severity.Error);
+
+            // Refresh so the UI reflects the machine's actual persisted state after the failed toggle.
+            var staleRefresh = await IndTraceConfigurationService.GetConfigurationAsync(refresh: true, CancellationToken.None);
+            if (staleRefresh.IsFailure)
+            {
+                Snackbar.Add("Configuration refresh also failed; the displayed machine state may be stale.", Severity.Warning);
+            }
+        }
+        else
+        {
+            // Toggle succeeded — fetch updated configuration; if THAT fails, say so distinctly instead
+            // of blaming the toggle.
+            var refreshResult = await IndTraceConfigurationService.GetConfigurationAsync(refresh: true, CancellationToken.None);
+
+            if (refreshResult.IsSuccess)
+            {
+                var msgSuccess = enable ? "Enabled" : "Disabled";
+                Snackbar.Add($"Machine state {msgSuccess} successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Machine {machineId} was {(enable ? "enabled" : "disabled")} successfully, but the configuration refresh failed: {string.Join("; ", refreshResult.Errors)}. The displayed state may be stale.", Severity.Warning);
+            }
+        }
+
+        // Trigger a UI update
+        await EnableChangedCallback.InvokeAsync();
+        await InvokeAsync(StateHasChanged);
+
+        MudDialog?.Close();
+    }
+}

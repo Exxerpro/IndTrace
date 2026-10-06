@@ -1,0 +1,45 @@
+@page "/configuration"
+
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using MudBlazor
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Components.Area.App
+
+@inject IndTraceConfigurationService IndTraceConfigurationService
+
+
+<h3>Configuration</h3>
+
+@if (_appDetails is null)
+{
+    <h2>@_message</h2>
+    <h2>Loading ...</h2>
+}
+else
+{
+    <MudContainer>
+        <AppConfiguration ConfigDetails="_appDetails" MachineNames="_appDetails.MachineNames">
+        </AppConfiguration>
+    </MudContainer>
+   
+}
+
+
+@code {
+    private ApplicationConfiguration? _appDetails;
+
+    private string _message = "loading";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await IndTraceConfigurationService.GetConfigurationAsync();
+
+        if (result.IsSuccess)
+            _appDetails = result.Value;
+        else
+        {
+            _message = "Error loading configuration details.";
+        }
+    }
+   
+}

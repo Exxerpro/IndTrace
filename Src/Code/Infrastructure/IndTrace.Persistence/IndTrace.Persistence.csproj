@@ -1,0 +1,87 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Assembly Information -->
+    <RootNamespace>IndTrace.Persistence</RootNamespace>
+    <AssemblyName>IndTrace.Persistence</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <!-- Versioning -->
+    <AssemblyVersion>2025.5.30.51</AssemblyVersion>
+    <FileVersion>2025.5.30.51</FileVersion>
+    <!---->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CORE FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core Framework">
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <!--<PackageReference Include="Microsoft.Extensions.Logging" />-->
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ENTITY FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Entity Framework">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CACHING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Caching">
+    
+    <PackageReference Include="ZiggyCreatures.FusionCache" />
+    <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ASP.NET CORE -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="ASP.NET Core">
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- SOLUTION FOLDERS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Solution Folders">
+    <Folder Include="Configurations\" />
+    <Folder Include="Data\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Interceptors\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="ReadModels\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+    <Folder Include="Specifications\" />
+  </ItemGroup>
+  
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

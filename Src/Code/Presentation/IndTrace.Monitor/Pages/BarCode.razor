@@ -1,0 +1,276 @@
+@page "/barcode"
+@using Microsoft.AspNetCore.Components.Forms
+@using MudBlazor
+@using Color = MudBlazor.Color
+@using System.Drawing
+@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailQrCode
+@using IndTrace.Application.Models.Extensions
+@using IndTrace.Application.Models.RequestHandler
+@using ZXing
+@using IndTrace.Components.Area.Forms
+@using IndTrace.Components.Area
+
+@using IndTrace.Components.Area.BarCode
+@using IndTrace.Domain.Interfaces
+@inject ISnackbar Snackbar
+@inject IMonitorRequestDispatcher MonitorRequestDispatcher
+
+
+
+
+<InputTextValidated Label=@_barCodeToSearch OnSearchBarCode="@SearchBarCode" />
+@_barCodeToSearch
+
+<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".png, .jpg">
+    <ActivatorContent>
+        <MudFab Color="Color.Secondary"
+                StartIcon="@Icons.Material.Filled.Image"
+                Label="Load picture" />
+    </ActivatorContent>
+</MudFileUpload>
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+}
+<MudDivider DividerType="DividerType.FullWidth" />
+
+@if (_imageData != null && _imageData.Length > 10)
+{
+    <MudImage Src="@_imageData" Width="150" Height="150" Alt="Uploaded Image" Elevation="25" Class="rounded-lg" />
+}
+
+<MudDivider DividerType="DividerType.FullWidth" />
+
+@if (!string.IsNullOrEmpty(_decodedResult))
+{
+    <MudFab Color="Color.Success"
+            StartIcon="@Icons.Material.Filled.QrCode"
+            Label=@_decodedResult/>
+}
+
+<MudDivider DividerType="DividerType.FullWidth" />
+
+@if (BarCodeDetails is not null)
+{
+    <BarCodeDetailsView 
+        SelectedBarCode="@SelectedBarCode" 
+        BarCodeDetails="@BarCodeDetails" />
+}
+
+<MudDivider DividerType="DividerType.FullWidth" />
+
+
+
+
+<MudStack Style="width: 100%">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                   @ref="@_fileUpload"
+                   OnFilesChanged="OnInputFileChanged"
+                   AppendMultipleFiles
+                   Hidden="@false"
+                   InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                   InputStyle="opacity:0"
+                   tabindex="-1">
+        <ActivatorContent>
+            <div ondrop="@(() => ClearDragClass())"
+                 ondragenter="@(() => SetDragClass())"
+                 ondragleave="@(() => ClearDragClass())"
+                 ondragend="@(() => ClearDragClass())">
+                <MudPaper Height="300px"
+                          Outlined="true"
+                          Class="@_dragClass">
+                    <MudText Typo="Typo.h6">
+                        Drag and drop files here or click
+                    </MudText>
+                    @foreach (var file in _fileNames)
+                    {
+                        <MudChip T="string"
+                                 Color="Color.Dark"
+                                 Text="@file"
+                                 tabindex="-1" />
+                    }
+                </MudPaper>
+            </div>
+        </ActivatorContent>
+    </MudFileUpload>
+    <MudToolBar Gutters="@false"
+                Class="relative d-flex justify-end gap-4">
+        <MudButton Color="Color.Primary"
+                   OnClick="@OpenFilePickerAsync"
+                   Variant="Variant.Filled">
+            Open file picker
+        </MudButton>
+        @* File upload has no backend in this release. The button is disabled and labelled so the
+           operator is not shown a control that pretends to upload. *@
+        <MudTooltip Text="File upload is not available in this release.">
+            <MudButton Color="Color.Primary"
+                       Disabled="true"
+                       OnClick="@Upload"
+                       Variant="Variant.Filled">
+                Upload (not available)
+            </MudButton>
+        </MudTooltip>
+        <MudButton Color="Color.Error"
+                   Disabled="@(!_fileNames.Any())"
+                   OnClick="@ClearAsync"
+                   Variant="Variant.Filled">
+            Clear
+        </MudButton>
+    </MudToolBar>
+</MudStack>
+
+
+@code {
+#nullable enable
+    private const string SDefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private const long MaxFileSize = 1_048_576; // 1MB in bytes
+    private string _dragClass = SDefaultDragClass;
+    private readonly List<string> _fileNames = new();
+    private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
+
+    private async Task ClearAsync()
+    {
+        await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
+        _fileNames.Clear();
+        ClearDragClass();
+    }
+
+    private Task OpenFilePickerAsync()
+        => _fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask;
+
+    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    {
+        ClearDragClass();
+        var files = e.GetMultipleFiles();
+        _fileNames.Clear();
+        foreach (var file in files)
+        {
+            // Only add files smaller than the maximum allowed size
+            if (file.Size <= MaxFileSize)
+            {
+                _fileNames.Add(file.Name);
+            }
+            else
+            {
+                // Notify user if file is too large
+                Snackbar.Add($"File '{file.Name}' exceeds the 1MB size limit and will not be uploaded.", Severity.Warning);
+            }
+        }
+    }
+
+    private void Upload()
+    {
+        // File upload has no backend in this release, so the Upload button is disabled in the UI
+        // and this method is intentionally a no-op. The previous body showed a
+        // "TODO: Upload your files!" snackbar that falsely implied an upload had happened.
+    }
+
+    private void SetDragClass()
+        => _dragClass = $"{SDefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass()
+        => _dragClass = SDefaultDragClass;
+
+
+    private string _decodedResult = string.Empty;
+    private bool _loading;
+    private string _imageData = "";
+    public BarCodeDetailMonitorVm? BarCodeDetails { get; set; }
+    public string SelectedBarCode { get; set; } = string.Empty;
+
+
+    private string _barCodeToSearch = string.Empty;
+
+    private async Task UploadFiles(IBrowserFile file)
+    {
+        ResetDecodedValues();
+        if (file is not null)
+        {
+            try
+            {
+                using var ms = await ReadFileAsync(file);
+                _decodedResult = ms.ToArray().DecodeBarCode();
+
+                if (!string.IsNullOrEmpty(_decodedResult))
+                {
+                    await GetBarCodeInfo(_decodedResult);
+                }
+            }
+            catch (Exception ex)
+            {
+                _decodedResult = $"Error decoding barcode: {ex.Message}";
+            }
+        }
+
+        _loading = false;
+
+    }
+
+    private void ResetDecodedValues()
+    {
+        _loading = true;
+        _imageData = "";
+        _decodedResult = "";
+    }
+
+    private async Task<MemoryStream> ReadFileAsync(IBrowserFile file)
+    {
+        MemoryStream? ms = null;
+        try
+        {
+            var buffer = new byte[file.Size];
+            ms = new MemoryStream();
+            await file.OpenReadStream().CopyToAsync(ms);
+            _imageData = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+
+            ms.Seek(0, SeekOrigin.Begin);
+            return ms;
+        }
+        catch
+        {
+            ms?.Dispose();
+            throw;
+        }
+    }
+
+    private async Task SearchBarCode(string barcode)
+    {
+        _barCodeToSearch = barcode;
+        await GetBarCodeInfo(barcode);
+    }
+
+
+    public async Task GetBarCodeInfo(string barcode)
+    {
+        var request = new GetBarCodeDetailQrCodeQuery
+            {
+                BarCode = barcode
+            };
+
+
+        var result = await MonitorRequestDispatcher.ProcessAsync(request);
+        BarCodeDetails = result.Value;
+        if (result.IsFailure || BarCodeDetails is null)
+        {
+            // LastError was previously set but never rendered — surface it to the operator.
+            LastError = result.IsFailure
+                ? $"Could not load bar code {barcode}: {string.Join("; ", result.Errors)}"
+                : $"No details found for bar code {barcode}.";
+            Snackbar.Add(LastError, Severity.Error);
+        }
+        else
+        {
+            Visible = true;
+        }
+
+    }
+
+
+    public bool Visible { get; set; }
+
+    public string LastError { get; set; } = string.Empty;
+
+}
+

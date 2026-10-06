@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- NU1605/NU1902 now handled globally, DV2001 removed - no DI diagrams needed for this project -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+    <!-- #188: client-side AddJsonProtocol(...) so hub payload serializer options can register the domain converters -->
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Abstractions\" />
+    <Folder Include="Implementations\" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,40 @@
+﻿@page "/Account/Logout"
+
+@using IndTrace.Monitor.Data
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Antiforgery;
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject SignInManager<ApplicationUser> SignInManager
+
+
+@attribute [RequireAntiforgeryToken(false)]
+
+<PageTitle>Logout</PageTitle>
+
+<AuthorizeView @ref="_authView">
+    <Authorized>
+        <div class="alert alert-info">Logging you out...</div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-success">You're logged out. </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private AuthorizeView? _authView;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var authState = await AuthenticationStateProvider
+            .GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            await SignInManager.SignOutAsync();
+        }
+       await base.OnInitializedAsync();
+       StateHasChanged();
+    }
+}

@@ -1,0 +1,14 @@
+// <copyright file="TagsGroupEntity.cs" company="Exxerpro Solutions SA de CV">
+// Copyright (c) Exxerpro Solutions SA de CV. Licensed under the GNU Affero General Public License v3.0 or later.
+// </copyright>
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+namespace IndTrace.Domain.Enum.LookUpTable;
+
+using IndTrace.Domain.Enum.Attributes;
+
+/// <summary>
+/// Represents the TagsGroupEntity.
+/// </summary>
+[EnumLookup]
+public class TagsGroupEntity(int id, string name, string displayName) : EnumLookUpTable(id, name, displayName);

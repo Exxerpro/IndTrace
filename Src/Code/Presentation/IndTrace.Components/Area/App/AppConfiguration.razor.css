@@ -1,0 +1,4 @@
+﻿.transparent-image {
+    background-color: white;
+    display: block;  /* Ensures the image is treated as a block element */
+}

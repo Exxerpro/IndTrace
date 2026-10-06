@@ -1,0 +1,49 @@
+﻿@using IndTrace.UI.Models.BarCodes
+<MudPaper Class="p-4">
+    <EditForm Model="BarCodeDetailQueryModel" OnValidSubmit="@HandleButtonClick">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <MudGrid>
+            <MudItem xs="12" sm="4">
+                <MudTextField T="string" Label="Label" @bind-Value="BarCodeDetailQueryModel.Label" />
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Select a barcode to see details</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Show Cycles</MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateHeading">Show Cycles Details</MudButton>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public required BarCodeModel BarCodeDetailQueryModel { get; set; }
+    
+    [Parameter]
+    public EventCallback<Task> OnButtonClickedCallback { get; set; }
+
+    [Parameter]
+    public EventCallback OnButtonClickedUpdateHeading { get; set; }
+
+
+    private async Task UpdateHeading(MouseEventArgs e)
+    {
+        await OnButtonClickedCallback.InvokeAsync();
+
+    }
+    private async Task HandleButtonClick()
+    {
+        // Invoke the EventCallback, passing in the required function signature
+        await OnButtonClickedCallback.InvokeAsync();
+    }
+}

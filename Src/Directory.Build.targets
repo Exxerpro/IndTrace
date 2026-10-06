@@ -1,0 +1,19 @@
+<Project>
+  <!-- ============================================================================ -->
+  <!-- OPEN-CORE EDITION -->
+  <!-- ============================================================================ -->
+  <!-- IndTraceEnterprise=true when the proprietary device drivers (Siemens S7, Cognex DataMan) are present in
+       the tree; the community edition (public repository) builds without them. Override on the command line
+       (-p:IndTraceEnterprise=false) to build the community edition from the full tree.
+       Defined HERE (not in Directory.Build.props) because every project under Src picks up this file, while
+       some Directory.Build.props chains (e.g. Src/Tests) do not import the root props. MSBuild evaluates all
+       properties (targets included) before any item, so ProjectReference/Compile conditions in project files
+       see the value. Driver-only wiring lives in *.Enterprise.cs files, compiled only in the enterprise edition. -->
+  <PropertyGroup>
+    <IndTraceEnterprise Condition="'$(IndTraceEnterprise)' == '' And Exists('$(MSBuildThisFileDirectory)Code/Infrastructure/IndTrace.S7Rx/IndTrace.S7Rx.csproj')">true</IndTraceEnterprise>
+    <IndTraceEnterprise Condition="'$(IndTraceEnterprise)' == ''">false</IndTraceEnterprise>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IndTraceEnterprise)' != 'true'">
+    <Compile Remove="**/*.Enterprise.cs" />
+  </ItemGroup>
+</Project>

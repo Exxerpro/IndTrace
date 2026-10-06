@@ -1,0 +1,831 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using IndTrace.Domain.Entities;
+
+namespace IndTrace.TestData.RawData;
+
+/// <summary>
+/// Static test data for Tag entities with O(1) lookup.
+/// IMPORTED: Contains all 80 entities from Tags.json
+/// Generated on: 2025-09-03 06:01:53
+/// </summary>
+public static class TagRawData
+{
+    private static readonly ImmutableDictionary<int, Tag> _tagsDict =
+        new Dictionary<int, Tag>
+        {
+            [1] = new Tag
+            {
+                TagId = 1,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "StatusStation",
+                Address = "DB39.DBW0",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 1
+            },            [2] = new Tag
+            {
+                TagId = 2,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "ContadorCiclos",
+                Address = "DB39.DBW2",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [3] = new Tag
+            {
+                TagId = 3,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "MinutoReset",
+                Address = "DB40.DBD832",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [4] = new Tag
+            {
+                TagId = 4,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "BarCodeCreated",
+                Address = "DB40.DBS302",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [5] = new Tag
+            {
+                TagId = 5,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "TipoPieza",
+                Address = "DB39.DBW8",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [6] = new Tag
+            {
+                TagId = 6,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarString3",
+                Address = "DB40.DBS814",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [7] = new Tag
+            {
+                TagId = 7,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarString4",
+                Address = "DB40.DBS1070",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [8] = new Tag
+            {
+                TagId = 8,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarString5",
+                Address = "DB40.DBS1326",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [9] = new Tag
+            {
+                TagId = 9,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarString6",
+                Address = "DB40.DBS1582",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [10] = new Tag
+            {
+                TagId = 10,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog1",
+                Address = "DB40.DBD0",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [11] = new Tag
+            {
+                TagId = 11,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog1",
+                Address = "DB40.DBD4",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [12] = new Tag
+            {
+                TagId = 12,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog1",
+                Address = "DB40.DBD8",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [13] = new Tag
+            {
+                TagId = 13,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStatusTest1",
+                Address = "DB40.DBB12",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [14] = new Tag
+            {
+                TagId = 14,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog2",
+                Address = "DB40.DBD14",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [15] = new Tag
+            {
+                TagId = 15,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog2",
+                Address = "DB40.DBD18",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [16] = new Tag
+            {
+                TagId = 16,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog2",
+                Address = "DB40.DBD22",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [17] = new Tag
+            {
+                TagId = 17,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStaturTest2",
+                Address = "DB40.DBB26",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [18] = new Tag
+            {
+                TagId = 18,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog3",
+                Address = "DB40.DBD28",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [19] = new Tag
+            {
+                TagId = 19,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog3",
+                Address = "DB40.DBD32",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [20] = new Tag
+            {
+                TagId = 20,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog3",
+                Address = "DB40.DBD36",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [21] = new Tag
+            {
+                TagId = 21,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStaturTest3",
+                Address = "DB40.DBB40",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [22] = new Tag
+            {
+                TagId = 22,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog4",
+                Address = "DB40.DBD42",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [23] = new Tag
+            {
+                TagId = 23,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog4",
+                Address = "DB40.DBD46",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [24] = new Tag
+            {
+                TagId = 24,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog4",
+                Address = "DB40.DBD50",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [25] = new Tag
+            {
+                TagId = 25,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStaturTest4",
+                Address = "DB40.DBB54",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [26] = new Tag
+            {
+                TagId = 26,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog5",
+                Address = "DB40.DBD56",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [27] = new Tag
+            {
+                TagId = 27,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog5",
+                Address = "DB40.DBD60",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [28] = new Tag
+            {
+                TagId = 28,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog5",
+                Address = "DB40.DBD64",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [29] = new Tag
+            {
+                TagId = 29,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStaturTest5",
+                Address = "DB40.DBB68",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [30] = new Tag
+            {
+                TagId = 30,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog6",
+                Address = "DB40.DBD70",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [31] = new Tag
+            {
+                TagId = 31,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog6",
+                Address = "DB40.DBD74",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [32] = new Tag
+            {
+                TagId = 32,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog6",
+                Address = "DB40.DBD78",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [33] = new Tag
+            {
+                TagId = 33,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStaturTest6",
+                Address = "DB40.DBB82",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [34] = new Tag
+            {
+                TagId = 34,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarDigital1",
+                Address = "DB40.DBX282.0",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [35] = new Tag
+            {
+                TagId = 35,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarEsperado1",
+                Address = "DB40.DBX282.1",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [36] = new Tag
+            {
+                TagId = 36,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "HoraReset",
+                Address = "DB40.DBW831",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [37] = new Tag
+            {
+                TagId = 37,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarDigital2",
+                Address = "DB40.DBX284.0",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [38] = new Tag
+            {
+                TagId = 38,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarEsperado2",
+                Address = "DB40.DBX284.1",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [39] = new Tag
+            {
+                TagId = 39,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "StatusStation",
+                Address = "DB39.DBW0",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [40] = new Tag
+            {
+                TagId = 40,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarDigital3",
+                Address = "DB40.DBX286.0",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [41] = new Tag
+            {
+                TagId = 41,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarEsperado3",
+                Address = "DB40.DBX286.1",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [42] = new Tag
+            {
+                TagId = 42,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "StatusDB",
+                Address = "DB39.DBW880",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [43] = new Tag
+            {
+                TagId = 43,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarDigital4",
+                Address = "DB40.DBX288.0",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [44] = new Tag
+            {
+                TagId = 44,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarEsperado4",
+                Address = "DB40.DBX288.1",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [45] = new Tag
+            {
+                TagId = 45,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "BarCodeReaded",
+                Address = "DB40.DBS558",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [46] = new Tag
+            {
+                TagId = 46,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "MaquinaStatusDB",
+                Address = "DB39.DBW878",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [47] = new Tag
+            {
+                TagId = 47,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "MaquinaAnteriorDB",
+                Address = "DB39.DBW876",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [48] = new Tag
+            {
+                TagId = 48,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog7",
+                Address = "DB40.DBD84",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [49] = new Tag
+            {
+                TagId = 49,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "SegundoReset",
+                Address = "DB40.DBW833",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [50] = new Tag
+            {
+                TagId = 50,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarString7",
+                Address = "DB40.DBS1838",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [51] = new Tag
+            {
+                TagId = 51,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarString8",
+                Address = "DB40.DBS2094",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [52] = new Tag
+            {
+                TagId = 52,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog9",
+                Address = "DB40.DBD116",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [53] = new Tag
+            {
+                TagId = 53,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog9",
+                Address = "DB40.DBD120",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [54] = new Tag
+            {
+                TagId = 54,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStatusTest9",
+                Address = "DB40.DBB124",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [55] = new Tag
+            {
+                TagId = 55,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog10",
+                Address = "DB40.DBD130",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [56] = new Tag
+            {
+                TagId = 56,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog10",
+                Address = "DB40.DBD134",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [57] = new Tag
+            {
+                TagId = 57,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStatusTest10",
+                Address = "DB40.DBB138",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [58] = new Tag
+            {
+                TagId = 58,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog11",
+                Address = "DB40.DBD144",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [59] = new Tag
+            {
+                TagId = 59,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog11",
+                Address = "DB40.DBD148",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [60] = new Tag
+            {
+                TagId = 60,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStatusTest11",
+                Address = "DB40.DBB152",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [61] = new Tag
+            {
+                TagId = 61,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog12",
+                Address = "DB40.DBD158",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [62] = new Tag
+            {
+                TagId = 62,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog12",
+                Address = "DB40.DBD162",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [63] = new Tag
+            {
+                TagId = 63,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStatusTest12",
+                Address = "DB40.DBB166",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [64] = new Tag
+            {
+                TagId = 64,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "ContadorCiclosPieza",
+                Address = "DB39.DBW882",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [65] = new Tag
+            {
+                TagId = 65,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "Resultado",
+                Address = "DB39.DBW884",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [66] = new Tag
+            {
+                TagId = 66,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "StatusPieza",
+                Address = "DB39.DBW886",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [67] = new Tag
+            {
+                TagId = 67,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarDigital5",
+                Address = "DB40.DBX290.0",
+                Type = "S7Link.Tag.ATOMIC.BOOL",
+                Length = 1,
+                Event = 0
+            },            [68] = new Tag
+            {
+                TagId = 68,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog7",
+                Address = "DB40.DBD88",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [69] = new Tag
+            {
+                TagId = 69,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "TiempoCicloActual",
+                Address = "DB39.DBD276",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [70] = new Tag
+            {
+                TagId = 70,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarString2",
+                Address = "DB40.DBS558",
+                Type = "S7Link.Tag.ATOMIC.STRING",
+                Length = 1,
+                Event = 0
+            },            [71] = new Tag
+            {
+                TagId = 71,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog7",
+                Address = "DB40.DBD92",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [72] = new Tag
+            {
+                TagId = 72,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStatusTest7",
+                Address = "DB40.DBB96",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [73] = new Tag
+            {
+                TagId = 73,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog8",
+                Address = "DB40.DBD98",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [74] = new Tag
+            {
+                TagId = 74,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMinAnalog8",
+                Address = "DB40.DBD102",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [75] = new Tag
+            {
+                TagId = 75,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorMaxAnalog8",
+                Address = "DB40.DBD106",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [76] = new Tag
+            {
+                TagId = 76,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarStatusTest8",
+                Address = "DB40.DBB110",
+                Type = "System.Int16",
+                Length = 1,
+                Event = 0
+            },            [77] = new Tag
+            {
+                TagId = 77,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog9",
+                Address = "DB40.DBD112",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [78] = new Tag
+            {
+                TagId = 78,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog10",
+                Address = "DB40.DBD126",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [79] = new Tag
+            {
+                TagId = 79,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog11",
+                Address = "DB40.DBD140",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            },            [80] = new Tag
+            {
+                TagId = 80,
+                MachineId = 10,  // Note: Spanish field name
+                PlcId = 1,
+                Name = "VarValorAnalog12",
+                Address = "DB40.DBD154",
+                Type = "System.Single",
+                Length = 1,
+                Event = 0
+            }
+        }.ToImmutableDictionary();
+
+    private static readonly Lazy<IReadOnlyList<Tag>> _fixtureCache =
+        new(() => _tagsDict.Values.ToList());
+
+    public static IReadOnlyList<Tag> Fixture => _fixtureCache.Value;
+    public static Tag? GetById(int id) => _tagsDict.TryGetValue(id, out var tag) ? tag : null;
+    public static Tag? GetTag(int id) => GetById(id);
+    public static IImmutableDictionary<int, Tag> Dictionary => _tagsDict;
+    public static bool Contains(int id) => _tagsDict.ContainsKey(id);
+    public static int Count => _tagsDict.Count;
+}

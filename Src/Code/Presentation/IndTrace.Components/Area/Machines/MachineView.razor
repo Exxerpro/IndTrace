@@ -1,0 +1,109 @@
+﻿@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Application.Machines.Queries.GetMachinesList
+@using IndTrace.Domain.Entities
+@using MudBlazor
+
+@inject IDialogService DialogService
+
+<MudContainer>
+
+    <MudPaper Class="pa-4">
+        <MudStack Spacing="2">
+            <!-- Customer Selection -->
+            <MudSelect T="string" Label="Select Customer"
+                       @bind-Value="SelectedCustomer"
+                       Adornment="Adornment.Start"
+                       AdornmentIcon="@Icons.Material.Filled.Business"
+                       Clearable="true"
+                       Dense="true">
+                @if (ApplicationConfiguration?.ActiveCustomer is not null)
+                {
+                    @foreach (var customer in ApplicationConfiguration.ActiveCustomer)
+                    {
+                        <MudSelectItem Value="@customer.Name">
+                            <MudAvatar Size="Size.Small"><MudIcon Icon="@Icons.Material.Filled.Image" /></MudAvatar> @customer.Name
+                        </MudSelectItem>
+                    }
+                }
+            </MudSelect>
+
+            <!-- Machines Table -->
+            <MudText Typo="Typo.h4">Machines List</MudText>
+            <MudTable Items="@FilteredMachines">
+                <HeaderContent>
+                    
+                    <MudTh>Name</MudTh>
+                    <MudTh>Status</MudTh>
+                    <MudTh>MachineType</MudTh>
+                    <MudTh>Actions</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Status">@Status(context.IsEnabled)</MudTd>
+                    <MudTd DataLabel="MachineType">@context.MachineType?.Name</MudTd>
+                    <MudTd DataLabel="Actions">
+                        <MudButton Variant="Variant.Filled" Color="Color.Info"
+                                   OnClick="() => OpenDialogAsync(context)">
+                            View Details
+                        </MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudStack>
+    </MudPaper>
+
+</MudContainer>
+
+
+@code {
+
+    [Parameter] 
+    public IEnumerable<MachineDto> Machines { get; set; } = [];
+
+    [Parameter] 
+    public EventCallback MachineEventCallback { get; set; }
+
+    [Parameter] 
+    public ApplicationConfiguration? ApplicationConfiguration { get; set; }
+
+    private Task OpenDialogAsync(MachineDto machine)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true ,MaxWidth = MaxWidth.Large};
+
+        var parameters = new DialogParameters
+        {
+            { nameof(MachineDetails.Machine), machine },
+            { nameof(MachineDetails.EnableChangedCallback),
+                EventCallback.Factory.Create(this, () => MachineEventCallback.InvokeAsync())},
+        };
+
+        return DialogService.ShowAsync<MachineDetails>($"Machine Details {machine.MachineId}", parameters, options);
+    }
+   
+
+    private string Status(bool contextIsEnabled)
+    {
+        return contextIsEnabled ? "Enabled" : "Disabled";
+    }
+
+    private string SelectedCustomer { get; set; } = string.Empty;
+
+    private IEnumerable<MachineDto> FilteredMachines =>
+        string.IsNullOrWhiteSpace(SelectedCustomer)
+            ? Machines
+            : Machines.Where(m => m.Description?.Contains(SelectedCustomer, StringComparison.OrdinalIgnoreCase) == true);
+
+    private string GetCustomerLogoUrl(string customerName)
+    {
+        if (string.IsNullOrWhiteSpace(customerName))
+        {
+            return string.Empty;
+        }
+
+        // Assume logos are stored under wwwroot/images/customers/
+        return $"images/customers/{customerName.ToLowerInvariant()}.png";
+    }
+
+}

@@ -1,0 +1,71 @@
+@using IndTrace.Components.Area.Metrics
+@using IndTrace.UI.Models.Performance
+@using MudBlazor
+
+
+@inject IDialogService DialogService
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MudGrid>
+        @foreach (var machine in Machines.Values)
+
+        {
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <MudCard Class="machines-card">
+                    <MudPaper Class="pa-4" @onmouseenter="() => ShowDetails(machine)" @onmouseleave="() => HideDetails()">
+                        <MudText Typo="Typo.h6">@machine.Name</MudText>
+                        <MudDivider Class="my-2" />
+                        <MudProgressCircular Value="@(machine.Indicator.Oee)" Color="@GetColor(machine.Indicator.Oee)" />
+                        <MudText Typo="Typo.body2">OEE: @(machine.Indicator.Oee.ToString("F2")) %</MudText>
+                        <MudText Typo="Typo.body2" Color="@GetColor(machine.Indicator.Availability)">Availability: @(machine.Indicator.Availability.ToString("F2")) %</MudText>
+                        <MudText Typo="Typo.body2" Color="@GetColor(machine.Indicator.Performance)">Performance: @(machine.Indicator.Performance.ToString("F2")) %</MudText>
+                        <MudText Typo="Typo.body2" Color="@GetColor(machine.Indicator.Quality)">Quality: @(machine.Indicator.Quality.ToString("F2")) %</MudText>
+                    </MudPaper>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(e => ShowDetails(machine))">Show Details</MudButton>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+</MudContainer>
+
+@code {
+
+    [Parameter]
+    public Dictionary<string, PerformanceRecord> Machines { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<PerformanceRecord> OnToggleOverlay { get; set; }
+
+    private Color GetColor(double value)
+    {
+        return value switch
+        {
+            >= 80 => Color.Success,
+            >= 60 => Color.Warning,
+            _ => Color.Error
+        };
+    }
+
+    private async Task ShowDetails(PerformanceRecord machine)
+    {
+       var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                NoHeader = false,
+                FullWidth = false,
+                MaxWidth = MaxWidth.ExtraLarge,
+                CloseButton = true,
+            };
+        var parameters = new DialogParameters
+        {
+            { "Machine", machine }
+        };
+
+        await DialogService.ShowAsync<MetricsDetailsModal>(machine.Name, parameters, options);
+
+    }
+
+    private Task HideDetails()
+    {
+        return Task.CompletedTask;
+    }
+}

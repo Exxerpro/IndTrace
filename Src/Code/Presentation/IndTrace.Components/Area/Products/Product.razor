@@ -1,0 +1,65 @@
+﻿<h3>Product</h3>
+
+@code {
+
+}
+@using IndTrace.Application.Customers
+@using MudBlazor
+@using IndTrace.Application.Lines
+@using IndTrace.Application.Products.Queries.GetProductDetail
+
+<EditForm Model="product">
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudTextField Label="Part Number" @bind-Value="product.PartNumber" Required="true" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField Label="Product Name" @bind-Value="product.ProductName" Required="true" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField Label="Customer Part Number" @bind-Value="product.CustomerPartNumber" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField Label="Alias Part Number" @bind-Value="product.AliasPartNumber" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField Label="Description" @bind-Value="product.Description" Lines="4" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudSelect Label="Customer" @bind-Value="product.CustomerId" Required="true">
+                @foreach (var customer in customers)
+                {
+                    <MudSelectItem Value="@customer.CustomerId">@customer.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudSelect Label="Line" @bind-Value="product.LineId" Required="true">
+                @foreach (var line in lines)
+                {
+                    <MudSelectItem Value="@line.LineId">@line.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudSwitch @bind-Value="product.IsActive" Label="Is Active" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField Label="Version" @bind-Value="product.Version" Required="true" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnSubmit">Submit</MudButton>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+@code {
+    private ProductDto product = new ProductDto();
+    private List<CustomerDto> customers = new List<CustomerDto>();
+    private List<LineDto> lines = new List<LineDto>();
+
+    private void OnSubmit()
+    {
+  
+    }
+}

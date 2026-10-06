@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Assembly Information -->
+    <AssemblyVersion>2025.5.30.51</AssemblyVersion>
+    <FileVersion>2025.5.30.51</FileVersion>
+    <AssemblyName>Gateway</AssemblyName>
+    <RootNamespace>Gateway</RootNamespace>
+    <OutputType>Library</OutputType>
+    <!-- User Secrets -->
+    <UserSecretsId>dotnet-Gateway-8A9FAB66-1908-4648-8971-111E42A3B319</UserSecretsId>
+    <UserSecretsId>dotnet-IndTrace.Communications-bc3e9150-f844-4820-8097-5b1a98f4a6aa</UserSecretsId>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Packages">
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Serilog.Enrichers.Demystifier" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- CONTENT FILES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Content Files">
+    <Content Update="obj\project.assets.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- CONFIGURATION FILES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Configuration Files">
+    <None Update="appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <LinkBase>$(MSBuildProjectName)</LinkBase>
+      <DestinationSubPath>$(MSBuildProjectName)\appsettings.json</DestinationSubPath>
+    </None>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\..\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\IndTrace.Dependencies\IndTrace.Dependencies.csproj" />
+    <ProjectReference Include="..\IndTrace.Devices\IndTrace.Devices.csproj" />
+    <ProjectReference Include="..\IndTrace.HubConnection\IndTrace.HubConnection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

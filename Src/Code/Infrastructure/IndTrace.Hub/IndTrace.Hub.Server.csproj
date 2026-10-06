@@ -1,0 +1,93 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Security & Configuration -->
+    <UserSecretsId>dotnet-IndTrace.Hub-74d2a8b7-9374-4521-beab-897ed5726dbd</UserSecretsId>
+    <!-- Application Startup -->
+    <StartupObject>IndTrace.Hub.Server.Program</StartupObject>
+    <!-- Application Information -->
+    <AssemblyTitle>IndTrace HubServer</AssemblyTitle>
+    <Description>IndTrace.HubServer</Description>
+    <Company>Exxerpro Solutions SA de CV</Company>
+    <Product>IndTrace.HubServer</Product>
+    <Title>IndTrace.HubServer</Title>
+    <!-- Application Icon -->
+    <ApplicationIcon>HubServer.ico</ApplicationIcon>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PUBLISHING PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Publishing Enhancements -->
+    <EnableDynamicPgo>true</EnableDynamicPgo>
+    <TieredCompilation>true</TieredCompilation>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- STATIC ASSETS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Application Assets">
+    <Content Include="HubServer.ico" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - SIGNALR -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="SignalR">
+    <PackageReference Include="Microsoft.AspNet.SignalR.Client" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CORE FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core Framework">
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - LOGGING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Logging">
+    <PackageReference Include="Serilog.Enrichers.Demystifier" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Infrastructure References">
+    <ProjectReference Include="..\IndTrace.Dependencies\IndTrace.Dependencies.csproj" />
+    <ProjectReference Include="..\IndTrace.HubConnection\IndTrace.HubConnection.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- LAUNCH SETTINGS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Development Configuration">
+    <None Update="Properties\launchSettings.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <!-- Enforce warnings-as-errors in Release once the project is clean -->
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

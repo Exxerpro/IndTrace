@@ -1,0 +1,34 @@
+﻿@* @using IndTrace.Application.Models.Interfaces
+@using IndTrace.Application.Notifications
+@using Microsoft.Extensions.Logging
+@inject EventsService Events
+@inject ILogger<DebugConsole> Logger
+
+<MudPaper Elevation="1" Class="p-2 debug-console" Style="position:fixed; bottom:10px; right:10px; width:320px; z-index:5000;">
+    <MudText Typo="Typo.subtitle2" Class="text-primary">Debug Log</MudText>
+
+    <MudList Dense="true" Style="max-height:150px; overflow:auto;" T="string">
+        @foreach (var message in Events.Messages?.Take(6) ?? Enumerable.Empty<string>())
+        {
+            <MudListItem Dense="true" Class="debug-message" Title="@message">
+                @message
+            </MudListItem>
+        }
+    </MudList>
+
+    <MudTooltip Text="Expand Full Log" Placement="Top">
+        <MudButton Variant="Variant.Text" Size="Size.Small" OnClick="ToggleDialog" Class="mt-1">Expand</MudButton>
+    </MudTooltip>
+</MudPaper>
+
+<MudDialog @bind-IsOpen="_showDialog" MaxWidth="MaxWidth.Large" FullWidth="true">
+    <DialogContent>
+        <MudTextField @bind-Value="_searchTerm" Placeholder="Search logs..." Variant="Variant.Outlined" FullWidth="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
+        <MudList Dense="true" Style="max-height:500px; overflow:auto;" T="string">
+            @foreach (var msg in FilteredMessages)
+            {
+                <MudListItem Dense="true">@msg</MudListItem>
+            }
+        </MudList>
+    </DialogContent>
+</MudDialog> *@

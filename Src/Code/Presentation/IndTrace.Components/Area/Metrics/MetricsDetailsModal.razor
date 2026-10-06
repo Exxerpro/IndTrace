@@ -1,0 +1,32 @@
+@using IndTrace.UI.Models.Performance
+@using MudBlazor
+
+<MudDialog>
+   <TitleContent>
+        <MudText Typo="Typo.h6">@Machine.Name</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MetricsDetailsView Machine="@Machine" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter] public required PerformanceRecord Machine { get; set; }
+
+    [CascadingParameter]
+    public required IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

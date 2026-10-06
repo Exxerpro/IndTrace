@@ -1,0 +1,78 @@
+@using IndTrace.UI.Models.BarCodes
+@using IndTrace.Domain.Interfaces
+@inject IDateTimeMachine DateTimeMachine
+<MudPaper Class="p-4">
+    @if (model is not null) {<EditForm Model="@model" OnValidSubmit="@OnValidSubmit" OnInvalidSubmit="@OnInvalidSubmit">
+        <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudGrid>
+                <MudItem xs="12" sm="7">
+                    <MudCard>
+                        <MudCardContent>
+
+                        <MudDatePicker Label="Initial Date" ShowWeekNumbers="true" Editable="true" @bind-Date="model.InitialDate" For="@(() => model.InitialDate)" />
+                        <MudDatePicker Label="Initial Date" ShowWeekNumbers="true" Editable="true" @bind-Date="model.EndDate" For="@(() => model.EndDate)" />
+                         <MudCheckBox T="bool" Label="Master" @bind-Value="model.IsMaster" For="@(() => model.IsMaster)"/>
+                             
+                           </MudCardContent>
+                        <MudCardActions>
+                            @if (_success)
+                            {
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Get List BarCodes</MudButton>
+                            }
+                            else
+                            {
+                                <MudText Color="@Color.Error">
+                                    <ValidationSummary />
+                                </MudText>
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Get List BarCodes</MudButton>
+                            }
+                            
+                        </MudCardActions>
+            </MudCard>
+            
+            </MudItem>
+        </MudGrid>
+    </EditForm>}
+
+</MudPaper>
+
+@code {
+
+    bool _success=true;
+
+    [Parameter]
+    public BarCodesListQueryModel model { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnFilterChanged { get; set; }
+
+    [Parameter]
+    public EditContext? EditContext { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Seed the default date range deterministically from the injected clock instead of DateTime.Now.
+        if (model.InitialDate is null && model.EndDate is null)
+        {
+            model.SetDefaultDateRange(DateTimeMachine);
+        }
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        // Invoke the EventCallback to notify the parent component
+        _success = true;
+        
+        await OnFilterChanged.InvokeAsync(null);
+        
+    }
+
+    private void OnInvalidSubmit(EditContext context)
+    {
+        _success = false;
+    }
+
+}
+
+

@@ -1,0 +1,171 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Versioning -->
+    <AssemblyVersion>2025.5.30.51</AssemblyVersion>
+    <FileVersion>2025.5.30.51</FileVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - HTTP AND RESILIENCE -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="HTTP and Resilience">
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - DEPENDENCY INJECTION -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Dependency Injection">
+    <PackageReference Include="Scrutor" />
+    <PackageReference Include="Castle.Core" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - IDENTITY SERVER -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Identity Server">
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CACHING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Caching">
+    
+  </ItemGroup>
+  <ItemGroup Label="Options">
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - BACKGROUND JOBS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Background Jobs">
+    <PackageReference Include="Hangfire" />
+    <PackageReference Include="Hangfire.SqlServer" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - HEALTH CHECKS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Health Checks">
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - SIGNALR -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="SignalR">
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Connections.Client" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Connections.Common" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ASP.NET CORE -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="ASP.NET Core">
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - OPENTELEMETRY -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="OpenTelemetry">
+    <PackageReference Include="OpenTelemetry.Api.ProviderBuilderExtensions" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
+    <PackageReference Include="OpenTelemetry" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Process" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+    <PackageReference Include="OpenTelemetry.Resources.Container" />
+    <PackageReference Include="OpenTelemetry.Resources.Host" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - GRPC -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="gRPC">
+    <PackageReference Include="Grpc.AspNetCore" />
+    <PackageReference Include="Grpc.AspNetCore.HealthChecks" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - LOGGING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Logging">
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Enrichers.Context" />
+    <PackageReference Include="Serilog.Enrichers.Demystifier" />
+    <PackageReference Include="Serilog.Enrichers.Process" />
+    <PackageReference Include="Serilog.Expressions" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="Serilog.Settings.AppSettings" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog.Sinks.Async" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.OpenTelemetry" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
+    <PackageReference Include="Serilog.Settings.Configuration" />
+    <PackageReference Include="Serilog.Sinks.File.GZip" />
+    <PackageReference Include="Serilog.Enrichers.Thread" />
+    <PackageReference Include="Serilog.Enrichers.Environment" />
+    <PackageReference Include="Serilog.Exceptions.EntityFrameworkCore" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - UI COMPONENTS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="UI Components">
+    <PackageReference Include="CodeBeam.MudBlazor.Extensions" />
+    <PackageReference Include="MudBlazor" />
+    <PackageReference Include="CoreAdmin" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - OFFICE DOCUMENTS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Office Documents">
+    <PackageReference Include="ClosedXML" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\IndTrace.Identity\IndTrace.Identity.csproj" />
+  </ItemGroup>
+  <ItemGroup Label="Infrastructure References">
+    <ProjectReference Include="..\IndTrace.Persistence\IndTrace.Persistence.csproj" />
+    <ProjectReference Include="..\IndTrace.HubConnection\IndTrace.HubConnection.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- SOLUTION FOLDERS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Solution Folders">
+    <Folder Include="Config\" />
+    <Folder Include="Clients\" />
+    <Folder Include="DI\" />
+    <Folder Include="Hangfire\" />
+    <Folder Include="OpenTelemetry\" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

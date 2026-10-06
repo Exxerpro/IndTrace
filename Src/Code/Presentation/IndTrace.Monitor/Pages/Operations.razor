@@ -1,0 +1,93 @@
+@page "/operations"
+@page "/dashboard"
+
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Application.UI.Services
+@using IndTrace.Components.Area.DashBoard
+@using IndTrace.Dependencies
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.JSInterop
+@using MudBlazor
+
+
+@inject IJSRuntime JsRuntime
+@inject ILogger<Operations> Logger
+@inject IndTraceEventsService EventsService
+@inject IndTraceConfigurationService IndTraceConfigurationService
+
+@implements IAsyncDisposable 
+
+<div id="particles-js"></div>
+
+
+@if (!IsInitialized)
+{
+    <MudProgressLinear Color="Color.Tertiary" Size="Size.Large" Rounded="true" Indeterminate="true" />
+}
+
+<MudGrid>
+    
+    <MudItem xs="12" sm="4" md="3" lg="3">
+        
+        <MudPaper Class="pa-4 mt-2">
+            @if (EventsService.ControllerMonitors is not null)
+            {
+                <PlcsInformation PlcConnections="EventsService.ControllerMonitors" ></PlcsInformation>
+            }
+            
+        </MudPaper>
+
+                
+        <MudPaper Class="pa-4">
+            @if (EventsService.ProductionData is not null)
+            {
+                <ProductInformation Product="EventsService.ProductionData"></ProductInformation>
+            }
+
+        </MudPaper> 
+
+    </MudItem>
+
+     <!-- Right Side Column -->
+    <MudItem xs="12" sm="8" md="9" lg="9">
+        @if (EventsService.StationMonitors is null || EventsService.StationMonitors.Count == 0 || applicationConfiguration is  null)
+        {
+            <p>Loading station data...</p>
+        }
+        else
+        {
+            <MudGrid>
+                @foreach (var station in EventsService.StationMonitors.Values.Where(m =>m is not null &&  m.IsEnabled && m.MachineId != 0))
+                {
+                    // Find the monitor with the matching MachineId
+                    var monitor = EventsService.ControllerMonitors.Values.FirstOrDefault(p => p is not null && p.MachineId == station.MachineId);
+
+                    <MudItem xs="12" sm="6" md="4" lg="3">
+                        <MachineInformation 
+                            Station="station" 
+                            Monitor ="monitor"
+                            MachineNames="applicationConfiguration.MachineNames" />
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    </MudItem> 
+</MudGrid> 
+
+ 
+<style>
+    
+    #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        background-image: url("");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: 50% 50%;
+    }
+
+</style>

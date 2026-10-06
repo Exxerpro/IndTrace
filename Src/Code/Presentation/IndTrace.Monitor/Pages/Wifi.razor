@@ -1,0 +1,53 @@
+﻿@page "/wifi"
+@using QRCoder
+@using System.ComponentModel.DataAnnotations
+@using ZXing.QrCode.Internal
+@using MudBlazor
+
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<MudGrid Justify="Justify.Center" Spacing="2" Class="full-height">
+    <MudItem xs="12" class="text-center">
+        <MudPaper Height="25px" Width="400px">            
+        </MudPaper>
+
+    </MudItem>
+    <MudItem xs="12" class="text-center">
+        <MudPaper Height="100px" Width="400px">
+            <MudText Typo="Typo.h5" Color="Color.Success">Connect to the IndTrace App</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" class="text-center">
+        <MudPaper Height="400px" Width="400px">
+            <MudImage Fluid="true" Src=@_wiFiQroCode Alt="Swedish Farm House" Class="rounded-lg" />
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+
+
+@code {
+    // #124 F13: instance fields — the previous static fields were shared across ALL circuits while
+    // being written per circuit.
+    private readonly string _wiFiSettings = "WIFI:S:IndTrace;T:WPA;P:IndTrace;H:true;";
+    private string _wiFiQroCode = "";
+
+    protected override void OnInitialized()
+    {
+        _wiFiQroCode = GetQrCode(_wiFiSettings);
+    }
+
+    private readonly QRCodeGenerator _qrCodeGenerator = new();
+
+    public string GetQrCode(string textToEncode)
+    {
+        using var qrCodeGenerator = new QRCodeGenerator();
+        var qrCodeData = qrCodeGenerator.CreateQrCode(textToEncode, QRCodeGenerator.ECCLevel.H);
+        var pngByteQrCode = new PngByteQRCode(qrCodeData);
+        var qrCodeImage = pngByteQrCode.GetGraphic(20);
+        return "data:image/png;base64," + Convert.ToBase64String(qrCodeImage);
+    }
+}
+
+

@@ -1,0 +1,96 @@
+@using IndTrace.Application.Registers.Services
+@using IndTrace.UI.Models.Metrics
+@using MudBlazor
+
+
+<MudSwitch @bind-Value="ShowTable" Color="Color.Primary">@(ShowTable ? "Hide" : "Show")</MudSwitch>
+<MudButton FullWidth="false" 
+           OnClick="@SelectedValuesChangedEvent" 
+           Variant="Variant.Filled" 
+           DropShadow="true">Save Selection</MudButton>
+<MudButton FullWidth="false"
+           OnClick="@RefreshValuesEvent"
+           Variant="Variant.Filled"
+           DropShadow="true">Reload</MudButton>
+
+@if (ShowTable)
+{
+    <MudTable @ref="_table" 
+              T="RegistersRecords" 
+              Items="@Registers" 
+              MultiSelection="true" 
+              Hover="true" 
+              @bind-SelectedItems="SelectedItems" 
+              SelectOnRowClick="true" 
+              Breakpoint="Breakpoint.Sm" 
+              Loading="@_loading" 
+              LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Machine Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Selected</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Machine">@context.MachineId</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Selected">@context.Selected</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+        </PagerContent>
+        <FooterContent>
+            <MudTd colspan="5">Select All</MudTd>
+        </FooterContent>
+    </MudTable>
+}
+
+@code {
+   
+    private MudTable<RegistersRecords>? _table;
+
+    [Parameter]
+    public HashSet<RegistersRecords> SelectedItems { get; set; } = [];
+
+    [Parameter]
+    public bool SaveChanges { get; set; } = true;
+
+    [Parameter]
+    public bool ShowTable { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public List<RegistersRecords> Registers { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<HashSet<RegistersRecords>> SelectedValuesSaved { get; set; }
+
+    [Parameter]
+    public EventCallback RefreshValues { get; set; }
+
+    private bool _open;
+    private bool _loading;
+
+    private void ToggleOpen() => _open = !_open;
+
+    protected override void  OnInitialized()
+    {
+        _open = true;
+    }
+
+    private void SelectedValuesChangedEvent()
+    {
+        SelectedValuesSaved.InvokeAsync(SelectedItems);
+    }
+
+    private async Task RefreshValuesEvent()
+    {
+        _loading = true;
+        await InvokeAsync(StateHasChanged);
+        await RefreshValues.InvokeAsync();
+        _loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+}

@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- User Secrets -->
+    <UserSecretsId>dotnet-IndTrace.HubClient-9f233e79-17a3-42b7-9af7-8da25477cdb6</UserSecretsId>
+    <!-- Application Startup -->
+    <StartupObject>IndTrace.Hub.Client.Program</StartupObject>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- CONTENT FILES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Content Files">
+    <None Update="project.assets.json">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+      <LinkBase>$(MSBuildProjectName)</LinkBase>
+      <DestinationSubPath>$(MSBuildProjectName)\project.assets.json</DestinationSubPath>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+      <LinkBase>$(MSBuildProjectName)</LinkBase>
+      <DestinationSubPath>$(MSBuildProjectName)\appsettings.json</DestinationSubPath>
+    </None>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Packages">
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\IndTrace.Gateway\IndTrace.Gateway.csproj" />
+    <ProjectReference Include="..\IndTrace.HubConnection\IndTrace.HubConnection.csproj" />
+  </ItemGroup>
+  <!-- Enforce warnings-as-errors in Release once the project is clean -->
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

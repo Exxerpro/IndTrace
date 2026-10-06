@@ -1,0 +1,88 @@
+@page "/notifications"
+
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Application.UI.Services
+@using IndTrace.Components.Area.DashBoard
+@using IndTrace.Dependencies
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.JSInterop
+@using MudBlazor
+@using ApexCharts
+
+
+
+@inject IJSRuntime JsRuntime
+@inject ILogger<Notifications> Logger
+@inject IndTraceEventsService EventsService
+@inject IndTraceConfigurationService IndTraceConfigurationService
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject ISnackbar Snackbar
+
+<div id="particles-js"></div>
+
+<MudButton OnClick="RequestPermission" Variant="Variant.Filled" Color="MudBlazor.Color.Primary">
+    RequestPermission
+</MudButton>
+
+
+<MudButton OnClick="SendNotification" Variant="Variant.Filled" Color="MudBlazor.Color.Primary">
+    SendNotification
+</MudButton>
+
+<MudButton OnClick="SendEvent" Variant="Variant.Filled" Color="MudBlazor.Color.Primary">
+    SendEvent
+</MudButton>
+    <ApexChart TItem="MyData"
+               Title="Sample Data">
+
+        <ApexPointSeries TItem="MyData"
+                         Items="Data"
+                         Name="Net Profit"
+                         SeriesType="SeriesType.Bar"
+                         XValue="e => e.Category"
+                         YValue="e=> e.NetProfit" />
+
+        <ApexPointSeries TItem="MyData"
+                         Items="Data"
+                         Name="Revenue"
+                         SeriesType="SeriesType.Bar"
+                         XValue="e => e.Category"
+                         YValue="e=> e.Revenue" />
+    </ApexChart>
+    
+@code {
+    private List<MyData> Data { get; set; } = new();
+    protected override void OnInitialized()
+    {
+        Data.Add(new MyData { Category = "Jan", NetProfit = 12, Revenue = 33 });
+        Data.Add(new MyData { Category = "Feb", NetProfit = 43, Revenue = 42 });
+        Data.Add(new MyData { Category = "Mar", NetProfit = 112, Revenue = 23 });
+    }
+
+    public class MyData
+    {
+        public string Category { get; set; } = string.Empty;
+        public int NetProfit { get; set; }
+        public int Revenue { get; set; }
+    }
+}
+
+@code {
+
+    private async Task RequestPermission()
+    {
+        await JsRuntime.InvokeVoidAsync("requestNotificationPermission");
+    }
+
+    private async Task SendNotification()
+    {
+        string title = "Important Update";
+        var options = new
+        {
+            body = "An important event has occurred!",
+            icon = "/img/notification.png"
+        };
+
+        await JsRuntime.InvokeVoidAsync("sendNotification", title, options);
+    }
+}

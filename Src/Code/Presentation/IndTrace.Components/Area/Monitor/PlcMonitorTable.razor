@@ -1,0 +1,73 @@
+@using Microsoft.AspNetCore.SignalR.Client
+@using System.Globalization
+@using IndTrace.Application.Models.Helpers
+@using IndTrace.Application.UI.Models
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList;
+
+
+@inject IJSRuntime JS
+
+@if (Plcs == null || !Plcs.Any())
+{
+    <MudPaper Class="pa-4" Elevation="1">
+        <MudText Typo="Typo.h6" Color="Color.Secondary">
+            No PLC connection data available.
+        </MudText>
+    </MudPaper>
+}
+<MudTable Items="Plcs" Dense="true" Hover="true" Striped="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6"  Color ="Color.Tertiary">Connections</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>PLC Id</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Label</MudTh>
+        <MudTh>PartNumber</MudTh>
+        <MudTh>CyclesOk</MudTh>
+        <MudTh>TimeStamp</MudTh>
+        <MudTh>HeartBeat</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="PLC Id">@context.PlcId</MudTd>
+            @(MachineNames?.TryGetValue(context.PlcId, out var plcName) == true ? plcName : $"Unknown ({context.PlcId})")
+        <MudTd DataLabel="Label">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                       OnClick="() => CopyToClipboard(context.Label)">
+                @(context.Label ?? "N/A")
+            </MudButton>
+        </MudTd>
+        <MudTd DataLabel="PartNumber">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small">
+                @(context.PartNumber ?? "N/A")
+            </MudButton>
+        </MudTd>
+        <MudTd DataLabel="CyclesOk">
+            <MudButton Variant="Variant.Filled" Color="Color.Info" Size="Size.Small">
+                @(context.CyclesOk.ToString() ?? "0")
+            </MudButton>
+        </MudTd>
+        <MudTd DataLabel="TimeStamp">@context.TimeStamp</MudTd>
+        <MudTd DataLabel="HeartBeat">
+            <MudButton Variant="Variant.Filled" Color="Color.Info" Size="Size.Small">
+                @(context.HeartBeat.ToString() ?? "0")
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter]
+    public IEnumerable<ControllerMonitor> Plcs { get; set; } = [];        
+
+     [Parameter]
+     public Dictionary<int,string> MachineNames { get; set; } = new();
+    
+
+     private async Task CopyToClipboard(string text)
+     {
+         await JS.InvokeVoidAsync("copyToClipboard", text);
+     }
+}

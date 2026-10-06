@@ -1,0 +1,212 @@
+@using IndTrace.Application.BarCodes.Services
+@using IndTrace.Application.UI.Models
+@using IndTrace.Domain.Entities
+@using IndTrace.Domain.Enum
+@using MudBlazor
+@using MudExtensions
+@inherits LayoutComponentBase
+@implements IDisposable
+
+
+@if(Station is not null )
+{
+
+<MudPaper Class="pa-4" Elevation="4" Square="true">
+    <MudText Typo="Typo.h6" Align="Align.Center" Class="mud-text-white mud-bg-primary pa-2">
+            <strong>     Machine: </strong> @(MachineNames?.TryGetValue(Station.MachineId, out var machineName) == true ? machineName : $"Unknown ({Station.MachineId})")
+    </MudText>
+
+    <MudSpacer/>
+
+    <MudText Typo="Typo.body1" Color="@Color.Tertiary">
+        <strong>Part Number:</strong> @Station.PartNumber
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@Color.Warning">
+        <strong>BarCode:</strong> @Station.Label
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+                <strong>Event:</strong> @Station.RequestTask
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+        <strong>Status:</strong> @Station.EventStatus
+    </MudText>
+
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+        <strong>Result:</strong> @Station.ResultValidation.Name
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+        <strong>TimeStamp:</strong> @Station.TimeStamp.TimeOfDay
+    </MudText>
+    
+    <MudText Typo="Typo.body1" Color="@Color.Info">
+        <strong>Cycles Ok:</strong> @Station.CyclesOk
+    </MudText>
+    
+    <MudText Typo="Typo.body1" Color="@Color.Info">
+        <strong>CycleStatus:</strong> @Station.CycleStatus.Name
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@Color.Info">
+        <strong>PartStatus:</strong> @Station.PartStatus.Name
+    </MudText>
+    
+    <MudText Typo="Typo.body1" Color="@Color.Primary">
+            <strong>Next Machine Id:</strong>  @(MachineNames?.TryGetValue(Station.NextMachineId, out var nextMachine) == true ? nextMachine : $"Unknown ({Station.NextMachineId})")
+    </MudText>
+
+    <MudSpacer />
+
+    <MudDivider />
+
+    <MudPaper Class=" pa-4 align-start d-flex" Outlined="true">
+        <MudPaper Class="pa-3" Elevation="6">
+            <MudIcon Icon="@GetStationIcon(Station.RequestTask)"
+                     Color="@GetStationColor(Station.ResultValidation.Name)" Size="Size.Large"/>
+        </MudPaper>
+        <MudPaper Class="pa-3" Elevation="6">
+
+            <MudIcon Icon="@GetResultIcon(Station.ResultValidation.Name)"
+                     Color="@GetStationColor(Station.ResultValidation.Name)" Size="Size.Large"/>
+         </MudPaper>
+    </MudPaper>
+
+   
+    @if (Monitor is not null ) {
+      
+       <MudPaper Class=" pa-4 align-start d-flex" Outlined="true">
+           <MudPaper Class="pa-3" Elevation="6">
+               <MudText Color="@GetControllerColor(Monitor)">Plc @Monitor.PlcId  </MudText>         
+           </MudPaper>
+           <MudSpacer />
+           <MudPaper Class="pa-3" Elevation="6">
+               <MudIcon Icon="@GetControllerICon(Monitor)" Color="@GetControllerColor(Monitor)" />
+           </MudPaper>
+       </MudPaper>
+    
+    }
+</MudPaper>
+
+}
+else{
+    <p>Loading station data...</p>
+}
+@code {
+    [Parameter]
+    public StationMonitor? Station { get; set; }
+
+    [Parameter]
+    public ControllerMonitor? Monitor { get; set; }
+   
+
+    [Parameter]
+    public Dictionary<int, string> MachineNames { get; set; } = new();
+
+
+    private ControllerMonitor? _subscribedMonitor;
+
+    protected override void OnParametersSet()
+    {
+        // The Monitor parameter can change to a different instance across renders.
+        // Unsubscribe from the previously-subscribed instance before subscribing to the
+        // new one so a singleton monitor never keeps a disposed circuit rooted.
+        if (!ReferenceEquals(_subscribedMonitor, Monitor))
+        {
+            if (_subscribedMonitor is not null)
+            {
+                _subscribedMonitor.ConnectionLost -= OnConnectionLost;
+                _subscribedMonitor.ConnectionRecovered -= OnConnectionRecovered;
+            }
+
+            if (Monitor is not null)
+            {
+                Monitor.ConnectionLost += OnConnectionLost;
+                Monitor.ConnectionRecovered += OnConnectionRecovered;
+            }
+
+            _subscribedMonitor = Monitor;
+        }
+
+        if (Station is not null)
+        {
+            Station.EnsureIsValidToRenderAndPersist();
+
+        }
+    }
+
+    /// <summary>
+    /// Unsubscribes from the controller monitor events so the singleton monitor does not
+    /// keep this (potentially disposed) component rooted after the circuit ends.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_subscribedMonitor is not null)
+        {
+            _subscribedMonitor.ConnectionLost -= OnConnectionLost;
+            _subscribedMonitor.ConnectionRecovered -= OnConnectionRecovered;
+            _subscribedMonitor = null;
+        }
+    }
+
+    private void OnConnectionLost(object? sender, EventArgs args)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnConnectionRecovered(object? sender, EventArgs args)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+
+
+    public Color GetStationColor(string result) =>
+        result switch
+        {
+            _ when result == ResultValidation.Valid.Name => Color.Success,
+            _ when result == ResultValidation.None.Name => Color.Info,
+            _ when result == ResultValidation.Invalid.Name => Color.Error,
+            _ => Color.Error
+        };
+
+
+    private string GetStationIcon(string request) =>
+        request switch
+        {
+            _ when request == GatewayTask.None.Name => @Icons.Material.Filled.Cancel,
+            _ when request == GatewayTask.CreateBarCodeAsync.Name => @Icons.Material.Filled.QrCode,
+            _ when request == GatewayTask.ReadBarCodeAsync.Name => @Icons.Material.Filled.QrCodeScanner,
+            _ when request == GatewayTask.CreateCycleAsync.Name => @Icons.Material.Filled.PlayCircle,
+            _ when request == GatewayTask.UpdateCycleOkAsync.Name => @Icons.Material.Filled.ContentPasteGo,
+            _ when request == GatewayTask.UpdateCycleNotOkAsync.Name => @Icons.Material.Filled.FactCheck,
+            _ => @Icons.Material.Filled.Cancel
+        };
+
+
+    private string GetResultIcon(string result) =>
+        result switch
+        {
+            _ when result == ResultValidation.Valid.Name => @Icons.Material.Filled.AssignmentTurnedIn,
+            _ when result == ResultValidation.None.Name => @Icons.Material.Filled.Autorenew,
+            _ when result == ResultValidation.Invalid.Name => @Icons.Material.Filled.Block,
+            _ => @Icons.Material.Filled.Block
+        };
+
+
+
+    private string GetControllerICon(ControllerMonitor controllerMonitor)
+    {
+        return controllerMonitor.IsConnected ? 
+            @Icons.Material.Filled.Link : 
+            @Icons.Material.Filled.LinkOff;
+    }
+    private Color GetControllerColor(ControllerMonitor controllerMonitor)
+    {
+        return controllerMonitor.IsConnected ? Color.Success : Color.Error;
+    }
+
+}

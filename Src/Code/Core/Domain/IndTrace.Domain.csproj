@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Assembly Information -->
+    <RootNamespace>IndTrace.Domain</RootNamespace>
+    <AssemblyName>IndTrace.Domain</AssemblyName>
+    <!-- Domain: no suppressions -->
+    <WarningsNotAsErrors>
+    </WarningsNotAsErrors>
+    <NoWarn>
+    </NoWarn>
+    <!-- Versioning -->
+    <AssemblyVersion>2025.5.30.51</AssemblyVersion>
+    <FileVersion>2023.7.15.49</FileVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES -->
+  <!-- ============================================================================ -->
+  <!-- ============================================================================ -->
+  <!-- SOLUTION FOLDERS -->
+  <!-- ============================================================================ -->
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+
+
+  <!-- ============================================================================ -->
+  <!-- RESULT AND RESULT ANALYZERS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Result and Result Analyzers">
+
+	  <PackageReference Include="IndQuestResults" />
+	  <PackageReference Include="IndQuestEnums" />
+
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+	  <!-- Temporarily disabled to focus on test fixes
+	  <PackageReference Include="IndQuestResults.Analyzers">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+	  </PackageReference>
+	  -->
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Events\Products\" />
+  </ItemGroup>
+
+</Project>

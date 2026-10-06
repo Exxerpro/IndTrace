@@ -1,0 +1,70 @@
+﻿@page "/createbarcode"
+@using QRCoder
+@using System.ComponentModel.DataAnnotations
+@using IndTrace.UI.Models.BarCodes
+@using MudBlazor
+@using ZXing.QrCode.Internal
+@using Microsoft.AspNetCore.Components.Forms
+
+<h1>QR Generator</h1>
+
+<MudPaper Class="p-4">
+    <EditForm Model="@_labelModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardContent>
+                <ValidationSummary/>
+                <MudTextField T="string" Label="Label" @bind-Value="_labelModel.Label"/>
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudButton FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.QrCode" DropShadow="true" Color="Color.Primary" Class="ml-auto">Generate</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+</MudPaper>
+
+    <MudPaper Class="p-4 QrCode">
+        
+        <MudTextField T="string" Label=" <h3>Connect to Wi-Fi</h3>" />
+   
+        <MudImage Src=@_wiFiQroCode Width="200" Height="200" alt="Wi-Fi QR Code" />
+    </MudPaper>
+
+
+
+@if (!string.IsNullOrWhiteSpace(_textToEncode))
+{
+    <MudPaper Class="p-4 QrCode">
+        <MudImage Src=@_encodedText Width="200" Height="200" />
+    </MudPaper>
+}
+@code {
+
+    // Per-instance (per-circuit) state. These were previously static, which leaked
+    // one user's WiFi settings / QR image across every other user's Blazor circuit.
+    private readonly string _wiFiSettings = "WIFI:S:SSID;T:WPA;P:password;H:true;";
+
+    private string _wiFiQroCode = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _wiFiQroCode = GetQrCode(_wiFiSettings);
+    }
+
+    private readonly BarCodeModel _labelModel = new();
+    private string _textToEncode = string.Empty;
+    private string _encodedText = string.Empty;
+
+    private void HandleValidSubmit()
+    {
+        // Encode the label the operator just entered, not the previously generated image.
+        _textToEncode = _labelModel.Label;
+        _encodedText = GetQrCode(_textToEncode);
+    }
+
+    public string GetQrCode(string textToEncode)
+        => QrCodeGenerator.Encode(textToEncode);
+
+  
+}

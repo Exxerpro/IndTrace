@@ -1,0 +1,29 @@
+@using System.Globalization
+@using MudBlazor
+
+@inject IJSRuntime JSRuntime
+
+<div class="oee-widget">
+    <div class="header">
+        <MudText Typo="Typo.h6">@MachineData.MachineId</MudText>
+        <MudText Typo="Typo.subtitle2">@MachineData.Status</MudText>
+    </div>
+    <div class="gauge">
+        <OeeGauge Value="@MachineData.OEE" Theme="@Theme"/>
+        <text x="100" y="80" text-anchor="middle" font-size="18">@Value.ToString("F1", CultureInfo.InvariantCulture)%%</text>
+
+    </div>
+
+    <div class="metrics">
+        <MudText Typo="Typo.h6">@MachineData.MachineId</MudText>
+        <MudText Typo="Typo.subtitle2">@MachineData.Status</MudText>
+        <MudText Typo="Typo.body2">Availability: @MachineData.Availability.ToString("F1", CultureInfo.InvariantCulture)%</MudText>
+        <MudText Typo="Typo.body2">Performance: @MachineData.Performance.ToString("F1", CultureInfo.InvariantCulture)%%</MudText>
+        <MudText Typo="Typo.body2">Quality: @MachineData.Quality.ToString("F1", CultureInfo.InvariantCulture)%%</MudText>
+
+    </div>
+    <div class="trend">
+        <TrendSparkline Data="MachineData.OeeTrend"  Theme="@Theme"/>
+    </div>
+</div>
+

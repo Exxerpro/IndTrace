@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <!-- ZERO TOLERANCE: ALL warnings are errors, including in tests -->
+    <!-- Clean code starts with clean tests! No suppressions allowed. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+</Project>

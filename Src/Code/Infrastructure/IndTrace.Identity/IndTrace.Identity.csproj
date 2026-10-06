@@ -1,0 +1,158 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Static Web Assets -->
+    <DisableCompressionStaticWebAssets>true</DisableCompressionStaticWebAssets>
+    <CompressionEnabled>false</CompressionEnabled>
+    <!-- Library Output Type -->
+    <OutputType>Library</OutputType>
+    <!-- Application Information -->
+    <AssemblyName>IndTrace.Identity</AssemblyName>
+    <AssemblyTitle>Identity</AssemblyTitle>
+    <Title>Intrace Identity</Title>
+    <Description>Intrace Identity</Description>
+    <Company>Exxerpro Solutions SA de CV</Company>
+    <Product>Intrace Identity</Product>
+    <!-- Versioning -->
+    <AssemblyVersion>2025.5.30.51</AssemblyVersion>
+    <FileVersion>2025.5.30.51</FileVersion>
+    <!-- Security & Configuration -->
+    <UserSecretsId>aspnet-IndTrace.Identity-e1b7778f-483b-4559-b272-ac1d2cccda0f</UserSecretsId>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+    
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PUBLISHING PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Performance Enhancements -->
+    <EnableDynamicPgo>true</EnableDynamicPgo>
+    <TieredCompilation>true</TieredCompilation>
+    <!-- Static Web Assets -->
+    <DisableCompressionStaticWebAssets>true</DisableCompressionStaticWebAssets>
+    <CompressionEnabled>false</CompressionEnabled>
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - UI COMPONENTS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="UI Components">
+    <PackageReference Include="Extensions.MudBlazor.StaticInput" />
+    <PackageReference Include="MudBlazor" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - EVENT STORE -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Event Store">
+    <PackageReference Include="EventStore.Client.Grpc.Streams" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - WEB PUSH NOTIFICATIONS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Web Push">
+    <PackageReference Include="Lib.Net.Http.WebPush" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" />
+    <PackageReference Include="Microsoft.Extensions.Options;" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ASP.NET CORE -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="ASP.NET Core">
+    <PackageReference Include="Microsoft.AspNetCore.Http" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" />
+    <PackageReference Include="System.ComponentModel.Annotations" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ENTITY FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Entity Framework">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <!-- Microsoft.EntityFrameworkCore.Sqlite removed: Identity uses SQL Server only; the Sqlite
+         package was unused dead weight whose transitive SQLitePCLRaw.lib.e_sqlite3 2.1.11 tripped
+         advisory GHSA-2m69-gcr7-jv3q (NU1903). Removing the dead ref eliminates the vuln at source. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - MICROSOFT EXTENSIONS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Microsoft Extensions">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - SYSTEM DIAGNOSTICS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="System Diagnostics">
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\Core\Domain\IndTrace.Domain.csproj" />
+    <ProjectReference Include="..\\..\\Core\\Application\\IndTrace.Application.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- STATIC WEB ASSETS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Static Web Assets">
+    <Content Update="wwwroot\\favicon.ico">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\\img\\Logos\\oemx.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\\particles.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\\particles.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- MUDBLAZOR STATIC CONTENT -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="MudBlazor Static Content">
+    <Content Update="_content\\MudBlazor\\**\\*">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- SOLUTION FOLDERS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Solution Folders">
+    <Folder Include="Data\Migrations\" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,107 @@
+﻿@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@using Microsoft.Extensions.Logging
+@inject IDialogService DialogService
+@inject ILogger<BarCodeDetailsViewModal> Logger
+
+
+
+<MudDialog>
+    <TitleContent>
+        <MudText> Selected BarCode</MudText>
+        <MudFab Color="Color.Tertiary"
+                StartIcon="@Icons.Material.Filled.QrCodeScanner"
+                Label=@(SelectedBarCode) />
+    </TitleContent>
+    <DialogContent>
+    @if (BarCodeDetails is not null)
+    {
+        <BarCodeDetailsView SelectedBarCode="@SelectedBarCode" BarCodeDetails="@BarCodeDetails" MachineNames="MachineNames"/>
+    }
+    else
+    {
+        <MudText Color="Color.Error" Typo="Typo.h6">
+            No details available for barcode "@SelectedBarCode".
+        </MudText>
+    }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+    <DialogActions>
+        <AuthorizeView>
+            <Authorized>
+                <MudButton OnClick="Restore" Variant="Variant.Filled" Color="Color.Tertiary">
+                    Restore
+                </MudButton>
+
+                <MudButton OnClick="Reject" Variant="Variant.Filled" Color="Color.Warning">
+                    Reject
+                </MudButton>
+            </Authorized>
+            <NotAuthorized>
+                <MudText Color="Color.Error" Typo="Typo.h4"><b>Log in to edit:</b> </MudText>
+            </NotAuthorized>
+        </AuthorizeView>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+
+    protected  override Task OnInitializedAsync()
+    {
+        if (BarCodeDetails is null)
+        {
+            Logger.LogInformation("BarCodeDetails is null");
+            return Task.CompletedTask;
+        }
+        Logger.LogInformation(BarCodeDetails.Label);
+        return Task.CompletedTask;
+    }
+
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    private void Submit() => MudDialog?.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog?.Cancel();
+
+    [Parameter]
+    public string SelectedBarCode { get; set; } = string.Empty;
+
+    [Parameter]
+    public BarCodeDetailMonitorVm? BarCodeDetails { get; set; }
+
+    [Parameter]
+    public Dictionary<int, string>? MachineNames { get; set; }
+
+    private Task Restore(MouseEventArgs obj)
+    {
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters
+        {
+            { "BarCode", SelectedBarCode },
+        };
+
+
+        return DialogService.ShowAsync<BarCodeRestore>($"Restore Bar Code {SelectedBarCode}",parameters, options);
+    }
+    private Task Reject(MouseEventArgs obj)
+    {
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters
+        {
+            { "BarCode", SelectedBarCode },
+        };
+        return DialogService.ShowAsync<BarCodeReject>($"Reject Bar Code {SelectedBarCode}", parameters, options);
+    }
+}

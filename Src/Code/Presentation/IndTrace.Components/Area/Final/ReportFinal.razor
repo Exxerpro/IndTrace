@@ -1,0 +1,104 @@
+@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetail
+@using IndTrace.Devices.Scanning
+@using IndTrace.Domain.Enum
+
+@using Microsoft.Extensions.Logging
+
+
+
+<h3>Result</h3>
+
+<MudText Typo="Typo.body1" Color="Color.Info">
+    Inspection:
+
+    @Visual
+</MudText>
+
+<MudText Typo="Typo.h5" GutterBottom="true">BarCode Scanned: @ScannedBarCode</MudText>
+
+@if (!string.IsNullOrWhiteSpace(Status))
+{
+    <MudText Typo="Typo.body1" Color="Color.Info">Status Validation: @Status</MudText>
+}
+
+<MudDivider />
+
+<EditForm Model="@BarCodeModel" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+           <MudCard>
+               <MudCardContent>
+                   <MudTextField T="string" Label="BarCode" @bind-Value="BarCodeModel.Label" Variant="Variant.Outlined" Placeholder="Type here, if there is no barcode available"/>
+                   <MudText Typo="Typo.caption" Color="Color.Secondary">Type here, if there is no barcode available</MudText>
+               </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                </MudCardActions>
+           </MudCard>
+        </MudItem>
+
+    </MudGrid>
+</EditForm>
+
+<MudDivider />
+
+@if (!string.IsNullOrWhiteSpace(ResultBarCode))
+{
+    <div class="QrCode">
+        <img src=@GetQrCode() alt="barCode" width="400" height="200" />
+    </div>
+}
+
+@if (BarCodeDetailResult is not null && !Equals(BarCodeDetailResult.ResultValidation, ResultValidation.Valid))
+{
+    <MudTable Items="BarCodeDetailResult.Cycles">
+        <HeaderContent>
+            <MudTh>Cycle Id</MudTh>
+            <MudTh>Machine Id</MudTh>
+            <MudTh>StartedOn</MudTh>
+            <MudTh>CycleTime</MudTh>
+            <MudTh>PartStatus</MudTh>
+            <MudTh>CycleStatus</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@(Cycle?.CycleId.Value ?? 0)</MudTd>
+            <MudTd>@(Cycle?.MachineId.Value ?? 0)</MudTd>
+            <MudTd>@(Cycle?.StartedOn)</MudTd>
+            <MudTd>@(Cycle?.CycleTime)</MudTd>
+            <MudTd>@CycleView.PartStatus.ToString()</MudTd>
+            <MudTd>@CycleView.CycleStatus.ToString()</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <MudButton Color="Color.Primary" OnClick="UpdateHeading">
+        Values
+    </MudButton>
+
+    @if (((Cycle?.CycleId.Value) ?? 0) > 0 && ShowValues)
+    {
+        <MudTable Items="BarCodeDetailResult.Registers">
+            <HeaderContent>
+                <MudTh>Machine Id</MudTh>
+                <MudTh>Cycle Id</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Description</MudTh>
+                <MudTh>Valor</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                @foreach (var register in @BarCodeDetailResult.Registers.Where(m => m.CycleId.Value == (Cycle?.CycleId.Value ?? -1)))
+                {
+                    <MudTr>
+                        <MudTd>@register.MachineId</MudTd>
+                        <MudTd>@register.CycleId.Value</MudTd>
+                        <MudTd>@register.Name</MudTd>
+                        <MudTd>@register.Description</MudTd>
+                        <MudTd>@register.Value</MudTd>
+                    </MudTr>
+                }
+            </RowTemplate>
+        </MudTable>
+    }
+}
+

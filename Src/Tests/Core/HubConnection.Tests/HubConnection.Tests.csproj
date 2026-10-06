@@ -1,0 +1,116 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Application Type -->
+    <OutputType>Exe</OutputType>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- Assembly Information -->
+    <RootNamespace>HubConnection.Tests</RootNamespace>
+    <AssemblyName>HubConnection.Tests</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IsTestingPlatformApplication>true</IsTestingPlatformApplication>
+    <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
+    <IsPackable>false</IsPackable>
+    <!-- Testing Startup -->
+    <XunitStartupAssembly>HubConnection.Tests</XunitStartupAssembly>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- DV2001 dependency validation removed - Manual DI audit performed instead of VS Layer Diagrams -->
+    <!-- NU1605, NU1902 now handled globally in Directory.Build.props -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- TESTING PLATFORM PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Microsoft Testing Platform Configuration -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <TestingPlatformServer>true</TestingPlatformServer>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <!-- Target Architecture -->
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CORE TESTING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core Testing">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - TESTING UTILITIES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Testing Utilities">
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Shouldly" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - LOGGING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Logging">
+    <PackageReference Include="Meziantou.Extensions.Logging.Xunit.v3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CODE ANALYSIS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Code Analysis">
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NSubstitute.Analyzers.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- MICROSOFT TESTING PLATFORM -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Microsoft Testing Platform">
+    <PackageReference Include="Microsoft.Testing.Platform" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- XUNIT V3 FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="xUnit v3">
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="xunit.v3.runner.inproc.console" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\..\Code\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\..\..\Code\Core\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup Label="Infrastructure References">
+    <ProjectReference Include="..\..\..\Code\Infrastructure\IndTrace.HubConnection\IndTrace.HubConnection.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT CAPABILITIES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Testing Platform Capabilities">
+    <ProjectCapability Include="DiagnoseCapabilities" />
+    <ProjectCapability Include="TestingPlatformServer" />
+    <ProjectCapability Include="TestContainer" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

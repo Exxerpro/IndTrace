@@ -1,0 +1,101 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <!-- Assembly Information -->
+    <RootNamespace>IndTrace.Application</RootNamespace>
+    <AssemblyName>IndTrace.Application</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- Application: allow only NU1902 suppression -->
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+    <!-- Versioning -->
+    <AssemblyVersion>2025.5.30.51</AssemblyVersion>
+    <FileVersion>2025.5.30.51</FileVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - TESTING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Testing">
+    <PackageReference Include="NSubstitute" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - DATA & FILE PROCESSING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Data Processing">
+    <!-- Issue #88: ASP.NET Http packages removed — the only consumer (ErrorHandlingMiddleware) was relocated to
+         IndTrace.Dependencies so ASP.NET types no longer bleed into Core/Application. -->
+    <PackageReference Include="CsvHelper" />
+    <PackageReference Include="QRCoder" />
+    <PackageReference Include="ZXing.Net" />
+    <PackageReference Include="System.Drawing.Common" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - DATABASE -->
+  <!-- ============================================================================ -->
+  <!-- [ARCH] Minimal EF Core reference for extension methods only - TODO: Remove remaining direct EF usage -->
+  <ItemGroup Label="Database - MINIMAL">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CACHING & PERFORMANCE -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Caching Performance">
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - HEALTH CHECKS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="HealthChecks">
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - VALIDATION -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Validation">
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- GENERATOR REFERENCES -->
+  <!-- ============================================================================ -->
+  <!-- EnumLookup source generator removed (#37): it emitted *_LookupProvider.ToLookup()
+       providers that had zero consumers, and keyed on the now-removed in-tree
+       IndTrace.Domain.Enum.EnumModel base type. Dead code. -->
+  <ItemGroup Label="Generator References">
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- SOLUTION FOLDERS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Solution Folders">
+    <Folder Include="Extensions\" />
+    <Folder Include="Generic\Commands\Create\" />
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
+
+  <!-- ============================================================================ -->
+  <!-- RESULT AND RESULT ANALYZERS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Result and Result Analyzers">
+
+	  <PackageReference Include="IndQuestResults" />
+	  <!--<PackageReference Include="IndQuestResults.Analyzers">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+	  </PackageReference>-->
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,221 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+
+	  <!-- ============================================================================ -->
+	  <!-- CORE PROPERTIES -->
+
+	  <!-- Application Type -->
+	  <OutputType>Exe</OutputType>
+	  <!-- Target Framework -->
+	  <TargetFramework>net10.0</TargetFramework>
+	  <!-- Enables code optimization -->
+	  <!-- Language Features -->
+	  <Nullable>enable</Nullable>
+	  <LangVersion>latest</LangVersion>
+	  <!-- Assembly Information -->
+	  <RootNamespace>IndTrace.Agregation.Dependices</RootNamespace>
+	  <AssemblyName>IndTrace.Agregation.Dependices</AssemblyName>
+	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	  <IsTestingPlatformApplication>true</IsTestingPlatformApplication>
+	  <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
+	  <IsPackable>false</IsPackable>
+	  <!-- Versioning -->
+	  <AssemblyVersion>2020.5.30.51</AssemblyVersion>
+	  <FileVersion>2020.5.30.51</FileVersion>
+	  <!-- Testing Startup -->
+	  <XunitStartupAssembly>IndTrace.Aggregation.BoundedTests</XunitStartupAssembly>
+	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	  <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+	  <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+
+    <!-- To enable Microsoft.Testing.Platform, uncomment the following line. -->
+    <!-- <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner> -->
+    <!-- Note: to use Microsoft.Testing.Platform correctly with dotnet test: -->
+    <!-- 1. You must add dotnet.config specifying the test runner to be Microsoft.Testing.Platform -->
+    <!-- 2. You must use .NET 10 SDK or later -->
+    <!-- For more information, see https://aka.ms/dotnet-test/mtp and https://xunit.net/docs/getting-started/v3/microsoft-testing-platform -->
+    <!-- To enable code coverage with Microsoft.Testing.Platform, add a package reference to Microsoft.Testing.Extensions.CodeCoverage -->
+    <!-- https://learn.microsoft.comdotnet/core/testing/microsoft-testing-platform-extensions-code-coverage -->
+  </PropertyGroup>
+	<PropertyGroup>
+		<!-- ============================================================================ -->
+		<!-- TESTING PLATFORM PROPERTIES -->
+		<!-- ============================================================================ -->
+
+		<!-- Microsoft Testing Platform Configuration -->
+		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+		<TestingPlatformServer>true</TestingPlatformServer>
+		<ImplicitUsings>disable</ImplicitUsings>
+	</PropertyGroup>
+
+
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+
+
+
+
+	<!-- ============================================================================ -->
+	<!-- CONFIGURATION FILES -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Configuration Files">
+		<None Remove="appsettings.Development.json" />
+		<None Remove="appsettings.json" />
+	</ItemGroup>
+	<ItemGroup Label="Configuration Content">
+		<Content Include="appsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Include="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PACKAGE REFERENCES - CORE TESTING -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Core Testing">
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Microsoft.Testing.Extensions.VSTestBridge" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PACKAGE REFERENCES - TESTING UTILITIES -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Testing Utilities">
+	
+		<!-- Restored for incremental migration -->
+		<PackageReference Include="Shouldly" />
+		<PackageReference Include="Serilog.Enrichers.Demystifier" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PACKAGE REFERENCES - ASP.NET CORE -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="ASP.NET Core">
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" />
+		<PackageReference Include="Microsoft.AspNet.SignalR.Client" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PACKAGE REFERENCES - ENTITY FRAMEWORK -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Entity Framework">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PACKAGE REFERENCES - LOGGING -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Logging">
+		<PackageReference Include="Meziantou.Extensions.Logging.Xunit.v3" />
+		<PackageReference Include="Microsoft.Extensions.Logging" />
+	</ItemGroup>
+	<ItemGroup Label="Options">
+		<PackageReference Include="Microsoft.Extensions.Options" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PACKAGE REFERENCES - TIME TESTING -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Time Testing">
+		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PACKAGE REFERENCES - CODE ANALYSIS -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Code Analysis">
+		<PackageReference Include="coverlet.collector">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="NSubstitute.Analyzers.CSharp">
+			<!-- Restored for incremental migration -->
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PACKAGE REFERENCES - UTILITIES -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Utilities">
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="ZiggyCreatures.FusionCache" />
+		<PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" />
+		<PackageReference Include="Serilog" />
+		<PackageReference Include="NSubstitute" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PROJECT REFERENCES -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Core References">
+		<ProjectReference Include="..\..\..\..\Code\Core\Application\IndTrace.Application.csproj" />
+		<ProjectReference Include="..\..\..\..\Code\Core\Domain\IndTrace.Domain.csproj" />
+	</ItemGroup>
+	<ItemGroup Label="Infrastructure References">
+		<!--<ProjectReference Include="..\..\..\Infrastructure\IndTrace.Gateway\IndTrace.Gateway.csproj" />-->
+		<ProjectReference Include="..\..\..\..\Code\Infrastructure\IndTrace.Persistence\IndTrace.Persistence.csproj" />
+		<ProjectReference Include="..\..\IndTrace.TestData\IndTrace.TestData.csproj" />
+	</ItemGroup>
+
+	<!-- Seed Data Content Items removed - duplicated the None items above -->
+	<!-- ============================================================================ -->
+	<!-- MICROSOFT TESTING PLATFORM -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Microsoft Testing Platform">
+		<PackageReference Include="Microsoft.Testing.Platform" />
+		<PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
+		<PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- XUNIT V3 FRAMEWORK -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="xUnit v3 (MTP v2)">
+		<PackageReference Include="xunit.v3.mtp-v2" />
+		<PackageReference Include="xunit.v3.runner.inproc.console" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.v3.runner.msbuild">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="**\XunitAutoGeneratedEntryPoint.cs" />
+		<Compile Remove="obj\**\XunitAutoGeneratedEntryPoint.cs" />
+	</ItemGroup>
+	<!-- ============================================================================ -->
+	<!-- PROJECT CAPABILITIES -->
+	<!-- ============================================================================ -->
+	<ItemGroup Label="Testing Platform Capabilities">
+		<ProjectCapability Include="DiagnoseCapabilities" />
+		<ProjectCapability Include="TestingPlatformServer" />
+		<ProjectCapability Include="TestContainer" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Dependencies\" />
+	</ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>
+

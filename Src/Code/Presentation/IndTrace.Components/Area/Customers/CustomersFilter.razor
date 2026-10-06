@@ -1,0 +1,24 @@
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using IndTrace.Domain.Entities
+@using IndTrace.Components.Area.Customers
+
+
+<MudSelect T="string" 
+           Value="SelectedCustomer"
+           ValueChanged="OnCustomerChanged"
+           Label="Select Customer"
+           Adornment="Adornment.Start"
+           AdornmentIcon="@Icons.Material.Filled.Business"
+           Clearable="true"
+           Dense="true">
+    @if (ApplicationConfiguration?.ActiveCustomer is not null)
+    {
+        @foreach (var customer in ApplicationConfiguration.ActiveCustomer)
+        {
+            <MudSelectItem Value="@customer.Name">
+                 @customer.Name
+            </MudSelectItem>
+        }
+    }
+</MudSelect>
+

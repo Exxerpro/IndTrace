@@ -1,0 +1,84 @@
+# --- Global Settings ---
+# Normalize all text files and convert to LF in repo; keep CRLF on Windows checkout
+* text=auto eol=crlf
+# --- C# / .NET / Blazor ---
+*.cs      text diff=csharp
+*.csproj  text
+*.sln     text
+*.xaml    text
+*.config  text
+*.json    text
+*.xml     text
+*.razor   text
+*.html    text
+*.css     text
+*.js      text
+*.ts      text
+*.py      text
+*.pyw    text
+*.ipynb  text
+*.pylintrc text
+*.flake8   text
+*.pyproject.toml text
+requirements*.txt text
+setup.py  text
+
+# --- SQL / Scripts ---
+*.sql     text
+*.ps1     text
+*.sh      text
+*.cmd     text
+*.bat     text
+
+# --- MATLAB / Simulink ---
+*.m       text
+*.mlx     text
+*.slx     binary
+*.mdl     binary
+*.fig     binary
+
+# --- AI / ML / Data / Scripting ---
+*.py      text
+*.ipynb   text
+*.csv     text
+*.tsv     text
+*.yaml    text
+*.yml     text
+
+# --- Documentation ---
+*.md      text
+*.txt     text
+*.rst     text
+
+# --- Configuration / CI-CD ---
+*.ini     text
+*.editorconfig text
+*.github  text
+*.workflows text
+*.yml text
+
+# --- Windows-specific Artifacts ---
+*.suo     binary
+*.user    binary
+*.log     text
+
+# --- Binary Files ---
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.bmp     binary
+*.ico     binary
+*.pdf     binary
+*.zip     binary
+*.gz      binary
+*.rar     binary
+*.7z      binary
+*.exe     binary
+*.dll     binary
+
+# --- Ignore Build Artifacts ---
+bin/      export-ignore
+obj/      export-ignore
+.vs/      export-ignore
+TestResults/ export-ignore

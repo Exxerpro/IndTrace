@@ -1,0 +1,27 @@
+﻿@page "/"
+@page "/Home"
+@page "/Exxerpro"
+
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Components.Area.Exxerpro
+@inject NavigationManager Navigation
+@inject IndTraceConfigurationService IndTraceConfigurationService
+
+<Home></Home>
+
+
+@code
+{
+    private ApplicationConfiguration ApplicationConfiguration { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result  =   await IndTraceConfigurationService.GetConfigurationAsync();
+        if (result.IsSuccess && result.Value is not null)
+        {
+            ApplicationConfiguration = result.Value;
+        }
+
+    }
+}

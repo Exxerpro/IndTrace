@@ -1,0 +1,171 @@
+@using IndTrace.Application.BarCodes.Services
+@using IndTrace.Application.UI.Models
+@using IndTrace.Domain.Entities
+@using IndTrace.Domain.Enum
+@using Microsoft.Extensions.Logging
+@using MudBlazor
+@using MudExtensions
+@inherits LayoutComponentBase
+
+@inject ILogger<Events> Logger
+
+@if(Station is not null )
+{
+
+<MudPaper Class="pa-4" Elevation="4" Square="true">
+    <MudText Typo="Typo.h6" Align="Align.Center" Class="mud-text-white mud-bg-primary pa-2">
+        Machine: @Station.MachineId
+    </MudText>
+
+    <MudSpacer/>
+
+    <MudText Typo="Typo.body1" Color="@Color.Tertiary">
+        <strong>Part Number:</strong> @Station.PartNumber
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@Color.Warning">
+        <strong>BarCode:</strong> @Station.Label
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+                <strong>Event:</strong> @Station.RequestTask
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+        <strong>Status:</strong> @Station.EventStatus
+    </MudText>
+
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+        <strong>Result:</strong> @Station.ResultValidation.Name
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+            <strong>BarCode Id:</strong> @Station.BarCodeId
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+            <strong>Cycle Id:</strong> @Station.CycleId
+    </MudText>
+
+        <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+            <strong>Date:</strong> @Station.TimeStamp.Date
+        </MudText>
+
+    <MudText Typo="Typo.body1" Color="@GetStationColor(Station.ResultValidation.Name)">
+        <strong>TimeStamp:</strong> @Station.TimeStamp.TimeOfDay
+    </MudText>
+    
+    <MudText Typo="Typo.body1" Color="@Color.Info">
+        <strong>Cycles Ok:</strong> @Station.CyclesOk
+    </MudText>
+    
+    <MudText Typo="Typo.body1" Color="@Color.Info">
+        <strong>CycleStatus:</strong> @Station.CycleStatus.Name
+    </MudText>
+
+    <MudText Typo="Typo.body1" Color="@Color.Info">
+        <strong>PartStatus:</strong> @Station.PartStatus.Name
+    </MudText>
+    
+    <MudText Typo="Typo.body1" Color="@Color.Primary">
+        <strong>Next Machine Id:</strong> @Station.NextMachineId
+    </MudText>
+
+    <MudSpacer />
+
+    <MudDivider />
+
+    <MudPaper Class=" pa-4 align-start d-flex" Outlined="true">
+        <MudPaper Class="pa-3" Elevation="6">
+            <MudIcon Icon="@GetStationIcon(Station.RequestTask)"
+                     Color="@GetStationColor(Station.ResultValidation.Name)" Size="Size.Large"/>
+        </MudPaper>
+        <MudPaper Class="pa-3" Elevation="6">
+
+            <MudIcon Icon="@GetResultIcon(Station.ResultValidation.Name)"
+                     Color="@GetStationColor(Station.ResultValidation.Name)" Size="Size.Large"/>
+         </MudPaper>
+    </MudPaper>
+
+
+</MudPaper>
+
+}
+else{
+    <p>Loading station data...</p>
+}
+@code {
+
+    /// <summary>
+    /// Sets the station monitor and updates the component state.
+    /// </summary>
+    /// <param name="input">The station monitor to set.</param>
+    public void SetStation(StationMonitor input)
+    {
+        input.EnsureIsValidToRenderAndPersist();
+        Station = input;
+        try
+        {
+            InvokeAsync(StateHasChanged);
+        }
+        catch (Exception e)
+        {
+            Logger?.LogError(e,"Error while updating the events component");
+        }
+        
+    }
+
+    /// <summary>
+    /// Gets or sets the station monitor to display.
+    /// </summary>
+    [Parameter]
+    public StationMonitor? Station { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        // Blazor already re-renders after OnParametersSet; an extra InvokeAsync(StateHasChanged)
+        // here only forced a redundant second render. Just validate the incoming station.
+        Station?.EnsureIsValidToRenderAndPersist();
+    }
+
+    /// <summary>
+    /// Gets the color to use for displaying the station's status based on the validation result.
+    /// </summary>
+    /// <param name="result">The validation result name.</param>
+    /// <returns>The appropriate MudBlazor color for the status.</returns>
+    public Color GetStationColor(string result) =>
+        result switch
+        {
+            _ when result == ResultValidation.Valid.Name => Color.Success,
+            _ when result == ResultValidation.None.Name => Color.Info,
+            _ when result == ResultValidation.Invalid.Name => Color.Error,
+            _ => Color.Error
+        };
+
+
+    private string GetStationIcon(string request) =>
+        request switch
+        {
+            _ when request == GatewayTask.None.Name => @Icons.Material.Filled.Cancel,
+            _ when request == GatewayTask.CreateBarCodeAsync.Name => @Icons.Material.Filled.QrCode,
+            _ when request == GatewayTask.ReadBarCodeAsync.Name => @Icons.Material.Filled.QrCodeScanner,
+            _ when request == GatewayTask.CreateCycleAsync.Name => @Icons.Material.Filled.PlayCircle,
+            _ when request == GatewayTask.UpdateCycleOkAsync.Name => @Icons.Material.Filled.ContentPasteGo,
+            _ when request == GatewayTask.UpdateCycleNotOkAsync.Name => @Icons.Material.Filled.FactCheck,
+            _ => @Icons.Material.Filled.Cancel
+        };
+
+
+    private string GetResultIcon(string result) =>
+        result switch
+        {
+            _ when result == ResultValidation.Valid.Name => @Icons.Material.Filled.AssignmentTurnedIn,
+            _ when result == ResultValidation.None.Name => @Icons.Material.Filled.Autorenew,
+            _ when result == ResultValidation.Invalid.Name => @Icons.Material.Filled.Block,
+            _ => @Icons.Material.Filled.Block
+        };
+
+   
+
+}

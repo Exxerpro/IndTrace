@@ -1,0 +1,73 @@
+﻿.oee-widget {
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background-color: #2a2a35;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    margin: 0.5rem;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+    .oee-widget.dark {
+        background-color: #2a2a35;
+        color: white;
+    }
+
+    .oee-widget.light {
+        background-color: #f4f4f4;
+        color: #1e1e1e;
+    }
+
+    .oee-widget.blue {
+        background-color: #001f3f;
+        color: #aadfff;
+    }
+
+    .oee-widget:hover {
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.1), 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .oee-widget .header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .oee-widget .metrics {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: left;
+    }
+
+    .oee-widget .gauge {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+.trend {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.trend-sparkline {
+    width: 100%;
+    height: 25px;
+    display: block;
+}
+
+.status-indicator.running {
+    color: #00ff99;
+}
+
+.status-indicator.stopped {
+    color: #ff4444;
+}

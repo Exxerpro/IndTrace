@@ -1,0 +1,116 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <a href="https://www.exxerpro.com" target="_blank">
+            <img src="img/exxerpro.png" alt="Exxerpro Logo" class="ml-3 app-logo" />
+        </a>
+
+        <a href="https://www.exxerpro.com" target="_blank">
+            <img src="img/exxerpro.png" alt="Exxerpro Logo" class="ml-3 app-logo" />
+        </a>
+        
+        @if (_menuOpen)
+        {
+            <MudBreadcrumbs Items="_items" Separator=">"></MudBreadcrumbs>
+        }
+        <MudSpacer />
+        
+        <MudSpacer />
+        <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
+        @if (_isDarkMode)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.LightMode" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => DarkToggle())" />
+        }
+        else
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => DarkToggle())" />
+        }
+
+        @if (_menuOpen)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="@((e) => MenuToggle())" Edge="Edge.End" />
+        }
+        else
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="@((e) => MenuToggle())" Edge="Edge.End" />
+        }
+        
+        @if (_login)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Login" Color="Color.Inherit" OnClick="@((e) => MenuLogIn())" Edge="Edge.End" />
+        }
+        else
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" OnClick="@((e) => MenuLogIn())" Edge="Edge.End" />
+        }
+        
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent Class="mt-16 pa-4">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    private bool _drawerOpen = true;
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private readonly List<BreadcrumbItem> _items =
+    [
+        new BreadcrumbItem("", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("", href: "/machines", icon: Icons.Material.Filled.Build),
+        new BreadcrumbItem("", href: "/monitor", icon: Icons.Material.Filled.DesktopWindows),
+        new BreadcrumbItem("", href: "/reports", icon: Icons.Material.Filled.Assessment),
+        new BreadcrumbItem("", href: "/barcode", icon: Icons.Material.Filled.QrCodeScanner),
+        new BreadcrumbItem("", href: "/configuration", icon: Icons.Material.Filled.Settings),
+        new BreadcrumbItem("", href: "/operations", icon: Icons.Material.Filled.Dashboard),
+        // new BreadcrumbItem("", href: "/metrics", icon: Icons.Material.Filled.Memory),
+        // new BreadcrumbItem("", href: "/wifi", icon: Icons.Material.Filled.NetworkWifi),
+        new BreadcrumbItem("", href: "/products", icon: Icons.Material.Filled.SwapHoriz),
+        // new BreadcrumbItem("", href: "/oee", icon: Icons.Material.Filled.DataThresholding),
+        // new BreadcrumbItem("", href: "/analyzer", icon: Icons.Material.Filled.DatasetLinked),
+        // new BreadcrumbItem("", href: "/notifications", icon: Icons.Material.Filled.DeveloperBoard),
+        // new BreadcrumbItem("", href: "/registers", icon: Icons.Material.Filled.EditCalendar),
+        // new BreadcrumbItem("", href: "/shifts", icon: Icons.Material.Filled.EventNote)
+    ];
+    
+    private readonly MudTheme _theme = new();
+    private bool _isDarkMode = true;
+    private bool _menuOpen = true;
+    private bool _login = false;
+    
+    private void MenuToggle()
+    {
+        _menuOpen = !_menuOpen;
+    }
+
+    private void DarkToggle()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+
+    private void MenuLogIn()
+    {
+        _login = !_login;
+
+    }
+
+}
+

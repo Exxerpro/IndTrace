@@ -1,0 +1,140 @@
+﻿@using Microsoft.Extensions.Logging
+@using Microsoft.JSInterop
+@using MudBlazor
+
+@inject IJSRuntime JsRuntime
+@inject ILogger<Home> Logger
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Logger.LogInformation("Starting Home page and particles");
+            try
+            {
+                await JsRuntime.InvokeVoidAsync("particlesJS.load", "particles-js", "/particles.json");
+                Logger.LogInformation("particlesJS.load Invoked");
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error loading particles.js");
+            }
+        }
+    }
+}
+
+<style>
+      .background-image {
+          background-size: cover;
+          background-position: center;
+          height: 300px;
+          position: relative;
+          color: black;
+          text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
+          display: flex;
+          align-items: flex-start;
+          padding: 20px;
+          box-sizing: border-box;
+      }
+
+      .overlay-text {
+          font-weight: bold;
+      }
+
+      .full-width {
+          width: 100%;
+          margin-bottom: 20px;
+          color: black;
+      }
+
+      .bg-transparent {
+          background-color: rgba(255, 255, 255, 0.8);
+          padding: 20px;
+          border-radius: 10px;
+    }
+       #particles-js    {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          z-index: -1;
+      } 
+</style>
+
+<div id="particles-js"></div>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MudPaper Class="full-width" Elevation="4" Style="background-image: url('/img/header1.png'); background-size: cover; background-position: center;">
+        <div class="bg-transparent">
+            <MudText Typo="Typo.h2" Class="overlay-text">Exxerpro Solutions</MudText>
+            <MudText Typo="Typo.h6" Class="overlay-text">Contact Us</MudText>
+            <MudText Typo="Typo.body1" Class="overlay-text">Email: <a href="mailto:exxerpro@exxerpro.com">exxerpro@exxerpro.com</a></MudText>
+        </div>
+    </MudPaper>
+
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="background-image" Elevation="4" Style="background-image: url('/img/image1.png');">
+                <div class="bg-transparent">
+                    <MudText Typo="Typo.h5" Class="overlay-text">About Us</MudText>
+                    <MudText Typo="Typo.body2" Class="overlay-text">
+                        Exxerpro Solutions, founded in 2010 in Santiago de Querétaro, Mexico, specializes in mechanical and industrial engineering. We focus on optimizing industrial processes through advanced techniques such as automation, analysis, modeling, control, simulation, measurement, digitization, sustainability, and artificial intelligence.
+                    </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="background-image" Elevation="4" Style="background-image: url('/img/image2.png');">
+                <div class="bg-transparent">
+                    <MudText Typo="Typo.h5" Class="overlay-text">Our Mission</MudText>
+                    <MudText Typo="Typo.body2" Class="overlay-text">
+                        Our mission is to enhance operational excellence and efficiency, driving towards Industry 5.0. We are committed to sustainability and innovation, minimizing waste, and optimizing the use of energy and resources.
+                    </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="background-image" Elevation="4" Style="background-image: url('/img/image3.png');">
+                <div class="bg-transparent">
+                    <MudText Typo="Typo.h5" Class="overlay-text">Our Expertise</MudText>
+                    <MudText Typo="Typo.body2" Class="overlay-text">
+                        We provide customized solutions, including PLC programming, artificial vision systems, and data storage and reporting systems. Our strong emphasis on quality management ensures continuous improvement and the development of new solutions to meet and exceed client expectations.
+                    </MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="background-image" Elevation="4" Style="background-image: url('/img/image4.png');">
+                <div class="bg-transparent">
+                    <MudText Typo="Typo.h5" Class="overlay-text">Projects</MudText>
+                    <MudList T="string">
+                        <MudListItem Text="Optimization of Industrial Processes" Icon="@Icons.Material.Filled.ProductionQuantityLimits" />
+                        <MudListItem Text="Automation and Control Systems" Icon="@Icons.Material.Filled.Rocket" />
+                        <MudListItem Text="Sustainable Energy Solutions" Icon="@Icons.Material.Filled.Engineering" />
+                        <MudListItem Text="Artificial Vision Systems" Icon="@Icons.Material.Filled.VideoCall" />
+                        <MudListItem Text="Value Storage and Reporting Systems" Icon="@Icons.Material.Filled.Storage" />
+                    </MudList>
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudPaper Class="full-width" Elevation="4" Style="background-image: url('/img/footer1.png'); background-size: cover; background-position: center;">
+        <div class="bg-transparent">
+            <MudText Typo="Typo.h5" Class="overlay-text">Quality Policy</MudText>
+            <MudText Typo="Typo.body2">
+                Exxerpro Solutions, a company dedicated to Industry 5.0, through the design and development of solutions and custom projects, focuses on optimization, sustainability, and automation for the manufacturing industry, committed to the quality of its products and services. It aims to be the best option for its clients, therefore establishes its commitment through the following policy based on the ISO 9001:2015 standard:
+                <br /><br />
+                As the strategic director of Exxerpro Solutions, I focus the quality management system as a tool to determine, satisfy, and exceed the needs and expectations of our clients, stakeholders, and the legal and regulatory requirements applicable to our processes, through the continuous improvement of the quality management system and the development of new solutions, products, and services; incorporating, for this purpose, novel and cutting-edge technologies, supported by our research, development, and innovation activities, thus becoming the best option for our clients.
+                <br /><br />
+                At Exxerpro Solutions, all employees and executives share the responsibility of applying this policy to all activities, programs, and projects, opening a bidirectional communication horizontally and vertically, ensuring the quality of our solutions.
+            </MudText>
+        </div>
+    </MudPaper>
+</MudContainer>
+
+
+

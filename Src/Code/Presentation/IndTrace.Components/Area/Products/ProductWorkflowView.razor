@@ -1,0 +1,50 @@
+﻿
+@using IndTrace.UI.Models.Products
+@using Microsoft.Extensions.Logging
+@inject ILogger<ProductWorkflowView> Logger
+
+<div tabindex="0" @onkeydown="HandleKeyDown" class="pa-4">
+
+    <div class="d-flex justify-center pa-4">
+        
+
+        <MudPaper Class="pa-4 ma-4 d-flex flex-column mud-background-gray rounded-lg transition-scale">
+       
+            @if (ProductState is not null && ProductState.ProductsView is not null)
+            {
+                <MudDropContainer T="ProductMachineItem" @ref="dropContainer" Items="@ProductState.MachineItems" ItemsSelector="@((item, column) => item.Status == column)" ItemDropped="ProductUpdated" Class="d-flex flex-row">
+                    <ChildContent>
+                        @foreach (var item in FilteredProducts)
+                        {
+                            <MudPaper Elevation="0" Width="224px" MinHeight="400px" Class="pa-4 ma-4 d-flex flex-column mud-background-gray rounded-lg">
+                                <MudToolBar Gutters="false">
+                                    <MudText Typo="Typo.subtitle1"><b>@item.Name</b></MudText>
+                                    <MudSpacer />
+
+                                </MudToolBar>
+                    
+
+                                <MudDropZone T="ProductMachineItem" Identifier="@item.Name" AllowReorder="true" CanDrop="CanDrop" Class="mud-height-full" />
+     
+                            </MudPaper>
+                        }
+       
+                    </ChildContent>
+                    <ItemRenderer>
+                        <MudPaper Elevation="25" Class="pa-4 rounded-lg my-3">@context.Name</MudPaper>
+                    </ItemRenderer>
+                </MudDropContainer>
+                <MudButton OnClick="@(() => MudDialog?.Cancel())">Cancel</MudButton>
+
+            }
+            else
+            {
+                <MudText Color="Color.Error">Component cannot render: ProductsViewState is null or improperly initialized.</MudText>
+            }
+
+        </MudPaper>
+        
+                          
+</div>
+
+</div>

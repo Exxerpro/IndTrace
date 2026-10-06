@@ -1,0 +1,27 @@
+@page "/machine-dashboard"
+@using System.Globalization
+@using IndTrace.Components.Area.OEE
+@using IndTrace.Domain.Entities
+@using MudBlazor
+@namespace IndTrace.Components.Area.Production
+
+<h3>OEE Dashboard</h3>
+
+@* This dashboard renders hard-coded sample machines (MC-101/202/303) with fabricated OEE
+   figures; it is not yet wired to a live OEE data source. The banner labels it as demo data so an
+   operator does not mistake the placeholder numbers for real production values. *@
+<MudAlert Severity="Severity.Warning" Class="ma-2" Icon="@Icons.Material.Filled.Science">
+    Demo data — machines MC-101 / MC-202 / MC-303 and their OEE figures are hard-coded sample
+    values, not live production data.
+</MudAlert>
+
+<MudGrid Spacing="1">
+    @foreach (var machine in Machines)
+    {
+        <MudItem xs="12" sm="6" md="4" lg="3">
+            <div class="dashboard-grid">
+                <OeeWidget MachineData="machine" Theme="@SelectedTheme"/>
+            </div>
+        </MudItem>
+    }
+</MudGrid> 

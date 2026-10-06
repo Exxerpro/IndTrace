@@ -1,0 +1,82 @@
+@using IndTrace.Application.Products.Queries.GetProductDetail
+@using IndTrace.Domain.Models
+@using Microsoft.Extensions.Logging
+@using MudBlazor
+@using MudBlazor.StaticInput
+@inject IDialogService dialogService
+
+
+@inject ILogger<AddProduct> logger
+
+<MudCard Style="width:400px; min-height:150px;" Class="pa-4 ma-4">
+    <MudCardContent>
+        @* #124 F12: failures (duplicate customer name, missing configuration, save errors) are
+           surfaced here instead of throwing out of the button handler. *@
+        @if (!string.IsNullOrWhiteSpace(Message))
+        {
+            <MudAlert Severity="@messageSeverity" Class="mb-2" data-testid="add-product-message">@Message</MudAlert>
+        }
+        @if (NewProduct is not null)
+        {
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h6" GutterBottom>
+                        Product Details
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.body1" Class="fw-bold">
+                        Name: 
+                    </MudText>
+                    <MudText Typo="Typo.body1">
+                        @NewProduct.ProductName
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.body1" Class="fw-bold">
+                        Customer: 
+                    </MudText>
+                    <MudText Typo="Typo.body1">
+                        @NewProduct.CustomerName
+                    </MudText>
+                </MudItem>
+                @if (NewProduct.Machines is not null && NewProduct.Machines.Any())
+                {
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.body1" Class="fw-bold">
+                            Machine Items:
+                        </MudText>
+                    </MudItem>
+                    @foreach (var machine in NewProduct.Machines)
+                    {
+                        <MudItem xs="12">
+                            <MudText Typo="Typo.body2">
+                                Machine Id: @machine
+                            </MudText>
+                        </MudItem>
+                    }
+                }
+                <MudItem xs="12">
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12" sm="4">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="CancelAddProduct" FullWidth="true">
+                                Cancel
+                            </MudButton>
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="TriggerConfigureWorkflow" FullWidth="true">
+                                Configure Workflow
+                            </MudButton>
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudButton Disabled="!SaveEnabled" Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveNewModel" FullWidth="true">
+                                Save
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudCardContent>
+</MudCard>
+

@@ -1,0 +1,116 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <!-- Application Information -->
+    <AssemblyTitle>Intrace Communications</AssemblyTitle>
+    <Product>Communications</Product>
+    <Title>Communications</Title>
+    <Description>Communications</Description>
+    <Company>Exxerpro Solutions SA de CV</Company>
+    <!-- Versioning -->
+    <AssemblyVersion>2025.5.30.51</AssemblyVersion>
+    <FileVersion>2025.5.30.51</FileVersion>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Application Startup -->
+    <StartupObject>IndTrace.Communications.Program</StartupObject>
+    <ApplicationIcon>Communications.ico</ApplicationIcon>
+    <!-- Security & Configuration -->
+    <UserSecretsId>dotnet-IndTrace.Communications-bc3e9150-f844-4820-8097-5b1a98f4a6aa</UserSecretsId>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PUBLISHING PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Publishing Enhancements -->
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <EnableDynamicPgo>true</EnableDynamicPgo>
+    <TieredCompilation>true</TieredCompilation>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - UTILITIES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Utilities">
+    <PackageReference Include="ObjectDumper.NET" />
+    <PackageReference Include="Scrutor" />
+    <PackageReference Include="Serilog.Enrichers.Demystifier" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CORE FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core Framework">
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\\..\\Core\\Application\\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\\..\\Core\\Domain\\IndTrace.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup Label="Infrastructure References">
+    <ProjectReference Include="..\\IndTrace.Dependencies\\IndTrace.Dependencies.csproj" />
+    <ProjectReference Include="..\\IndTrace.Gateway\\IndTrace.Gateway.csproj" />
+    <ProjectReference Include="..\\IndTrace.Persistence\\IndTrace.Persistence.csproj" />
+    <ProjectReference Include="..\\IndTrace.HubConnection\\IndTrace.HubConnection.csproj" />
+    <ProjectReference Include="..\\IndTrace.Devices\\IndTrace.Devices.csproj" />
+  </ItemGroup>
+  <!-- Proprietary device drivers: enterprise edition only (see IndTraceEnterprise in Directory.Build.targets). -->
+  <ItemGroup Label="Driver References" Condition="'$(IndTraceEnterprise)' == 'true'">
+    <ProjectReference Include="..\\IndTrace.CognexComm\\IndTrace.CognexComm.csproj" />
+    <ProjectReference Include="..\\IndTrace.S7Rx\\IndTrace.S7Rx.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- CONFIGURATION FILES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Configuration Files">
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- STATIC ASSETS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Application Assets">
+    <None Update="Communications.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- SOLUTION FOLDERS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Solution Folders">
+    <Folder Include="Logs\\" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

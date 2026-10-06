@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Suppress MudBlazor analyzer warnings in UI models library -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- Shipping configuration: treat all warnings as errors, do not whitelist nullability warnings -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Shipping'">
+    <WarningsNotAsErrors>
+    </WarningsNotAsErrors>
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="UI Components">
+    <PackageReference Include="MudBlazor" />
+    <PackageReference Include="ClosedXML" />
+    <PackageReference Include="QRCoder" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- SOLUTION FOLDERS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Solution Folders">
+    <Folder Include="DashBoard\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Machines\" />
+    <Folder Include="State\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

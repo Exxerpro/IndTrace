@@ -1,0 +1,86 @@
+@using Microsoft.AspNetCore.SignalR.Client
+@using System.Globalization
+@using IndTrace.Application.Models.Helpers
+@using IndTrace.Application.UI.Models
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList;
+@using IndTrace.Domain.Entities
+
+@inject IJSRuntime JS
+
+@if (Stations is null || !Stations.Any())
+{
+
+
+    <MudPaper Class="pa-4" Elevation="1">
+        <MudText Typo="Typo.h6" Color="Color.Secondary">
+            No station data available.
+        </MudText>
+    </MudPaper>
+}
+else
+{
+
+<MudTable T="StationMonitor" Items="Stations" Dense="true" Hover="true" Striped="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" Color ="Color.Tertiary">Results</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Machine</MudTh>
+        <MudTh>Label</MudTh>
+        <MudTh>ResultValidation</MudTh>
+        <MudTh>Error</MudTh>
+        <MudTh>PartStatus</MudTh>
+        <MudTh>CycleStatus</MudTh>
+        <MudTh>Last Machine Id</MudTh>
+        <MudTh>Next Machine Id</MudTh>
+        <MudTh>TimeStamp</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Machine">@(MachineNames?.TryGetValue(context.MachineId, out var machine) == true ? machine : $"Unknown ({context.MachineId})")</MudTd>
+        <MudTd DataLabel="Label">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                       OnClick="() => CopyToClipboard(context.Label)">
+                @(context.Label ?? "N/A")
+            </MudButton>
+        </MudTd>
+        <MudTd DataLabel="ResultValidation">
+            @(context.ResultValidation?.Name ?? "None")
+        </MudTd>
+        <MudTd DataLabel="Error">
+            @(context.Error ?? "-")
+        </MudTd>
+        <MudTd DataLabel="PartStatus">
+            @(context.PartStatus?.Name ?? "None")
+        </MudTd>
+        <MudTd DataLabel="CycleStatus">
+            @(context.CycleStatus?.Name ?? "None")
+        </MudTd>
+        <MudTd DataLabel="Last Machine Id">
+            @(MachineNames?.TryGetValue(context.LastMachineId, out var lastMachine) == true ? lastMachine : $"Unknown ({context.LastMachineId})")
+        </MudTd>
+        <MudTd DataLabel="Next Machine Id">
+            @(MachineNames?.TryGetValue(context.NextMachineId, out var nextMachine) == true ? nextMachine : $"Unknown ({context.NextMachineId})")
+        </MudTd>
+        <MudTd DataLabel="TimeStamp">
+            @(context.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fff"))
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+}
+@code {
+
+
+    [Parameter]
+    public IEnumerable<StationMonitor> Stations { get; set; } = Array.Empty<StationMonitor>(); 
+
+    [Parameter]
+    public Dictionary<int,string> MachineNames { get; set; } = new();
+
+    private async Task CopyToClipboard(string text)
+    {
+        await JS.InvokeVoidAsync("copyToClipboard", text);
+    }
+}

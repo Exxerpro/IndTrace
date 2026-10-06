@@ -1,0 +1,89 @@
+@page "/system-metrics"
+
+@using IndTrace.Dependencies.Services;
+@implements IDisposable
+@inject SystemMetricsService MetricsService
+@inject ILogger<SystemMetrics> Logger
+
+<h3>
+    System Metrics || <strong>CPU Usage:</strong> @CpuUsage.ToString("F2") % || <strong>Memory avalaible:</strong> @((MemoryUsage/1024).ToString("F2"))MB || <strong>Network Sent:</strong> @BandwidthSent KB/  || <strong>Network Received:</strong> @BandwidthReceived KB/s
+</h3>
+
+@code {
+    private readonly CancellationTokenSource cts = new();
+    private float CpuUsage;
+    private float MemoryUsage;
+    private double BandwidthSent;
+    private double BandwidthReceived;
+
+    protected override void OnInitialized()
+    {
+        // Start the refresh loop WITHOUT awaiting it: the previous while(true) inside
+        // OnInitializedAsync never completed initialization and kept polling forever after the
+        // circuit was torn down (#124). The loop observes its own faults, so the discard is safe.
+        _ = RefreshLoopAsync();
+    }
+
+    private async Task RefreshLoopAsync()
+    {
+        // Capture the token once so a concurrent Dispose (Cancel + Dispose) can never race the
+        // cts.Token accessor on a disposed source.
+        var token = cts.Token;
+
+        // #126 LOW sweep: the loop SURVIVES non-cancellation faults (log + continue with backoff) so a
+        // single transient sampling/render failure no longer freezes the dashboard for the rest of the
+        // circuit's life. It exits only on cancellation/disposal.
+        while (!token.IsCancellationRequested)
+        {
+            try
+            {
+                var cpuUsage = MetricsService.GetCpuUsage();
+                var memoryUsage = MetricsService.GetMemoryUsage();
+                var networkUtilization = MetricsService.GetNetworkUtilization();
+
+                // Marshal every state mutation and the render through the Blazor dispatcher.
+                await InvokeAsync(() =>
+                {
+                    CpuUsage = cpuUsage;
+                    MemoryUsage = memoryUsage;
+                    BandwidthSent = networkUtilization.sent / 1024; // Convert to KB
+                    BandwidthReceived = networkUtilization.received / 1024; // Convert to KB
+                    StateHasChanged();
+                });
+
+                await Task.Delay(2000, token); // Update every 2 seconds
+            }
+            catch (OperationCanceledException)
+            {
+                // Normal teardown: Dispose cancelled the loop.
+                return;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "System metrics refresh loop failed; retrying after backoff.");
+                try
+                {
+                    await Task.Delay(5000, token); // Backoff before the next attempt
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Cancels and disposes the refresh loop's token source so the polling loop stops with the
+    /// circuit (matches the #90 Controls.razor CancellationTokenSource pattern).
+    /// </summary>
+    public void Dispose()
+    {
+        if (!cts.IsCancellationRequested)
+        {
+            cts.Cancel();
+        }
+
+        cts.Dispose();
+    }
+}

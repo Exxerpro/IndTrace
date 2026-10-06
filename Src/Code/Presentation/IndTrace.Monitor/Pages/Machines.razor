@@ -1,0 +1,35 @@
+@page "/machines"
+@using System.Globalization
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Application.Machines.Queries.GetMachinesList
+@using IndTrace.Application.UI.Services
+@using IndTrace.Components.Area.Machines
+@using MudBlazor
+
+@inject IndTraceConfigurationService IndTraceConfigurationService
+@inject PersistentComponentState ApplicationState
+
+
+<h3>Machines</h3>
+
+@if (MachineList is not null && ApplicationConfiguration is not null)
+{
+
+
+    <MachineView 
+        Machines="MachineList" 
+        MachineEventCallback="OnMachineEvent" 
+        ApplicationConfiguration="ApplicationConfiguration">
+
+    </MachineView>
+}
+else
+{
+    <p>@message</p>
+}
+
+@code {
+
+}
+

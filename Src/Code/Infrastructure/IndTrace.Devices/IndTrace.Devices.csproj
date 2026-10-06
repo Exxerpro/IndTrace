@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <!-- Vendor-neutral device contracts (PLC controller, barcode reader) plus the community defaults
+       (in-memory simulated PLC controller, null barcode reader). Device drivers (e.g. Siemens S7,
+       Cognex DataMan) implement these contracts in their own projects. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>IndTrace.Devices</RootNamespace>
+    <AssemblyName>IndTrace.Devices</AssemblyName>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+    <PackageReference Include="System.Reactive" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+</Project>

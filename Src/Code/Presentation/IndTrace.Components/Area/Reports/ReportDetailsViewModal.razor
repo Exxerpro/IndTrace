@@ -1,0 +1,32 @@
+﻿@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@using IndTrace.Components.Area.BarCode
+@using IndTrace.Domain.Enum
+@using MudBlazor
+@using IndTrace.Components.Area.Reports
+
+
+
+
+<MudDialog @ref="dialogRef">
+    <DialogContent>
+
+            <BarCodeDetailsView SelectedBarCode="@SelectedBarCode" reportDetails="ReportDetails" />
+
+    </DialogContent>
+</MudDialog>
+
+@code {
+    private MudDialog? dialogRef;
+
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    [Parameter]
+    public string SelectedBarCode { get; set; } = string.Empty;
+    
+    [Parameter]
+    public ReportDetailMonitorVm? ReportDetails { get; set; }
+}

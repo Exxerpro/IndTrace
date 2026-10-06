@@ -1,0 +1,91 @@
+@page "/registers"
+@using IndTrace.Application.Registers.Services
+@using MudBlazor
+@using IndTrace.Components.Area.Metrics
+@using IndTrace.UI.Models.Metrics
+@using IndTrace.UI.Models.Performance
+@inject PersistentComponentState ApplicationState
+
+
+<h3>Metrics</h3>
+
+<MudDivider DividerType="DividerType.Middle"></MudDivider>
+
+
+<MudCard xs="6">
+<MetricsView 
+    Variables="@DataSet"
+    OnSeriesDeleted="OnSeriesDeleted" />
+</MudCard> 
+
+<MudDivider DividerType="DividerType.Middle"></MudDivider>
+
+<MudCard xs="6">
+    <MudSelect T="string" Label="Metrics"
+               SelectedValuesChanged="OptionsChanged"
+               MultiSelection="true">
+        @foreach (var metric in MetricsClasses.Indicators)
+        {
+            <MudSelectItem T="string" Value="@metric">@metric</MudSelectItem>
+        }
+    </MudSelect>
+</MudCard> 
+
+<MudText Color="Color.Success" >Select variables to graph</MudText>
+
+
+
+<MudDivider DividerType="DividerType.Middle"></MudDivider>
+
+
+@code {
+
+    public List<string> VariablesList { get; set; } = [];
+
+    public List<VariablesData> DataSet { get; set; } = [];
+
+    private async Task OptionsChanged(IEnumerable<string> variables)
+    {
+        VariablesList = variables.ToList();
+        await PopulateData(VariablesList);
+    }
+   
+
+    private async Task PopulateData(IEnumerable<string> variables)
+    {
+        var random= new Random();
+       
+        //TODO GET THE DATA FROM THE DATABASE
+        
+        foreach (var variable in variables)
+        {
+            if (DataSet.Any(x => x.Name == variable))
+            {
+                continue;
+            }
+            var max= random.Next(1, 100);
+            DataSet.Add(new VariablesData()
+            {
+                Name = variable,
+                Color = Color.Success,
+                    Data = Enumerable.Range(0, 100).Select(_ => random.SampleWithTendencyToTheRight() * max).ToArray()
+            });
+        }
+        await Task.Delay(100);
+       
+    }
+
+    private void OnSeriesDeleted(VariablesData series)
+    {
+        var set = DataSet.FirstOrDefault(x => 
+                                        x.Name == series.Name && 
+                                        x.MachineId == series.MachineId);
+        if (set is not null)
+            DataSet.Remove(set);
+
+        //VariablesList.Remove(series);
+
+
+    }
+
+}

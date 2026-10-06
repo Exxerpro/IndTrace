@@ -1,0 +1,120 @@
+﻿@using MudBlazor
+@typeparam TItem
+
+<MudItem xs="12" sm="4">
+    <MudCard>
+        <MudCardContent>
+            <MudCheckBox T="bool" Label="@Label" Value="@IsChecked" ValueChanged="OnCheckBoxCheckedEvent" />
+            
+
+            @if (IsChecked)
+            {
+                <MudField Label="@FieldLabel" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@AdornmentIcon" OnAdornmentClick="@OnAdornmentClick">
+                    <MudText Color="Color.Success" Typo="Typo.h6">@SelectedItem</MudText>
+                </MudField>
+                @if (ListIsVisible)
+                {
+                    <MudList T="TItem" SelectedValueChanged="@OnItemSelectedEvent">
+                        @foreach (var item in Items)
+                        {
+                            @if (string.IsNullOrEmpty(Image))
+                            {
+                                <MudListItem Value="@item">@item</MudListItem>
+                            }
+                            @if (!string.IsNullOrEmpty(Image))
+                            {
+                                <MudListItem Value="@item">
+                                    <AvatarContent>
+                                        <MudAvatar>
+                                           <MudImage Src="@("/img/" + Image +"/" + item + ".png")" style="width:50px;height:50px;" />
+                                        </MudAvatar>
+                                    </AvatarContent>
+                                    <ChildContent>
+                                        @item
+                                    </ChildContent>
+                                </MudListItem>
+                            }
+                        }
+                    </MudList>
+                } 
+            }
+        </MudCardContent>
+    </MudCard>
+</MudItem>
+
+@code {
+    /// <summary>
+    /// Gets or sets the label text for the filter card.
+    /// </summary>
+    [Parameter] public required string Label { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the filter is checked/active.
+    /// </summary>
+    [Parameter] public bool IsChecked { get; set; }
+   
+    /// <summary>
+    /// Gets or sets the collection of items to display in the filter list.
+    /// </summary>
+    [Parameter] public required IEnumerable<TItem> Items { get; set; }
+
+    /// <summary>
+    /// Gets or sets the currently selected item.
+    /// </summary>
+    [Parameter] public required TItem SelectedItem { get; set; }
+
+    /// <summary>
+    /// Gets or sets the content to render for the filter.
+    /// </summary>
+    [Parameter] public RenderFragment? For { get; set; }
+
+    /// <summary>
+    /// Gets or sets the label text for the field.
+    /// </summary>
+    [Parameter] public required string FieldLabel { get; set; }
+
+    /// <summary>
+    /// Gets or sets the image path/name to use for item icons.
+    /// </summary>
+    [Parameter] public required string Image { get; set; }
+
+    /// <summary>
+    /// Gets or sets the icon to use for the adornment.
+    /// </summary>
+    [Parameter] public required string AdornmentIcon { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback to invoke when an item is selected.
+    /// </summary>
+    [Parameter] public EventCallback<TItem> OnItemSelected { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback to invoke when the checkbox state changes.
+    /// </summary>
+    [Parameter] public EventCallback<bool> OnCheckBoxChecked { get; set; }
+
+
+    private bool ListIsVisible { get; set; } = false;
+
+    private void OnItemSelectedEvent(TItem item)
+    {
+        ListIsVisible = false;
+        IsChecked = true;
+        SelectedItem = item;     
+        OnItemSelected.InvokeAsync(item);
+    }
+
+    private void OnAdornmentClick()
+    {
+        ListIsVisible = true;
+    }
+  
+    private void OnCheckBoxCheckedEvent(bool value)
+    {
+        IsChecked = value;
+        ListIsVisible = value;
+        OnCheckBoxChecked.InvokeAsync(value);
+    }
+
+
+}

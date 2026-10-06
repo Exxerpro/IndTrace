@@ -1,0 +1,63 @@
+﻿@page "/claims-principal-data"
+@page "/user"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Mvc.RazorPages
+@using MudBlazor
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<h1>ClaimsPrincipal Value</h1>
+
+<MudButton Variant="Variant.Filled" OnClick="GetClaimsPrincipalData" StartIcon="@Icons.Material.Filled.ReadMore" Color="Color.Info" Size="Size.Small">   Get ClaimsPrincipal Value</MudButton>
+
+@if (HttpContext is not null && HttpContext.Request is not null)
+{
+    <MudText Typo="Typo.h6">Host</MudText>
+    <MudText Typo="Typo.h6">@HttpContext.Request.Host</MudText>
+}
+
+<p>@_authMessage</p>
+
+@if (_claims.Count() > 0)
+{
+    <ul>
+        @foreach (var claim in _claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
+
+<p>@_surname</p>
+
+@code {
+    private string? _authMessage;
+    private string? _surname;
+    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+
+    
+        [CascadingParameter]
+        private HttpContext? HttpContext { get; set; }
+    
+    public async Task GetClaimsPrincipalData()
+    {
+   
+
+        var authState = await AuthenticationStateProvider
+            .GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            _authMessage = $"{user.Identity.Name} is authenticated.";
+            _claims = user.Claims;
+            _surname = user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value;
+        }
+        else
+        {
+            _authMessage = "The user is NOT authenticated.";
+        }
+    }
+
+}

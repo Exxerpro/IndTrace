@@ -1,0 +1,41 @@
+{
+  "$schema": "https://aka.ms/testingplatform/v1/configuration.schema.json",
+  "version": "1",
+  "runSettings": {
+    "dotnetTestSupport": {
+      "enabled": true
+    },
+    "xunit": {
+      "enabled": true,
+      "parallelizeTestCollections": true,
+      "maxParallelThreads": 0,
+      "diagnosticMessages": false,
+      "internalDiagnosticMessages": false,
+      "failSkips": false,
+      "stopOnFail": false,
+      "preEnumerateTheories": true
+    }
+  },
+  "logging": {
+    "logLevel": {
+      "default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "extensions": [
+    {
+      "extensionId": "Microsoft.Testing.Extensions.TrxReport",
+      "configuration": {
+        "outputPath": "TestResults",
+        "fileName": "test-results.trx"
+      }
+    }
+  ],
+  "telemetry": {
+    "enabled": false
+  },
+  "diagnostics": {
+    "enabled": false
+  }
+}

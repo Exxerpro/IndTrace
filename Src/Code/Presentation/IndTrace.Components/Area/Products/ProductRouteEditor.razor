@@ -1,0 +1,120 @@
+@using IndTrace.UI.Models.Products.Authoring
+
+<div class="pa-4" data-testid="route-editor">
+
+    <div class="d-flex align-center mb-2">
+        <MudText Typo="Typo.h6"><b>@(string.IsNullOrWhiteSpace(ProductName) ? $"Product {ProductId}" : ProductName)</b></MudText>
+        <MudSpacer />
+        <MudText Typo="Typo.body2" data-testid="route-summary">
+            Nodes: <span data-testid="node-count">@draft.Nodes.Count</span> ·
+            Forks: <span data-testid="fork-count">@draft.ForkCount</span>
+        </MudText>
+    </div>
+
+    <MudText Typo="Typo.caption" Class="mud-text-secondary">
+        Record the routes this line physically supports. IndTrace validates arrivals against these edges; it never picks which one the part takes.
+    </MudText>
+
+    @* ---- Add-machine palette: click a machine to append it to the route as a node. ---- *@
+    <div class="d-flex flex-wrap gap-2 my-3" data-testid="machine-palette">
+        @foreach (var machine in UnplacedMachines)
+        {
+            <MudButton Variant="Variant.Outlined"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Rounded.Add"
+                       data-testid="@($"add-machine-{machine.Key}")"
+                       OnClick="@(() => AddMachine(machine.Key))">
+                @machine.Value
+            </MudButton>
+        }
+    </div>
+
+    @* ---- One card per node; each shows its ordered outgoing edges. ---- *@
+    @for (var ni = 0; ni < draft.Nodes.Count; ni++)
+    {
+        var nodeIndex = ni;
+        var node = draft.Nodes[nodeIndex];
+
+        <MudPaper Elevation="1" Class="pa-3 my-2" data-testid="@($"node-{nodeIndex}")">
+            <div class="d-flex align-center mb-2">
+                <MudText Typo="Typo.subtitle1"><b>@node.MachineName</b> <span class="mud-text-secondary">(M@node.MachineId)</span></MudText>
+
+                <span class="mx-3">role:</span>
+                <select class="pa-1" @bind="node.RoleValue" data-testid="@($"node-role-{nodeIndex}")">
+                    @foreach (var role in SelectableRoles)
+                    {
+                        <option value="@role.Value">@role.Name</option>
+                    }
+                </select>
+
+                @if (node.IsFork)
+                {
+                    <span class="mud-chip mud-chip-filled mud-chip-color-secondary mx-3" data-testid="@($"fork-badge-{nodeIndex}")">⑂ fork</span>
+                }
+
+                <MudSpacer />
+                <MudButton Variant="Variant.Text"
+                           Size="Size.Small"
+                           Color="Color.Error"
+                           data-testid="@($"remove-node-{nodeIndex}")"
+                           OnClick="@(() => RemoveNode(node))">
+                    Remove
+                </MudButton>
+            </div>
+
+            @if (node.Outgoing.Count == 0)
+            {
+                <MudText Typo="Typo.body2" Class="mud-text-secondary" data-testid="@($"terminal-{nodeIndex}")">
+                    → (End) — terminal node, no outgoing edge.
+                </MudText>
+            }
+
+            @for (var ei = 0; ei < node.Outgoing.Count; ei++)
+            {
+                var edgeIndex = ei;
+                var edge = node.Outgoing[edgeIndex];
+
+                <div class="d-flex align-center my-1" data-testid="@($"edge-{nodeIndex}-{edgeIndex}")">
+                    <span class="mr-2">edge #@(edgeIndex + 1) →</span>
+                    <select class="pa-1" @bind="edge.TargetMachineId" data-testid="@($"edge-target-{nodeIndex}-{edgeIndex}")">
+                        @foreach (var machine in AvailableMachines)
+                        {
+                            <option value="@machine.Key">@machine.Value (M@machine.Key)</option>
+                        }
+                    </select>
+                    <MudButton Variant="Variant.Text"
+                               Size="Size.Small"
+                               Color="Color.Error"
+                               Class="ml-2"
+                               data-testid="@($"remove-edge-{nodeIndex}-{edgeIndex}")"
+                               OnClick="@(() => RemoveEdge(node, edge))">
+                        ▽
+                    </MudButton>
+                </div>
+            }
+
+            <MudButton Variant="Variant.Outlined"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Rounded.CallSplit"
+                       Class="mt-2"
+                       data-testid="@($"add-branch-{nodeIndex}")"
+                       OnClick="@(() => AddBranch(node))">
+                + branch
+            </MudButton>
+        </MudPaper>
+    }
+
+    <MudGrid Spacing="2" Class="w-100 mt-4">
+        <MudItem xs="12" sm="6">
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth="true" data-testid="cancel" OnClick="Cancel">
+                Cancel
+            </MudButton>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" data-testid="submit" OnClick="SubmitAsync">
+                Submit
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+
+</div>

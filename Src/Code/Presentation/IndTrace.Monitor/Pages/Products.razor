@@ -1,0 +1,78 @@
+@page "/Products"
+@using IndTrace.Application.ConfigStations.Queries.GetConfigStationList
+@using IndTrace.Application.Configuration.Services
+@using IndTrace.Application.Models.Interfaces
+@using IndTrace.Application.Products.Queries.GetProductDetail
+@using IndTrace.Application.WorkFlows.Queries.GetList
+@using MudBlazor
+@using IndTrace.Domain.Entities
+@using Microsoft.AspNetCore.Components.Forms
+@using IndTrace.Components.Area.Products
+@using IndTrace.Domain.Models
+@using IndTrace.UI.Models.Products
+@using Microsoft.AspNetCore.Components.Web
+@using IndTrace.Components.Area.Customers
+@using IndTrace.Domain.Interfaces
+
+
+@inject ILogger<Products> logger
+@inject IDialogService DialogService
+@inject IndTraceConfigurationService IndTraceConfigurationService
+@inject IProductService productService
+@inject ISnackbar snackbar
+@inject PersistentComponentState ApplicationState
+
+
+
+
+@if (!IsInitialized) {
+    <MudProgressLinear Color="Color.Tertiary" Size="Size.Large" Rounded="true" Indeterminate="true" />
+}
+
+@if (ApplicationConfiguration is not null && ApplicationConfiguration.Customers is not null)
+{
+
+
+
+    @if(showAddProduct)
+    {
+        <ProductsForm OnProductAdded="NewProductAdded"
+                      Customers="ApplicationConfiguration.Customers"
+                      SelectedCustomer="@SelectedCustomer">
+        </ProductsForm>
+    }
+    else
+    {
+        <ProductsList Products="ApplicationConfiguration.Products"
+                      ApplicationConfiguration="ApplicationConfiguration"
+                      OnProductSelected="ProductSelected"
+                      OnSelectedCustomerChanged="HandleSelectedCustomerChanged">
+        </ProductsList>
+}
+
+    <MudText>@SelectedCustomer</MudText>
+}
+else
+{
+    <p>" loading configuration details."</p>
+}
+
+
+<MudButton OnClick="ShowAddProduct">
+    Add Product
+</MudButton>
+
+
+
+<AddProduct NewProduct="NewProduct"
+            OnCancel="CancelAddProduct"
+            OnProductAdded="SaveNewModel"
+            Result="Result"
+            ApplicationConfiguration="ApplicationConfiguration"
+            MachineNames="MachineNames"
+            WorkFlowsDto="ListWorkFlowsDto"
+            SelectedCustomer="@SelectedCustomer"/>
+
+       
+
+

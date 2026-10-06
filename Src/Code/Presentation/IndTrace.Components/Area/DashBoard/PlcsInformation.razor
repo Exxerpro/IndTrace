@@ -1,0 +1,185 @@
+﻿@using IndTrace.Application.UI.Models
+@using Microsoft.Extensions.Logging
+@using MudBlazor
+
+@implements IDisposable
+@inject ILogger<PlcsInformation> Logger
+
+<MudTable Items="@PlcConnections.Values"
+          Dense="true"
+          Hover="true"
+          Breakpoint="Breakpoint.Sm"
+          Loading="@_loading"
+          LoadingProgressColor="Color.Info">
+
+    <HeaderContent>
+        <MudTh>PLC Name</MudTh>
+        <MudTh>IP Address</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="PLC">
+            <MudText Color="@GetColor(context)">
+                @context.Name
+            </MudText>
+           
+        </MudTd>
+        <MudTd DataLabel="IP">
+            <MudText Color="@GetColor(context)">
+                @context.IpAddress 
+            </MudText>
+           <MudIcon Icon="@GetICon(context)" Color="@GetColor(context)"/>
+        </MudTd>
+        
+    </RowTemplate>
+</MudTable>
+
+
+
+<MudPaper Class=" pa-4 align-start d-flex" Outlined="true">
+    <MudPaper Class="pa-3" Elevation="6">
+        <MudButton Disabled="@_loading" OnClick="Refresh" Variant="Variant.Filled" Color="Color.Primary">
+            @if (_loading)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                <MudText Class="ms-2">Refreshing</MudText>
+            }
+            else
+            {
+                <MudText>Refresh status</MudText>
+            }
+        </MudButton>
+    </MudPaper>
+    <MudSpacer />
+    <MudPaper Class="pa-3" Elevation="6">
+        <MudIconButton Icon="@Icons.Material.Filled.Troubleshoot" 
+                       OnClick="Refresh" aria-label="Refresh"> Refresh 
+        </MudIconButton>
+    </MudPaper>
+</MudPaper>
+
+
+
+<MudSpacer />
+
+
+
+
+@code {
+
+
+    private bool _loading = false;
+
+    [Parameter]
+    public IReadOnlyDictionary<int ,ControllerMonitor> PlcConnections { get; set; } = new Dictionary<int, ControllerMonitor>();
+
+    private string GetICon(ControllerMonitor controllerMonitor)
+    {
+        return controllerMonitor.IsConnected ? 
+            @Icons.Material.Filled.Link : 
+            @Icons.Material.Filled.LinkOff;
+    }
+
+    private Color GetColor(ControllerMonitor controllerMonitor)
+    {
+        return controllerMonitor.IsConnected ? Color.Success : Color.Error;
+    }
+
+
+    private System.Threading.Timer? _timer;
+
+    private async Task Refresh()
+    {
+        _loading = true;
+        await InvokeAsync(StateHasChanged);
+
+        // Single authoritative pass: re-attach the connection handlers and probe each PLC exactly
+        // ONCE per click (a preceding loop used to call RefreshConnection again, probing every PLC
+        // twice per refresh — #124).
+        foreach (var plc in PlcConnections.Values)
+        {
+            if (plc is null)
+            {
+                continue;
+            }
+
+            plc.ConnectionLost -= OnConnectionLost;
+            plc.ConnectionRecovered -= OnConnectionRecovered;
+
+            plc.ConnectionLost += OnConnectionLost;
+            plc.ConnectionRecovered += OnConnectionRecovered;
+
+            plc.RefreshConnection();
+        }
+
+
+        // Dispose the previous timer before allocating a new one so repeated
+        // Refresh clicks do not leak Timer instances.
+        _timer?.Dispose();
+
+        // Set up a timer to clear the loading flag after 3 seconds. TimerCallback is
+        // void-returning, so an async lambda here would be async-void (an unhandled fault would
+        // escape the component); instead the callback is synchronous and marshals the state
+        // mutation through InvokeAsync with the exception observed inside the delegate (#124).
+        _timer = new Timer(_ =>
+        {
+            _ = InvokeAsync(() =>
+            {
+                try
+                {
+                    _loading = false;
+                    StateHasChanged();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "PLC refresh timer UI update failed.");
+                }
+            });
+        }, null, 3000, Timeout.Infinite);
+    }
+
+    // subscribe to events from the plc on parameters set
+    // Subscribe to events from the plc on parameters set
+    protected override void OnParametersSet()
+    {
+        foreach (var plc in PlcConnections.Values)
+        {
+            plc.ConnectionLost -= OnConnectionLost;
+            plc.ConnectionRecovered -= OnConnectionRecovered;
+
+            plc.ConnectionLost += OnConnectionLost;
+            plc.ConnectionRecovered += OnConnectionRecovered;
+        }
+    }
+
+    private void OnConnectionLost(object? sender, EventArgs args)
+    {
+         InvokeAsync(StateHasChanged);
+    }
+
+    private void OnConnectionRecovered(object? sender, EventArgs args)
+    {
+         InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Unsubscribes from every PLC monitor event and disposes the refresh timer so a
+    /// disposed circuit is not kept rooted by the singleton monitors.
+    /// </summary>
+    public void Dispose()
+    {
+        foreach (var plc in PlcConnections.Values)
+        {
+            if (plc is null)
+            {
+                continue;
+            }
+
+            plc.ConnectionLost -= OnConnectionLost;
+            plc.ConnectionRecovered -= OnConnectionRecovered;
+        }
+
+        _timer?.Dispose();
+        _timer = null;
+    }
+
+}

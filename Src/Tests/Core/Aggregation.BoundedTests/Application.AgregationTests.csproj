@@ -1,0 +1,206 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Application Type -->
+    <OutputType>Exe</OutputType>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Enables code optimization -->
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- Assembly Information -->
+    <RootNamespace>IndTrace.Aggregation.BoundedTests</RootNamespace>
+    <AssemblyName>IndTrace.Aggregation.BoundedTests</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IsTestingPlatformApplication>true</IsTestingPlatformApplication>
+    <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
+    <IsPackable>false</IsPackable>
+    <!-- Versioning -->
+    <AssemblyVersion>2020.5.30.51</AssemblyVersion>
+    <FileVersion>2020.5.30.51</FileVersion>
+    <!-- Testing Startup -->
+    <XunitStartupAssembly>IndTrace.Aggregation.BoundedTests</XunitStartupAssembly>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- TESTING PLATFORM PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Microsoft Testing Platform Configuration -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <TestingPlatformServer>true</TestingPlatformServer>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- CONFIGURATION FILES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Configuration Files">
+    <None Remove="appsettings.Development.json" />
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+  <ItemGroup Label="Configuration Content">
+    <Content Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CORE TESTING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core Testing">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.Testing.Extensions.VSTestBridge" />
+    <PackageReference Include="Chill" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - TESTING UTILITIES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Testing Utilities">
+    <PackageReference Include="NSubstitute" /> <!-- Restored for incremental migration -->
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="Serilog.Enrichers.Demystifier" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ASP.NET CORE -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="ASP.NET Core">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Client" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ENTITY FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Entity Framework">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <!-- #117 F6a: SaveChangesAsync(tableName) early-returns on non-relational providers, so its retry
+         semantics need a relational pipeline; SQLite (in-memory connection) provides it in-process.
+         The direct bundle reference lifts SQLitePCLRaw to the 2.1.12 release patched against
+         GHSA-2m69-gcr7-jv3q — the advisory that previously banned EF-Sqlite from the repo. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - LOGGING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Logging">
+    <PackageReference Include="Meziantou.Extensions.Logging.Xunit.v3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+  </ItemGroup>
+  <ItemGroup Label="Options">
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - TIME TESTING -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Time Testing">
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - CODE ANALYSIS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Code Analysis">
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NSubstitute.Analyzers.CSharp"> <!-- Restored for incremental migration -->
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - UTILITIES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Utilities">
+    <PackageReference Include="GenCode128" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\..\Code\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\..\..\Code\Core\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup Label="Infrastructure References">
+    <!--<ProjectReference Include="..\..\..\Infrastructure\IndTrace.Gateway\IndTrace.Gateway.csproj" />-->
+    <ProjectReference Include="..\..\..\Code\Infrastructure\IndTrace.Persistence\IndTrace.Persistence.csproj" />
+    <!-- Issue #88: ErrorHandlingMiddleware moved here from Core; needed to compile ErrorHandlingMiddlewareTests. -->
+    <ProjectReference Include="..\..\..\Code\Infrastructure\IndTrace.Dependencies\IndTrace.Dependencies.csproj" />
+    <ProjectReference Include="..\Agregation.Dependices\Agregation.Dependices\Agregation.Dependices.csproj" />
+    <ProjectReference Include="..\IndTrace.TestData\IndTrace.TestData.csproj" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- SEED DATA FILES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Seed Data - None Items">
+    <None Include="..\..\SeedDataFiles\**\*.*">
+      <Link>SeedDataFiles\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <!-- Seed Data Content Items removed - duplicated the None items above -->
+  <!-- ============================================================================ -->
+  <!-- MICROSOFT TESTING PLATFORM -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Microsoft Testing Platform">
+    <PackageReference Include="Microsoft.Testing.Platform" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- XUNIT V3 FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="xUnit v3 (MTP v2)">
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="xunit.v3.runner.inproc.console" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3.runner.msbuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="**\XunitAutoGeneratedEntryPoint.cs" />
+    <Compile Remove="obj\**\XunitAutoGeneratedEntryPoint.cs" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT CAPABILITIES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Testing Platform Capabilities">
+    <ProjectCapability Include="DiagnoseCapabilities" />
+    <ProjectCapability Include="TestingPlatformServer" />
+    <ProjectCapability Include="TestContainer" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BarCodes\Commands\Create\" />
+    <Folder Include="BarCodes\Rules\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+  <!-- DataStore (virtual-network fixture DB) is part of the enterprise S7 tooling; the tests that use it are
+       *.Enterprise.cs and compile only in the enterprise edition. -->
+  <ItemGroup Label="Enterprise References" Condition="'$(IndTraceEnterprise)' == 'true'">
+    <ProjectReference Include="..\..\..\Code\Infrastructure\IndTrace.DataStore\IndTrace.DataStore.csproj" />
+  </ItemGroup>
+</Project>

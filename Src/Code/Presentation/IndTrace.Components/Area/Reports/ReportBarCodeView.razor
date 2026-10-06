@@ -1,0 +1,39 @@
+﻿@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@using IndTrace.Domain.Enum
+@using IndTrace.Application.BarCodes.DTO
+@using MudBlazor
+
+<div class="row">
+    <div class="col-sm-6">
+        <MudTable Items="@BarCodesDtoList" Bordered="true" Striped="true">
+            <HeaderContent>
+                <MudTh>Code</MudTh>
+                <MudTh>Created</MudTh>
+                <MudTh>PartStatus</MudTh>
+                <MudTh>FlowStatus</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Code">
+                    <MudButton Color="Color.Info" Disabled="true">@context.Label</MudButton>
+                </MudTd>
+                <MudTd DataLabel="Created">@context.CreatedOn</MudTd>
+                <MudTd DataLabel="PartStatus">@context.PartStatus</MudTd>
+                <MudTd DataLabel="FlowStatus">@context.FlowStatus</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public List<BarCodeDto>? BarCodesDtoList { get; set; } = new();
+
+    [Parameter]
+    public string SelectedBarCode { get; set; } = string.Empty;
+}

@@ -1,0 +1,152 @@
+@using IndTrace.UI.Models.Reports
+@using IndTrace.Domain.Interfaces
+@inject IDateTimeMachine DateTimeMachine
+<MudPaper Class="p-4">
+    <EditForm Model="@model" OnValidSubmit="@OnValidSubmit" OnInvalidSubmit="@OnInvalidSubmit">
+        <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudGrid>
+                <MudItem xs="12" sm="7">
+                    <MudCard>
+                        <MudCardContent>
+
+                        <MudDatePicker Label="Initial Date" ShowWeekNumbers="true" Editable="true" @bind-Date="model.StartDate" For="@(() => model.StartDate)" />
+                        <MudDatePicker Label="Initial Date" ShowWeekNumbers="true" Editable="true" @bind-Date="model.EndDate" For="@(() => model.EndDate)" />
+                         <MudCheckBox T="bool" Label="Master" @bind-Value="model.IsMaster" For="@(() => model.IsMaster)"/>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudCard>
+                    <MudCardContent>
+                        <label>Selected Model</label>
+                        <p>@model.SelectedProduct</p>
+                        <MudCheckBox T="bool" Label="Model" @bind-Value="model.FilterByProduct" For="@(() => model.FilterByProduct)" />
+                        @if (model.Products is not null)
+                        {
+                            <MudList T="string" SelectedValueChanged="OnModelSelected">
+                                @foreach (var model in model.Products)
+                                {
+                                    <MudListItem Value="@model">@model</MudListItem>
+                                }
+                            </MudList>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudCard>
+                    <MudCardContent>
+                        <label>Selected Shift</label>
+                        <p>@model.SelectedShift</p>
+                        <MudCheckBox T="bool" Label="Shift" @bind-Value="model.FilterByShift" For="@(() => model.FilterByShift)" />
+                        @if (model.Shifts is not null)
+                        {
+                            <MudList T="string" SelectedValueChanged="OnShiftSelected">
+                                @foreach (var shift in model.Shifts)
+                                {
+                                    <MudListItem Value="@shift.ToString()">@shift</MudListItem>
+                                }
+                            </MudList>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudCard>
+                    <MudCardContent>
+                        <label>Selected State</label>
+                        <p>@model.SelectedState</p>
+                        <MudCheckBox T="bool" Label="State" @bind-Value="model.FilterByState" For="@(() => model.FilterByState)" />
+                        @if (model.StatesList is not null)
+                        {
+                            <MudList T="string" SelectedValueChanged="OnStateSelected">
+                                @foreach (var state in model.StatesList)
+                                {
+                                    <MudListItem Value="@state">@state</MudListItem>
+                                }
+                            </MudList>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+          <MudItem>
+              <MudCard>
+        <MudCardContent>
+                        <MudCardActions>
+                            @if (_success)
+                            {
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Get List BarCodes</MudButton>
+                            }
+                            else
+                            {
+                                <MudText Color="@Color.Error">
+                                    <ValidationSummary />
+                                </MudText>
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Get List BarCodes</MudButton>
+                            }
+                            
+                        </MudCardActions>
+                        </MudCardContent>
+            </MudCard>
+            
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+
+</MudPaper>
+
+@code {
+
+    bool _success=true;
+
+    [Parameter]
+    public ReportsListQueryModel model { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnFilterChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Seed the default date range deterministically from the injected clock instead of DateTime.Now.
+        if (model.StartDate is null && model.EndDate is null)
+        {
+            model.SetDefaultDateRange(DateTimeMachine);
+        }
+    }
+
+    private void OnInvalidSubmit(EditContext context)
+    {
+        _success = false;
+    }
+    private void OnModelSelected(string selectedModel)
+    {
+        model.SelectedProduct = selectedModel;
+    }
+
+    private void OnShiftSelected(string selectedShift)
+    {
+        if (int.TryParse(selectedShift, out int parsedValue))
+        {
+            model.SelectedShift = parsedValue;
+        }
+    }
+
+    private void OnStateSelected(string selectedState)
+    {
+        model.SelectedState = selectedState;
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        // Invoke the EventCallback to notify the parent component
+        _success = true;
+
+        await OnFilterChanged.InvokeAsync(null);
+
+    }
+
+}

@@ -1,0 +1,48 @@
+﻿@using IndTrace.Application.BarCodes.Queries.GetBarCodeDetailMonitor
+@using Microsoft.Extensions.Logging
+@inject IDialogService DialogService
+@inject ILogger<BarCodeDetailsViewModal> Logger
+<MudPaper Class="pa-8" Style="height: 300px; position: relative;">
+
+<MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
+    
+
+        BarCode Details 
+        <MudText Color="Color.Success">@SelectedBarCode</MudText>
+
+        <BarCodeDetailsView SelectedBarCode="@SelectedBarCode" BarCodeDetails="@BarCodeDetails" />
+
+        <MudButton Color="Color.Primary" OnClick="Close">Close</MudButton>
+    
+</MudOverlay>
+</MudPaper>
+
+@code {
+    
+    protected  override Task OnInitializedAsync()
+    {
+        if (BarCodeDetails is null)
+        {
+            Logger.LogInformation("BarCodeDetails is null");
+            return Task.CompletedTask;
+        }
+        Logger.LogInformation(BarCodeDetails.Label);
+        return Task.CompletedTask;
+    }
+
+ 
+    [Parameter]
+    public string SelectedBarCode { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool Visible { get; set; } 
+
+    [Parameter]
+    public BarCodeDetailMonitorVm? BarCodeDetails { get; set; }
+
+    private void Close(MouseEventArgs obj)
+    {
+        Visible = false;
+    }
+
+}

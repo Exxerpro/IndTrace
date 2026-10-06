@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <!-- Target Framework -->
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Language Features -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Static Web Assets -->
+    <DisableCompressionStaticWebAssets>true</DisableCompressionStaticWebAssets>
+    <CompressionEnabled>false</CompressionEnabled>
+    <!-- Allow nullability warnings to remain warnings (not errors) in this Mud components library, non-Shipping configs only -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- Shipping configuration: treat all warnings as errors -->
+  <!-- CS86xx suppressions REMOVED - All null safety violations must be fixed -->
+  <!-- MUD0002 warnings now handled globally via BL0008 suppression -->
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - UI COMPONENTS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="UI Components">
+    <PackageReference Include="CodeBeam.MudBlazor.Extensions" />
+    <PackageReference Include="MudBlazor" />
+    <PackageReference Include="Extensions.MudBlazor.StaticInput" />
+    <PackageReference Include="CoreAdmin" />
+    <PackageReference Include="BlazorDownloadFile" />
+    <PackageReference Include="QrCoder" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ASP.NET CORE -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="ASP.NET Core">
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - ENTITY FRAMEWORK -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Entity Framework">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup Label="Infrastructure References">
+    <ProjectReference Include="..\..\Infrastructure\IndTrace.Devices\IndTrace.Devices.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\IndTrace.Dependencies\IndTrace.Dependencies.csproj" />
+  </ItemGroup>
+  <ItemGroup Label="Presentation References">
+    <ProjectReference Include="..\IndTrace.Models\IndTrace.UI.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+</Project>

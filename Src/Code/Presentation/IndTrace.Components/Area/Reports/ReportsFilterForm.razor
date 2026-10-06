@@ -1,0 +1,205 @@
+﻿@using MudBlazor
+@using IndTrace.Components.Area.Forms
+@using IndTrace.UI.Models.Reports
+
+
+<MudPaper Class="p-4">
+    <EditForm Model="@model" OnValidSubmit="@OnValidSubmit" OnInvalidSubmit="@OnInvalidSubmit" HandleKeyDown="" >
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <MudGrid>
+            <MudItem xs="12" sm="7">
+                <MudCard>
+                    <MudCardContent>
+
+                        <MudDatePicker Label="Start Date" @ref="_picker1" AutoClose="true" ShowWeekNumbers="true" Editable="true" @bind-Date="model.StartDate" For="@(() => model.StartDate)" />
+                        <MudDatePicker Label="End Date" @ref="_picker2" AutoClose="true" ShowWeekNumbers="true" Editable="true" @bind-Date="model.EndDate" For="@(() => model.EndDate)" />
+                        <MudCheckBox T="bool" Label="Master" @bind-Value="model.IsMaster" For="@(() => model.IsMaster)" />
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <FilterCardComponent TItem="string"
+                                 Label="Product"
+                                 IsChecked="@model.FilterByProduct"                                 
+                                 Items="@_products"
+                                 SelectedItem="@model.SelectedProduct"
+                                 OnItemSelected="@OnProductSelected"
+                                 FieldLabel="Product:"
+                                 Image="Products"
+                                 AdornmentIcon="@Icons.Material.Filled.ModeEdit" >
+            </FilterCardComponent>
+
+         
+               <FilterCardComponent TItem="string"
+                    Label="Customer"
+                    IsChecked="@model.FilterByCustomer"                    
+                    Items="@model.Customers"
+                    SelectedItem="@model.SelectedCustomer"
+                    OnItemSelected="@OnCustomerSelected"
+                    FieldLabel="Customer:"
+                    Image="Customers"
+                    AdornmentIcon="@Icons.Material.Filled.ModeEdit" >
+            </FilterCardComponent>
+
+
+            <FilterCardComponent TItem="int"
+                                 Label="Shift"
+                                 IsChecked="@model.FilterByShift"
+                                 Items="@model.Shifts"
+                                 SelectedItem="@model.SelectedShift"                                 
+                                 FieldLabel="Shift:"
+                                 Image="Shifts"
+                                 AdornmentIcon="@Icons.Material.Filled.ModeEdit">
+            </FilterCardComponent>
+
+            <FilterCardComponent TItem="string"
+                                 Label="State"
+                                 IsChecked="@model.FilterByState"
+                                 Items="@model.StatesList"
+                                 SelectedItem="@model.SelectedState"
+                                 FieldLabel="State:"
+                                 Image="States"
+                                 AdornmentIcon="@Icons.Material.Filled.ModeEdit">
+            </FilterCardComponent>
+
+
+
+            
+            <MudItem xs="12" sm="4">
+                <MudCard>
+                    <MudCardContent>
+                        <label>Search for Register</label>
+
+                        <MudCheckBox T="bool" Label="Register" @bind-Value="model.FilterByRegister" For="@(() => model.FilterByRegister)" />
+                        @if (model.FilterByRegister)
+                        {
+                            <p>@model.SelectedRegister</p>
+                            <InputTextValidated Label=@model.SelectedRegister ButtonText="Accept"  OnSearchBarCode="@OnRegisterSelected" />
+
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem>
+                <MudCard>
+                    <MudCardContent>
+                        <MudCardActions>
+                            @if (_success)
+                            {
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Get List BarCodes</MudButton>
+                            }
+                            else
+                            {
+                                <MudText Color="@Color.Error">
+                                    <ValidationSummary />
+                                </MudText>
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Get List BarCodes</MudButton>
+                            }
+
+                        </MudCardActions>
+                    </MudCardContent>
+                </MudCard>
+
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+
+</MudPaper>
+
+@code {
+
+    bool _success = true;
+
+    [Parameter]
+    public required ReportsListQueryModel model { get; set; }
+
+    [Parameter]
+    public EventCallback OnFilterChanged { get; set; }
+
+
+    public bool FilterByState { get; set; } = false;
+    public bool ProductIsVisible { get; set; } = true;
+    public bool CustomerIsVisible { get; set; } = true;
+
+    private List<string> _products = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _products = model.Products;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnInvalidSubmit(EditContext context)
+    {
+        _success = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+
+    private void OnCustomerSelected(string selectedCustomer)
+    {
+
+        model.SelectedCustomer= selectedCustomer;
+
+        _products = model.CustomerProducts
+               .Where(x => x.Name == selectedCustomer)
+               .SelectMany(x => x.Products)
+               .Select(p => p.PartNumber)
+               .ToList();
+
+        model.FilterByCustomer = true;
+
+        model.SelectedProduct = "";
+
+        InvokeAsync(StateHasChanged);
+
+    }
+
+
+    private void OnProductSelected(string selectedProduct)
+    {
+        model.SelectedProduct= selectedProduct;
+        model.FilterByProduct = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+
+    private void OnRegisterSelected(string selectedRegister)
+    {
+        model.SelectedRegister = selectedRegister;
+        InvokeAsync(StateHasChanged);
+    }
+
+       private void OnStateSelected(string selectedState)
+    {
+        model.SelectedState = selectedState;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        // Invoke the EventCallback to notify the parent component
+        _success = true;
+
+        await OnFilterChanged.InvokeAsync(context);
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    
+    private MudDatePicker? _picker1;
+    private MudDatePicker? _picker2;
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code is "Enter" or "NumpadEnter")
+        {
+            _picker1?.CloseAsync(false);
+            _picker2?.CloseAsync(false);
+        }
+         InvokeAsync(StateHasChanged);
+
+    }
+}

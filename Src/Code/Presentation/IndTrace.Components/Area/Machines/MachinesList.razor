@@ -1,0 +1,100 @@
+@page "/MachinesList"
+@using IndTrace.Application.Machines.Queries.GetMachinesList
+@using IndTrace.Application.Models.RequestHandler
+@using IndTrace.Domain.Interfaces
+
+@using MudBlazor
+
+@inject IMonitorRequestDispatcher MonitorRequestDispatcher
+
+<h2>Machines List</h2>
+
+@if (_machines is null)
+{
+    <MudText Typo="Typo.body1">Loading page...</MudText>
+}
+else
+{
+    <div class="col-md-12">
+        <MudTable Items="_machines" Hover="true" Bordered="true" Striped="false">
+            <HeaderContent>
+                <MudTh>Machine Id</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>MachineType</MudTh>
+                <MudTh>Location</MudTh>
+                <MudTh>WorkFlowType</MudTh>
+                <MudTh>EnableAppTraceability</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTr Class="@GetRowClass(context)">
+                    <MudTd DataLabel="Machine Id">@context.MachineId</MudTd>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="MachineType">@context.MachineType</MudTd>
+                    <MudTd DataLabel="Location">@context.Location</MudTd>
+                    <MudTd DataLabel="WorkFlowType">@context.WorkFlowType</MudTd>
+                    <MudTd DataLabel="EnableAppTraceability">
+                        <MudText Class="@GetTextClass(context.IsEnabled)">
+                                @GetEnableText(@context.IsEnabled)
+                        </MudText>
+                    </MudTd>
+                </MudTr>
+            </RowTemplate>
+        </MudTable>
+    </div>
+}
+
+
+    @code {
+        private IEnumerable<MachineDto>? _machines;
+
+        protected override Task OnInitializedAsync()
+        {
+            // For now, just initialize empty collection since GetMachinesListQuery doesn't exist
+            _machines = new List<MachineDto>();
+            return Task.CompletedTask;
+        }
+
+        private string GetRowClass(MachineDto machine)
+        {
+            return machine.IsEnabled ? "enabled-row" : "disabled-row";
+        }
+
+        private string GetTextClass(bool isEnabled)
+        {
+            return isEnabled ? "text-enabled" : "text-disabled";
+        }
+
+        private string GetEnableText(bool isEnabled)
+        {
+            return isEnabled ? "Enabled" : "Disabled";
+        }
+
+    }
+
+<style>
+    .enabled-row:nth-child(odd) {
+    background-color: #f9f9f9;
+    }
+
+    .enabled-row:nth-child(even) {
+    background-color: #e9f7ef;
+    }
+
+    .disabled-row:nth-child(odd) {
+    background-color: #f9f9f9;
+    }
+
+    .disabled-row:nth-child(even) {
+    background-color: #fce4e4;
+    }
+
+    .text-enabled {
+    color: #2e7d32; 
+    font-weight: bold;
+    }
+
+    .text-disabled {
+    color: #c62828;
+    font-weight: bold;
+    }
+</style>

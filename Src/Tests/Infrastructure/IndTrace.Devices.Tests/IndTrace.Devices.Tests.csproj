@@ -1,0 +1,104 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ============================================================================ -->
+  <!-- CORE PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IsTestingPlatformApplication>true</IsTestingPlatformApplication>
+    <GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
+    <IsPackable>false</IsPackable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>IndTrace.Devices.Tests</RootNamespace>
+    <AssemblyName>IndTrace.Devices.Tests</AssemblyName>
+    <IsTestProject>true</IsTestProject>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- TESTING PLATFORM PROPERTIES -->
+  <!-- ============================================================================ -->
+  <PropertyGroup>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <TestingPlatformServer>true</TestingPlatformServer>
+  </PropertyGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - TESTING FRAMEWORKS -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="xUnit v3">
+    <PackageReference Include="Microsoft.AspNetCore.Http" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+  </ItemGroup>
+  <ItemGroup Label="Visual Studio Runner">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.Testing.Extensions.VSTestBridge" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3.runner.inproc.console" />
+    <PackageReference Include="xunit.v3.runner.msbuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+  <ItemGroup Label="Microsoft Testing Platform">
+    <PackageReference Include="Microsoft.Testing.Platform" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PACKAGE REFERENCES - TESTING UTILITIES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Testing Utilities">
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Shouldly" />
+  </ItemGroup>
+  <ItemGroup Label="Logging">
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Meziantou.Extensions.Logging.Xunit.v3" />
+  </ItemGroup>
+  <ItemGroup Label="NSubstitute Analyzers">
+    <PackageReference Include="NSubstitute.Analyzers.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Label="Reactive Extensions">
+    <PackageReference Include="System.Reactive" />
+    <PackageReference Include="System.Reactive.Linq" />
+    <PackageReference Include="Microsoft.Reactive.Testing" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="IndQuestResults" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- USING DIRECTIVES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Global Usings">
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <!-- ============================================================================ -->
+  <!-- PROJECT REFERENCES -->
+  <!-- ============================================================================ -->
+  <ItemGroup Label="Core References">
+    <ProjectReference Include="..\..\..\Code\Infrastructure\IndTrace.Devices\IndTrace.Devices.csproj" />
+    <ProjectReference Include="..\..\..\Code\Core\Application\IndTrace.Application.csproj" />
+    <ProjectReference Include="..\..\..\Code\Core\Domain\IndTrace.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="**\XunitAutoGeneratedEntryPoint.cs" />
+    <Compile Remove="obj\**\XunitAutoGeneratedEntryPoint.cs" />
+  </ItemGroup>
+  <ItemGroup Label="Testing Platform Capabilities">
+    <ProjectCapability Include="DiagnoseCapabilities" />
+    <ProjectCapability Include="TestingPlatformServer" />
+    <ProjectCapability Include="TestContainer" />
+  </ItemGroup>
+</Project>

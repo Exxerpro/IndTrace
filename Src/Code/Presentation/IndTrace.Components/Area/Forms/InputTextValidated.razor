@@ -1,0 +1,56 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using IndTrace.Components.Validators
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Label" HelperText="Write down the label"
+                                  @bind-Value="model.Label" For="@(() => model.Label)" />
+      
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">@ButtonText</MudButton>
+                </MudCardActions>
+            </MudCard>
+      
+        </MudItem>
+
+    </MudGrid>
+</EditForm>
+
+
+@code {
+    ModelBarCode model = new ModelBarCode() { Label = string.Empty };
+
+    [Parameter]
+    public required string Label { get; set; }
+
+    [Parameter] 
+    public required string ButtonText { get; set; } 
+
+    [Parameter]
+    public EventCallback<string> OnSearchBarCode { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ButtonText = "Search";
+    }
+
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+
+    private void OnValidSubmit(EditContext context)
+    {
+        Label= model.Label;
+        StateHasChanged();
+        OnSearchBarCode.InvokeAsync(model.Label);
+    }
+
+}

@@ -1,0 +1,303 @@
+﻿
+@using IndTrace.Application.Notifications
+@using IndTrace.Application.UI.Models
+@using IndTrace.Domain.Entities
+@using MudBlazor
+@implements IDisposable
+
+
+<MudGrid>
+    <MudItem>
+        <!-- Music Wave Visualizer -->
+        <MudProgressLinear Color="Color.Primary" Value="@_progress" BufferValue="100" Style="height:4px;" />
+        <Events @ref="Events" ></Events>
+    </MudItem>
+    <MudFlexBreak />
+
+    <MudItem>
+        <!-- Music Player Controls -->
+        <MudIconButton Icon="@Icons.Material.Filled.GetApp" Color="Color.Primary" OnClick="@GetMoreEvents" />
+        <MudIconButton Icon="@Icons.Material.Filled.SkipPrevious" Color="Color.Primary" OnClick="@PreviousEvent" />
+        <MudIconButton Icon="@PlayIcon" Color="Color.Primary" OnClick="@PlayPause" />
+        <MudIconButton Icon="@Icons.Material.Filled.SkipNext" Color="Color.Primary" OnClick="@NextEvent" />
+        <MudIconButton Icon="@Icons.Material.Filled.Repeat" Color="Color.Primary" OnClick="@Repeat" />
+    </MudItem>
+    <MudFlexBreak />
+
+    <MudItem>
+        <!-- Music Progress Slider -->
+        @* #124 F7: the slider binds a local backing field, not the [Parameter] — locally mutating a
+           parameter is overwritten on the next parameter set. Changes flow out via ProgressChanged. *@
+        <MudSlider T="double" Value="_progress" ValueChanged="OnProgressSliderChanged" Min="0" Max="100" Color="Color.Primary" />
+    </MudItem>
+    
+    <MudSwitch T="bool" @bind-Value="IsForward">
+        @(IsForward ?  "Reverse" :  "Forward")
+    </MudSwitch>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public double Progress { get; set; } = 0;
+
+    // #124 F7: outward channel so a parent using @bind-Progress still works while the slider itself
+    // mutates only the local backing field.
+    [Parameter]
+    public EventCallback<double> ProgressChanged { get; set; }
+
+    [Parameter]
+    public EventsService? EventsService { get; set; }
+
+    public string PlayIcon = Icons.Material.Filled.PlayArrow;
+
+    // #124 F7: @ref-populated only — the previous manual "new Events()" meant methods could hit an
+    // unrendered instance before @ref attached.
+    private Events? Events;
+
+    // Local backing field for the Progress parameter; synced in OnParametersSet when the parent
+    // supplies a new value, mutated locally by the slider.
+    private double _progress;
+    private double _lastProgressParameter;
+
+    protected override void OnParametersSet()
+    {
+        if (Progress != _lastProgressParameter)
+        {
+            _lastProgressParameter = Progress;
+            _progress = Progress;
+        }
+    }
+
+    private Task OnProgressSliderChanged(double value)
+    {
+        _progress = value;
+        return ProgressChanged.InvokeAsync(value);
+    }
+
+
+    private LinkedList<StationMonitor> StationMonitors = new();
+    private LinkedListNode<StationMonitor>? CurrentNode;
+
+    private IEnumerable<TaskGatewayResponseDto> Responses { get; set; } = [];
+    private IEnumerable<TaskGatewayRequest> Requests { get; set; } = [];
+
+    private bool IsPlaying = false;
+    private bool IsRepeating = false;
+    private bool IsForward = true;
+
+    // Bound the in-memory playback history so a long replay session cannot grow unbounded.
+    private const int MaxPlaybackItems = 500;
+    private readonly CancellationTokenSource _cts = new();
+    private bool _disposed;
+
+
+    private async Task PreviousEvent()
+    {
+        if (CurrentNode?.Previous != null)
+        {
+            CurrentNode = CurrentNode.Previous;
+            if (CurrentNode is not null)
+            {
+                UpdateStation(CurrentNode.Value);
+            }
+        }
+        else
+        {
+            // If at the beginning, monitorRequest more data from the service
+            await GetMoreEvents(); // Fetch more events in reverse
+        }
+    }
+
+    private async Task NextEvent()
+    {
+        if (CurrentNode?.Next != null)
+        {
+            CurrentNode = CurrentNode.Next;
+            if (CurrentNode is not null)
+            {
+                UpdateStation(CurrentNode.Value);
+            }
+        }
+        else
+        {
+            // If at the end, monitorRequest more data from the service
+            await GetMoreEvents(); // Fetch more events in forward direction
+        }
+    }
+
+    private void PlayPause()
+    {
+        IsPlaying = !IsPlaying;
+        PlayIcon = IsPlaying ? Icons.Material.Filled.Pause : Icons.Material.Filled.PlayArrow;
+
+        if (IsPlaying)
+        {
+            // Start the replay logic. The loop observes both the disposal flag and a
+            // cancellation token so it stops once the component is torn down instead of
+            // running forever as a fire-and-forget task.
+            var token = _cts.Token;
+            InvokeAsync(async () =>
+            {
+                while (IsPlaying && CurrentNode != null && !_disposed && !token.IsCancellationRequested)
+                {
+                    try
+                    {
+                        await Task.Delay(1000, token); // Play each event every second
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+
+                    if (_disposed || token.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    await NextEvent();
+                }
+            });
+        }
+    }
+
+    private void Repeat()
+    {
+        IsRepeating = !IsRepeating;
+    }
+
+    private async Task GetMoreEvents()
+    {
+        if (EventsService is null) return;
+
+        var result = IsForward
+            ? await EventsService.GetNextEventsAsync(CancellationToken.None)
+            : await EventsService.GetPreviousEventsAsync(CancellationToken.None);
+
+        if (result.IsFailure) return;
+
+        Responses = result.Value?.Responses ?? Array.Empty<TaskGatewayResponseDto>();
+        Requests = result.Value?.Requests ?? Array.Empty<TaskGatewayRequest>();
+
+        var newMonitors = GetCombinedStationMonitors();
+
+        if (IsForward)
+        {
+            foreach (var monitor in newMonitors)
+            {
+                StationMonitors.AddLast(monitor);
+            }
+
+            TrimPlaybackFromFront();
+        }
+        else
+        {
+            foreach (var monitor in newMonitors.Reverse())
+            {
+                StationMonitors.AddFirst(monitor);
+            }
+
+            TrimPlaybackFromBack();
+        }
+
+        // Update the current node if it was null (initial load)
+        if (CurrentNode == null && StationMonitors.Count > 0)
+        {
+            CurrentNode = StationMonitors.First;
+            if (CurrentNode is not null)
+            {
+                UpdateStation(CurrentNode.Value);
+            }
+        }
+    }
+
+    private void UpdateStation(StationMonitor station)
+    {
+        station.EnsureIsValidToRenderAndPersist();
+        // #124 F7: Events is @ref-populated; it is null until the first render completes.
+        Events?.SetStation(station);
+        StateHasChanged();
+    }
+
+    
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (EventsService is null) return;
+
+        var result = await EventsService.GetNextEventsAsync(CancellationToken.None);
+        if (result.IsFailure) return;
+
+        Responses = result.Value?.Responses ?? Array.Empty<TaskGatewayResponseDto>();
+        Requests = result.Value?.Requests ?? Array.Empty<TaskGatewayRequest>();
+
+        var initialMonitors = GetCombinedStationMonitors();
+
+        StationMonitors = new LinkedList<StationMonitor>(initialMonitors);
+
+        if (StationMonitors.Count > 0)
+        {
+            CurrentNode = StationMonitors.First;
+            if (CurrentNode is null) return;
+
+            UpdateStation(CurrentNode.Value);
+        }
+    }
+
+    // Method to return a combined, mapped, and ordered collection of StationMonitor
+    private IEnumerable<StationMonitor> GetCombinedStationMonitors()
+    {
+
+        
+
+        if (Responses is null || Requests is null) return [];
+
+        var mappedResponses = Responses.Select(response => StationMonitor.CreateStationFromGatewayResponse(response,response.TimeStamp));
+        var mappedRequests = Requests.Select(request => StationMonitor.CreateStationFromGatewayRequest(request,request.TimeStamp));
+
+        var combinedMonitors = mappedResponses
+            .Concat(mappedRequests)
+            .OrderBy(monitor => monitor.TimeStamp);
+
+        return combinedMonitors;
+    }
+
+    // Drops the oldest (front) entries once the history exceeds the cap, never removing
+    // the node the player is currently positioned on.
+    private void TrimPlaybackFromFront()
+    {
+        while (StationMonitors.Count > MaxPlaybackItems
+               && StationMonitors.First is { } first
+               && !ReferenceEquals(first, CurrentNode))
+        {
+            StationMonitors.RemoveFirst();
+        }
+    }
+
+    // Drops the oldest (back) entries when replaying in reverse, never removing the node
+    // the player is currently positioned on.
+    private void TrimPlaybackFromBack()
+    {
+        while (StationMonitors.Count > MaxPlaybackItems
+               && StationMonitors.Last is { } last
+               && !ReferenceEquals(last, CurrentNode))
+        {
+            StationMonitors.RemoveLast();
+        }
+    }
+
+    /// <summary>
+    /// Stops the replay loop and releases the cancellation source when the component is disposed.
+    /// </summary>
+    public void Dispose()
+    {
+        _disposed = true;
+        IsPlaying = false;
+        if (!_cts.IsCancellationRequested)
+        {
+            _cts.Cancel();
+        }
+
+        _cts.Dispose();
+    }
+
+}

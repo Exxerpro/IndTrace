@@ -1,0 +1,127 @@
+﻿@using IndTrace.Application.Registers.Services
+@using IndTrace.UI.Models.Metrics
+@using MudBlazor
+
+<MudCard Class="details-card">
+    <MudCardContent>
+        <MudPopover ref="@_anchorRef" AnchorOrigin="Origin.TopLeft" TransformOrigin="Origin.TopLeft" Fixed="true" Open="_isPopoverOpen">
+            <MudPaper Class="pa-4">
+                <MudList T="string">
+                    <MudListItem OnClick="@(() => HandleMenuAction("Delete"))">Delete</MudListItem>
+                    <MudListItem OnClick="@(() => HandleMenuAction("Change Color"))">Change Color</MudListItem>
+                    <MudListItem OnClick="@(() => HandleMenuAction("Cancel"))">Cancel</MudListItem>
+                </MudList>
+            </MudPaper>
+        </MudPopover>
+
+        @if (ShowSelectedVariables)
+        {
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudPaper Class="pa-4">
+                        @foreach (var data in Variables)
+                        {
+                            <MudText @ref="refs[data.Name]" Typo="Typo.body2" Color="@data.Color" Class="mb-2">
+                                <span @onclick="@(() => TogglePopover(data.Name))" style="cursor: pointer;">
+                                    @data.Name: @(data.Data.FirstOrDefault().ToString("F2"))
+                                </span>
+                            </MudText>
+                        }
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+
+        <MudGrid>
+            <MudChart ChartType="ChartType.Line"
+                      LegendPosition="Position.Start"
+                      ChartSeries="@Series"
+                      @bind-SelectedIndex="_selectedIndex"
+                      Width="100%" Height="350px"
+                      ChartOptions="@Options"
+                      CanHideSeries>
+            </MudChart>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    [Parameter]
+    public List<VariablesData> Variables { get; set; } = new List<VariablesData>();
+
+    [Parameter] public EventCallback<VariablesData> OnSeriesDeleted { get; set; }
+
+    [Parameter]
+    public bool ShowSelectedVariables { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment? InitialTip { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private int _selectedIndex = -1;
+
+    public ChartOptions Options { get; set; } = new ChartOptions
+        {
+            YAxisRequireZeroPoint = true,
+            ShowLegend = true,
+            YAxisTicks = 20,
+            XAxisLines = true
+        };
+
+    public List<ChartSeries> Series { get; set; } = new List<ChartSeries>();
+
+    private VariablesData? _selectedData;
+    private MudText? _anchorRef;
+    private Dictionary<string, MudText> refs = new Dictionary<string, MudText>();
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        UpdateChartData(Variables);
+    }
+
+    private void UpdateChartData(List<VariablesData> variables)
+    {
+        if (variables == null || !variables.Any()) return;
+
+        Series.Clear();
+        foreach (var variable in variables)
+        {
+            Series.Add(new ChartSeries { Name = variable.Name, Data = variable.Data });
+        }
+    }
+
+    private bool _isPopoverOpen = false;
+
+    private void TogglePopover(string name)
+    {
+        if (!refs.TryGetValue(name, out var refComponent)) return;
+
+        _anchorRef = refComponent;
+        _selectedData = Variables.FirstOrDefault(v => v.Name == name);
+        _isPopoverOpen = !_isPopoverOpen;
+    }
+
+    private void HandleMenuAction(string option)
+    {
+        _isPopoverOpen = false;
+        if (_selectedData == null) return;
+
+        switch (option)
+        {
+            case "Delete":
+                Variables.Remove(_selectedData);
+                OnSeriesDeleted.InvokeAsync(_selectedData);
+                break;
+            case "Change Color":
+                _selectedData.Color = _selectedData.Color == Color.Success ? Color.Error : Color.Success;
+                break;
+            case "Cancel":
+                break;
+        }
+        UpdateChartData(Variables);
+    }
+}

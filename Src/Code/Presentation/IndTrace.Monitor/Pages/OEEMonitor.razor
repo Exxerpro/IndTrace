@@ -1,0 +1,33 @@
+@page "/oee"
+@using MudBlazor
+@using Microsoft.AspNetCore.Components.Web
+@using IndTrace.Components.Area.Machines
+@using IndTrace.Monitor.Worker
+@using IndTrace.UI.Models.Performance
+@inject OeeState OeeState
+@inject IndFusionWorker IndFusionWorker
+
+<PageTitle>OEE Dashboard</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MudCard Class="machines-card">
+        <MudText Typo="Typo.h4" GutterBottom>
+            Overall Equipment Effectiveness (OEE) Dashboard
+        </MudText>
+        <MudText Typo="Typo.body1" GutterBottom>
+            At Exxerpro Solutions, we offer robust data storage and reporting systems to ensure your data is secure, accessible, and actionable.
+        </MudText>
+    </MudCard>
+</MudContainer>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MachinesTable Machines=@Machines  />
+
+</MudContainer>
+
+@code {
+
+    private Dictionary<string, PerformanceRecord> Machines => OeeState.Machines;
+
+ 
+}
