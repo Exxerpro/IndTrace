@@ -62,7 +62,7 @@ public class MachinePerformanceIndicator(int machineId, string machineName, stri
             "Packaging Robot",
         };
 
-        return machineNames.Select((t, i) => new MachinePerformanceIndicator(machineId: i + 1, machineName: t, imageName: "/img/machine" + i.ToString("D1") + ".png", status: statuses[random.Next(statuses.Count)], lastMaintenanceDate: DateTime.Now.ToLocalTime().AddDays(-random.Next(30)))).ToList();
+        return machineNames.Select((t, i) => new MachinePerformanceIndicator(machineId: i + 1, machineName: t, imageName: "/_content/IndTrace.Components/img/machine" + i.ToString("D1") + ".png", status: statuses[random.Next(statuses.Count)], lastMaintenanceDate: DateTime.Now.ToLocalTime().AddDays(-random.Next(30)))).ToList();
     }
 
     // Override ToString method for easy display
