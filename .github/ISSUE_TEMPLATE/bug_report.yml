@@ -1,0 +1,59 @@
+name: Bug report
+description: Something in IndTrace does not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Security problems must be reported privately (see the security policy), not here.
+        Do not paste real production data, credentials or hostnames.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Domain / Application (cycles, routing, barcodes)
+        - Gateway / simulated PLC controller
+        - Hub (SignalR)
+        - Monitor UI
+        - Identity
+        - Persistence / database
+        - Build / tests
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, including error messages or logs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The smallest sequence that reproduces it, ideally a failing test.
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+      placeholder: e.g. 1af6821
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, .NET SDK version (`dotnet --version`), SQL Server version.
