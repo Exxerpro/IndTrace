@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IndTrace — Open-source manufacturing traceability for PLC lines</title>
+<meta name="description" content="IndTrace records every serialized part as it moves through a PLC-connected production line and validates each arrival against the part's routing. Open source (AGPL), .NET 10, Blazor, SQL Server.">
+<link rel="canonical" href="https://exxerpro.github.io/IndTrace/">
+<link rel="alternate" hreflang="en" href="https://exxerpro.github.io/IndTrace/">
+<link rel="alternate" hreflang="es" href="https://exxerpro.github.io/IndTrace/es/">
+<link rel="alternate" hreflang="x-default" href="https://exxerpro.github.io/IndTrace/">
+<meta name="theme-color" content="#1e2428">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="IndTrace">
+<meta property="og:title" content="IndTrace — Open-source manufacturing traceability">
+<meta property="og:description" content="Every part, every station, on the record. IndTrace tracks parts through PLC lines and validates each arrival against its routing.">
+<meta property="og:url" content="https://exxerpro.github.io/IndTrace/">
+<meta property="og:image" content="https://exxerpro.github.io/IndTrace/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="es_MX">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&family=Libre+Barcode+128+Text&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "IndTrace",
+  "description": "Open-source manufacturing traceability for PLC-connected production lines: records parts, cycles and process values, and validates each arrival against the part's routing.",
+  "codeRepository": "https://github.com/Exxerpro/IndTrace",
+  "url": "https://exxerpro.github.io/IndTrace/",
+  "programmingLanguage": ["C#", "Razor"],
+  "runtimePlatform": ".NET 10",
+  "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+  "keywords": "traceability, manufacturing, MES, PLC, Industry 4.0, OEE, Blazor, SignalR, SQL Server",
+  "author": { "@type": "Person", "name": "Abel Briones Ramírez", "url": "https://hebelmx.github.io/abel-briones/" },
+  "publisher": { "@type": "Organization", "name": "Exxerpro Solutions SA de CV" }
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="IndTrace home">
+      <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="5" width="20" height="12" rx="2" fill="#f0b92b" stroke="currentColor" stroke-width="2"/><path d="M5 8v6M8 8v6M10 8v6M13 8v6M16 8v6" stroke="currentColor" stroke-width="1.6"/></svg>
+      IndTrace
+    </a>
+    <nav class="head-nav" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#screens">Screens</a>
+      <a href="#start">Get started</a>
+      <a href="https://github.com/Exxerpro/IndTrace">GitHub</a>
+      <a href="es/" hreflang="es" lang="es">Español</a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch light or dark theme">Theme</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="hero">
+    <div class="wrap">
+      <h1>Every part, every station, on the record.</h1>
+      <p class="lead">IndTrace records what happens to each serialized part as it moves through a PLC-connected production line, and checks every arrival against the part's routing. Your machines and operators stay in charge. IndTrace keeps the history and flags what should not have happened.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="https://github.com/Exxerpro/IndTrace">View the source on GitHub</a>
+        <a class="btn btn-plain" href="#screens">See the screens</a>
+      </div>
+    </div>
+    <div class="line" data-line>
+      <div class="wrap">
+        <ol class="stations" aria-label="Example: one part reporting in at five stations">
+          <li class="station"><span class="station-post"></span><span class="station-id">WS100</span><span class="station-name">Label print</span><span class="tag-slot"></span><span class="verdict"></span></li>
+          <li class="station"><span class="station-post"></span><span class="station-id">WS200</span><span class="station-name">Assembly</span><span class="tag-slot"></span><span class="verdict"></span></li>
+          <li class="station"><span class="station-post"></span><span class="station-id">WS300</span><span class="station-name">Leak test</span><span class="tag-slot"></span><span class="verdict"></span></li>
+          <li class="station"><span class="station-post"></span><span class="station-id">WS400</span><span class="station-name">Vision check</span><span class="tag-slot"></span><span class="verdict"></span></li>
+          <li class="station"><span class="station-post"></span><span class="station-id">WS500</span><span class="station-name">Final pack</span><span class="tag-slot"></span><span class="verdict"></span></li>
+        </ol>
+        <p class="line-caption">Part L1AL100003 reports in at each station. WS200 and WS300 are legal next steps, so IndTrace records them. When the part shows up at WS500 without passing WS400, IndTrace records the arrival as rejected and reports it back to the line.</p>
+      </div>
+    </div>
+    <script type="application/json" id="line-script">
+      [
+        { "part": "a", "label": "L1AL100003", "station": 0, "ok": true,  "text": "Label registered" },
+        { "part": "a", "label": "L1AL100003", "station": 1, "ok": true,  "text": "Legal next step" },
+        { "part": "a", "label": "L1AL100003", "station": 2, "ok": true,  "text": "Legal next step" },
+        { "part": "a", "label": "L1AL100003", "station": 4, "ok": false, "text": "Skipped WS400: recorded as rejected" }
+      ]
+    </script>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <h2>It tracks. It does not control.</h2>
+      <div class="prose">
+        <p>Most problems in traceability come from systems that try to run the line. IndTrace does not. The equipment decides where a part goes; IndTrace decides whether that move was legal, and keeps the evidence.</p>
+      </div>
+      <div class="split">
+        <div>
+          <h3>The line decides</h3>
+          <ul>
+            <li>The PLC and the operator move the part and run the process.</li>
+            <li>Each station judges its own cycle: pass or fail.</li>
+            <li>When a part reaches a station, the PLC reports it in.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>IndTrace records and validates</h3>
+          <ul>
+            <li>Stores the barcode, station, cycle result, process values and time.</li>
+            <li>Checks the arrival against the product's routing: is this station a legal next step?</li>
+            <li>Answers the PLC with an acknowledgement and a validation result.</li>
+          </ul>
+          <p class="note">It never sends a "go to machine X" command.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <h2>What it does, operation by operation</h2>
+      <div class="route-card">
+        <div class="route-card-head"><span>Route card: IndTrace</span><span>Rev. community edition</span></div>
+        <table>
+          <thead><tr><th scope="col">Op</th><th scope="col">What IndTrace does</th><th scope="col">Where you see it</th></tr></thead>
+          <tbody>
+            <tr><td class="op">010</td><td class="what"><strong>Identify the part</strong>Registers one principal barcode per part. Component and adjacent labels are stored with it, so genealogy is a lookup, not a hunt.</td><td class="where">BarCode, Reports</td></tr>
+            <tr><td class="op">020</td><td class="what"><strong>Validate each arrival</strong>Checks every reported arrival against the legal successors in the product's routing, and against the previous station's result.</td><td class="where">Monitor, Results</td></tr>
+            <tr><td class="op">030</td><td class="what"><strong>Record the cycle</strong>Keeps cycle results, OK and NOK part status, flow status and the process variables each station reports.</td><td class="where">Reports</td></tr>
+            <tr><td class="op">040</td><td class="what"><strong>Configure the routing</strong>Products, workflows, machines and PLCs are data, edited in the Configuration screens, not code.</td><td class="where">Configuration</td></tr>
+            <tr><td class="op">050</td><td class="what"><strong>Watch the line live</strong>Station status, parts and results stream to the browser over SignalR as they are reported.</td><td class="where">Dashboard</td></tr>
+            <tr><td class="op">060</td><td class="what"><strong>Find and export history</strong>Filter by date, product, customer, shift or state, open a part's full history, and export it.</td><td class="where">Reports</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <h2>The screens</h2>
+      <div class="prose"><p>Captured from the community edition running on a demo database. All companies, products and part numbers in it are fictitious.</p></div>
+      <div class="shots">
+        <figure class="shot wide">
+          <button type="button" data-zoom="assets/screens/reports-1600.webp" aria-label="Enlarge: Reports">
+            <div class="frame"><img src="assets/screens/reports-1600.webp" srcset="assets/screens/reports-800.webp 800w, assets/screens/reports-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 1180px" width="1600" height="1000" alt="Reports screen listing 189 barcodes with created time, OK or NOK part status, flow status and cycle count, with filters for date, product, customer, shift and state."></div>
+          </button>
+          <figcaption><strong>Reports.</strong> Every serialized part with its status, filtered by date, product, customer, shift or state, ready to export.</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom="assets/screens/routing-1600.webp" aria-label="Enlarge: Routing configuration">
+            <div class="frame"><img src="assets/screens/routing-800.webp" srcset="assets/screens/routing-800.webp 800w, assets/screens/routing-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" width="800" height="500" loading="lazy" alt="Configuration screen, Workflow tab: each row links a product to a machine and its legal next machine."></div>
+          </button>
+          <figcaption><strong>Routing.</strong> Each workflow row says which machine may follow which, per product. This is what arrivals are checked against.</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom="assets/screens/dashboard-1600.webp" aria-label="Enlarge: Line dashboard">
+            <div class="frame"><img src="assets/screens/dashboard-800.webp" srcset="assets/screens/dashboard-800.webp 800w, assets/screens/dashboard-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" width="800" height="500" loading="lazy" alt="Line dashboard with one card per station, WS100 to WS800, showing part number, barcode, event, result, cycle status and next machine."></div>
+          </button>
+          <figcaption><strong>Line dashboard.</strong> One card per station, updated live from the PLC gateway.</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom="assets/screens/machines-1600.webp" aria-label="Enlarge: Machines">
+            <div class="frame"><img src="assets/screens/machines-800.webp" srcset="assets/screens/machines-800.webp 800w, assets/screens/machines-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" width="800" height="500" loading="lazy" alt="Machines list: stations with their status and type (initial printer, process, final)."></div>
+          </button>
+          <figcaption><strong>Machines.</strong> The stations of a line and the role each plays in the routing.</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom="assets/screens/products-1600.webp" aria-label="Enlarge: Products">
+            <div class="frame"><img src="assets/screens/products-800.webp" srcset="assets/screens/products-800.webp 800w, assets/screens/products-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" width="800" height="500" loading="lazy" alt="Products list with internal part number, customer and customer part number."></div>
+          </button>
+          <figcaption><strong>Products.</strong> Internal and customer part numbers, per customer.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="videos">
+    <div class="wrap">
+      <h2>Walkthroughs</h2>
+      <div class="prose"><p>Short recordings of the community edition are being produced. They will appear here.</p></div>
+      <div class="videos">
+        <figure class="video">
+          <div class="video-slot"><img src="assets/screens/dashboard-800.webp" alt="" loading="lazy" width="800" height="500"><span>Recording soon</span></div>
+          <h3>A part's journey</h3>
+          <p>A part travels a simulated line, and each arrival is validated on the dashboard.</p>
+        </figure>
+        <figure class="video">
+          <div class="video-slot"><img src="assets/screens/routing-800.webp" alt="" loading="lazy" width="800" height="500"><span>Recording soon</span></div>
+          <h3>Define a routing</h3>
+          <p>Set up a product, its stations and the legal order between them.</p>
+        </figure>
+        <figure class="video">
+          <div class="video-slot"><img src="assets/screens/reports-800.webp" alt="" loading="lazy" width="800" height="500"><span>Recording soon</span></div>
+          <h3>Trace a part</h3>
+          <p>Start from one barcode and find every station, result and value it collected.</p>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="wrap">
+      <h2>How it is built</h2>
+      <div class="prose"><p>A hexagonal .NET 10 solution. Vendor drivers sit behind a small device contract, so the core never depends on a PLC brand.</p></div>
+      <div class="arch">
+        <svg viewBox="0 0 1100 380" role="img" aria-labelledby="arch-title arch-desc">
+          <title id="arch-title">IndTrace architecture</title>
+          <desc id="arch-desc">Line equipment reports to the gateway through the device contract. The gateway calls the application layer, which stores data in SQL Server, and publishes events to the SignalR hub, which feeds the Blazor monitor.</desc>
+          <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"/></marker></defs>
+          <rect class="box" x="20" y="60" width="200" height="100" rx="6"/>
+          <text class="t-title" x="40" y="98">Line equipment</text>
+          <text class="t-dim" x="40" y="124">PLCs, barcode readers</text>
+          <line class="seam" x1="284" y1="20" x2="284" y2="360"/>
+          <text class="t-dim" x="294" y="352">Device contract (IndTrace.Devices)</text>
+          <rect class="box" x="300" y="60" width="230" height="100" rx="6"/>
+          <text class="t-title" x="320" y="98">Gateway</text>
+          <text class="t-dim" x="320" y="124">Receives reports, validates,</text>
+          <text class="t-dim" x="320" y="142">acknowledges</text>
+          <rect class="box-accent" x="590" y="60" width="230" height="100" rx="6"/>
+          <text class="t-title on-tag" x="610" y="98">Application</text>
+          <text class="t-dim on-tag" x="610" y="124">CQRS handlers, routing rules,</text>
+          <text class="t-dim on-tag" x="610" y="142">Result&lt;T&gt; error flow</text>
+          <rect class="box" x="880" y="60" width="200" height="100" rx="6"/>
+          <text class="t-title" x="900" y="98">SQL Server</text>
+          <text class="t-dim" x="900" y="124">EF Core persistence</text>
+          <rect class="box" x="590" y="240" width="230" height="90" rx="6"/>
+          <text class="t-title" x="610" y="276">Hub</text>
+          <text class="t-dim" x="610" y="302">SignalR event stream</text>
+          <rect class="box" x="880" y="240" width="200" height="90" rx="6"/>
+          <text class="t-title" x="900" y="276">Monitor</text>
+          <text class="t-dim" x="900" y="302">Blazor UI</text>
+          <path class="flow" d="M222 96H296"/>
+          <text class="t-dim" x="228" y="86">report</text>
+          <path class="flow" d="M298 126H226"/>
+          <text class="t-dim" x="228" y="148">ack</text>
+          <path class="flow" d="M532 110H586"/>
+          <path class="flow" d="M822 110H876"/>
+          <path class="flow" d="M415 162V285H586"/>
+          <path class="flow" d="M822 285H876"/>
+          <path class="flow" d="M960 238V164"/>
+          <text class="t-dim" x="968" y="206">queries</text>
+        </svg>
+      </div>
+      <div class="arch-notes">
+        <div><h3>Community edition</h3><p>Ships an in-memory simulated PLC controller, so the whole stack runs without hardware.</p></div>
+        <div><h3>Drivers plug in</h3><p>Siemens S7 and Cognex DataMan drivers implement the same contract in the commercial edition.</p></div>
+        <div><h3>Two dispatchers</h3><p>PLC traffic and UI requests go through separate CQRS dispatchers, each with its own bounded context.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quality">
+    <div class="wrap">
+      <h2>Built for a plant floor</h2>
+      <div class="prose"><p>A wrong record can stop a line or ship a bad part, so the codebase holds a strict gate on every change.</p></div>
+      <div class="facts">
+        <div class="fact"><b>10,895</b><span>automated tests run in CI on every pull request</span></div>
+        <div class="fact"><b>0</b><span>compiler warnings allowed; every warning is an error</span></div>
+        <div class="fact"><b>Result&lt;T&gt;</b><span>errors travel as values, never as exceptions across boundaries</span></div>
+        <div class="fact"><b>AGPL-3.0</b><span>free to use, study, change and share</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="start">
+    <div class="wrap">
+      <h2>Get started</h2>
+      <ol class="steps">
+        <li><div><p>Install the <a href="https://dotnet.microsoft.com/download/dotnet/10.0">.NET 10 SDK</a>, then clone and build. The build treats warnings as errors.</p>
+<pre><code>git clone https://github.com/Exxerpro/IndTrace.git
+cd IndTrace
+dotnet build Src/IndTrace.sln</code></pre></div></li>
+        <li><div><p>Run a test suite. Suites run on Microsoft Testing Platform, so use <code>dotnet run</code>.</p>
+<pre><code>dotnet run --project Src/Tests/Core/Aggregation.BoundedTests/Application.AgregationTests.csproj</code></pre></div></li>
+        <li><div><p>Point the hosts at a SQL Server and start them. A step-by-step guide for an empty database and a simulated line is in progress in <a href="https://github.com/Exxerpro/IndTrace/issues/1">issue #1</a>.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="author">
+    <div class="wrap author">
+      <div>
+        <h2>Who builds it</h2>
+      </div>
+      <div class="prose">
+        <p>IndTrace is designed and led by <strong>Abel Briones Ramírez</strong> at Exxerpro Solutions, after more than 25 years of building automation and traceability for automotive and manufacturing plants. It grew from a system built for one plant into a platform meant for many.</p>
+        <div class="links">
+          <a href="https://hebelmx.github.io/abel-briones/projects/industrial-traceability-platform.html">The project in Abel's portfolio</a>
+          <a href="https://github.com/hebelmx">Abel on GitHub</a>
+          <a href="https://github.com/Exxerpro/IndTrace/blob/main/CONTRIBUTING.md">Contribute to IndTrace</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div>
+      <p>IndTrace is free software under the <a href="https://github.com/Exxerpro/IndTrace/blob/main/LICENSE">GNU AGPL v3.0 or later</a>. Copyright Exxerpro Solutions SA de CV.</p>
+      <p>Company names in the sample data are fictitious and imply no affiliation. See the <a href="https://github.com/Exxerpro/IndTrace/blob/main/NOTICE.md">notice</a>.</p>
+    </div>
+    <p><a href="https://github.com/Exxerpro/IndTrace/security/policy">Report a vulnerability</a></p>
+  </div>
+</footer>
+
+<dialog class="lightbox" aria-label="Enlarged screenshot">
+  <form method="dialog"><button type="submit">Close</button></form>
+  <img src="" alt="">
+</dialog>
+<script src="assets/site.js" defer></script>
+</body>
+</html>
