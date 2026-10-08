@@ -28,7 +28,7 @@ public class GatewayWorker(
     IGatewayCommandDispatcher commandDispatcher,
     IndTraceConfigurationService configService,
     IHubConnectionFactory connectionFactory,
-    DateTimeMachine dateTimeMachine,
+    IDateTimeMachine dateTimeMachine,
     IHubConnection hubConnection,
     IPlcControllerFactory plcControllerFactory)
     : BackgroundService, IManualStart
@@ -37,7 +37,7 @@ public class GatewayWorker(
     private readonly ILogger<GatewayWorker> logger = logger;
     private readonly IndTraceConfigurationService configService = configService;
     private readonly IHubConnectionFactory connectionFactory = connectionFactory;
-    private readonly DateTimeMachine dateTimeMachine = dateTimeMachine;
+    private readonly IDateTimeMachine dateTimeMachine = dateTimeMachine;
     private readonly IPlcControllerFactory plcControllerFactory = plcControllerFactory;
     private CancellationTokenSource? cts; // Allow individual worker cancellation
 
@@ -630,7 +630,7 @@ public class GatewayWorker(
     /// <param name="dateTimeMachine">The deterministic time source.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The created controller, or the factory's failure.</returns>
-    internal virtual Task<Result<IIndTraceControllerRx>> CreateControllerAsync(PlcDto value, DateTimeMachine dateTimeMachine, CancellationToken cancellationToken)
+    internal virtual Task<Result<IIndTraceControllerRx>> CreateControllerAsync(PlcDto value, IDateTimeMachine dateTimeMachine, CancellationToken cancellationToken)
         => value.AddControllerAsync(this.plcControllerFactory, this.logger, this.hubConnection, this.connectionFactory, dateTimeMachine, cancellationToken);
 
     /// <summary>
@@ -646,7 +646,7 @@ public class GatewayWorker(
     /// <param name="dateTimeMachine">The deterministic time source.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The configured controller, or a failure naming the PLC and the step that failed.</returns>
-    internal async Task<Result<IIndTraceControllerRx>> SetupControllerAsync(int key, PlcDto value, DateTimeMachine dateTimeMachine, CancellationToken cancellationToken)
+    internal async Task<Result<IIndTraceControllerRx>> SetupControllerAsync(int key, PlcDto value, IDateTimeMachine dateTimeMachine, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {

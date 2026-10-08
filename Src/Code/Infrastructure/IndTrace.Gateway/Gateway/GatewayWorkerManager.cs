@@ -11,7 +11,7 @@ using IndTrace.Gateway.Exceptions;
 /// Represents the GatewayWorkerManager.
 /// </summary>
 public class GatewayWorkerManager(ILogger<GatewayWorkerManager> logger,
-    DateTimeMachine dateTimeMachine,
+    IDateTimeMachine dateTimeMachine,
     IndTraceConfigurationService configService,
     IServiceProvider serviceProvider,
     IHostApplicationLifetime applicationLifetime) : BackgroundService
@@ -20,7 +20,7 @@ public class GatewayWorkerManager(ILogger<GatewayWorkerManager> logger,
     private readonly IServiceProvider serviceProvider = serviceProvider;
     private readonly IHostApplicationLifetime applicationLifetime = applicationLifetime;
     private IndTraceConfigurationService configService = configService;
-    private readonly DateTimeMachine dateTimeMachine = dateTimeMachine;
+    private readonly IDateTimeMachine dateTimeMachine = dateTimeMachine;
     private readonly Dictionary<int, GatewayWorker> gatewayWorkers = []; // Keeps track of workers
     private readonly Dictionary<int, Task> runningWorkers = []; // Keeps track of workers
     private readonly Dictionary<int, IServiceScope> workerScopes = []; // DI scope owned per worker for its lifetime
@@ -164,7 +164,7 @@ public class GatewayWorkerManager(ILogger<GatewayWorkerManager> logger,
                 scope.ServiceProvider.GetRequiredService<IGatewayCommandDispatcher>(),
                 scope.ServiceProvider.GetRequiredService<IndTraceConfigurationService>(),
                 scope.ServiceProvider.GetRequiredService<IHubConnectionFactory>(),
-                scope.ServiceProvider.GetRequiredService<DateTimeMachine>(),
+                scope.ServiceProvider.GetRequiredService<IDateTimeMachine>(),
                 hubConnection,
                 scope.ServiceProvider.GetRequiredService<IPlcControllerFactory>())
             {

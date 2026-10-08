@@ -77,6 +77,13 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\Code\Presentation\IndTrace.Monitor\Worker\HubMonitorWorker.cs" Link="Linked\HubMonitorWorker.cs" />
+    <Compile Include="..\..\..\Code\Presentation\IndTrace.Monitor\MonitorServiceRegistration.cs" Link="Linked\MonitorServiceRegistration.cs" />
+    <Compile Include="..\..\..\Code\Presentation\IndTrace.Monitor\Components\Account\AccountServiceRegistration.cs" Link="Linked\Account\AccountServiceRegistration.cs" />
+    <Compile Include="..\..\..\Code\Presentation\IndTrace.Monitor\Components\Account\IdentityRedirectManager.cs" Link="Linked\Account\IdentityRedirectManager.cs" />
+    <Compile Include="..\..\..\Code\Presentation\IndTrace.Monitor\Components\Account\IdentityUserAccessor.cs" Link="Linked\Account\IdentityUserAccessor.cs" />
+    <Compile Include="..\..\..\Code\Presentation\IndTrace.Monitor\Components\Account\IdentityNoOpEmailSender.cs" Link="Linked\Account\IdentityNoOpEmailSender.cs" />
+    <!-- The linked account helpers rely on the Web SDK implicit usings of the Monitor project. -->
+    <Using Include="Microsoft.AspNetCore.Http" />
     <!-- HubMonitorWorker (a BackgroundService) relies on the Web SDK's implicit Hosting using. -->
     <Using Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>

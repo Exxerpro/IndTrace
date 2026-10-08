@@ -37,7 +37,7 @@
 
         <MudPaper Elevation="1" Class="pa-3 my-2" data-testid="@($"node-{nodeIndex}")">
             <div class="d-flex align-center mb-2">
-                <MudText Typo="Typo.subtitle1"><b>@node.MachineName</b> <span class="mud-text-secondary">(M@node.MachineId)</span></MudText>
+                <MudText Typo="Typo.subtitle1"><b>@node.MachineName</b> <span class="mud-text-secondary">(M@(node.MachineId))</span></MudText>
 
                 <span class="mx-3">role:</span>
                 <select class="pa-1" @bind="node.RoleValue" data-testid="@($"node-role-{nodeIndex}")">
@@ -79,7 +79,7 @@
                     <select class="pa-1" @bind="edge.TargetMachineId" data-testid="@($"edge-target-{nodeIndex}-{edgeIndex}")">
                         @foreach (var machine in AvailableMachines)
                         {
-                            <option value="@machine.Key">@machine.Value (M@machine.Key)</option>
+                            <option value="@machine.Key">@machine.Value (M@(machine.Key))</option>
                         }
                     </select>
                     <MudButton Variant="Variant.Text"

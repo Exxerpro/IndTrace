@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Microsoft.AspNetCore.Identity;
-using IndTrace.Monitor.Data;
+using IndTrace.Identity.Data;
 
 namespace IndTrace.Monitor.Components.Account;
 

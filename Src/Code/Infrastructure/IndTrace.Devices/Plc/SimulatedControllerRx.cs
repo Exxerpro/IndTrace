@@ -30,7 +30,7 @@ public sealed class SimulatedControllerRx : IIndTraceControllerRx, IDisposable
     private const string CommandFeedbackTag = "CommandFeedback";
 
     private readonly ILogger logger;
-    private readonly DateTimeMachine dateTimeMachine;
+    private readonly IDateTimeMachine dateTimeMachine;
     private readonly Subject<IIndTraceControllerRx> commandChanged = new();
     private readonly Subject<IIndTraceControllerRx> heartBeatChanged = new();
     private readonly CompositeDisposable subscriptions = [];
@@ -45,7 +45,7 @@ public sealed class SimulatedControllerRx : IIndTraceControllerRx, IDisposable
     /// <param name="logger">The logger the controller reports through.</param>
     /// <param name="plcDetails">The PLC configuration being simulated.</param>
     /// <param name="dateTimeMachine">The deterministic time source.</param>
-    public SimulatedControllerRx(ILogger logger, PlcDto plcDetails, DateTimeMachine dateTimeMachine)
+    public SimulatedControllerRx(ILogger logger, PlcDto plcDetails, IDateTimeMachine dateTimeMachine)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(plcDetails);

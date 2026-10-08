@@ -10,13 +10,13 @@ namespace IndTrace.Application.BarCodes.Commands.Update;
 /// </summary>
 public class UpdateBarCodeCommandValidator : AbstractValidator<UpdateBarCodeCommand>
 {
-    private readonly DateTimeMachine dateTimeMachine;
+    private readonly IDateTimeMachine dateTimeMachine;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UpdateBarCodeCommandValidator"/> class.
     /// Initializes a new instance of the class.
     /// </summary>
-    public UpdateBarCodeCommandValidator(DateTimeMachine? dateTimeMachine = default)
+    public UpdateBarCodeCommandValidator(IDateTimeMachine? dateTimeMachine = default)
     {
         // [Fix]
         // CLAUDE

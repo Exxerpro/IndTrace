@@ -21,7 +21,7 @@ public interface IPlcControllerFactory
     /// <param name="logger">The logger the controller reports through.</param>
     /// <param name="dateTimeMachine">The deterministic time source.</param>
     /// <returns>The created controller, or a failure explaining why this factory cannot serve the PLC.</returns>
-    Result<IIndTraceControllerRx> Create(PlcDto plc, ILogger logger, DateTimeMachine dateTimeMachine);
+    Result<IIndTraceControllerRx> Create(PlcDto plc, ILogger logger, IDateTimeMachine dateTimeMachine);
 
     /// <summary>
     /// Classifies an exception escaping a controller created by this factory. <see langword="true"/> means the

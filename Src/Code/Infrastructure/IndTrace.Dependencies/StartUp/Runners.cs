@@ -91,18 +91,44 @@ public static class Runners
     }
 
     /// <summary>
-    /// Sets the current process priority to <see cref="ProcessPriorityClass.High"/>.
+    /// Raises the current process priority to <see cref="ProcessPriorityClass.High"/>, best effort.
     /// </summary>
     /// <param name="logger">The logger to use for logging information.</param>
+    /// <returns><see langword="true"/> when the priority was raised; otherwise <see langword="false"/>.</returns>
     /// <remarks>
-    /// This method may throw <see cref="System.ComponentModel.Win32Exception"/> if the priority cannot be set.
+    /// Raising priority needs privileges the OS may deny (on Linux, without <c>CAP_SYS_NICE</c> it fails with
+    /// "Permission denied"). Priority is a scheduling hint, not a correctness requirement, so a refusal is logged
+    /// as a warning and start-up continues instead of crashing the gateway.
     /// </remarks>
-    public static void EnsureProgramIsHighPriority(ILogger logger)
+    public static bool EnsureProgramIsHighPriority(ILogger logger)
     {
-        Process currentProcess = Process.GetCurrentProcess();
+        using var currentProcess = Process.GetCurrentProcess();
+        return EnsureProgramIsHighPriority(logger, priority => currentProcess.PriorityClass = priority);
+    }
 
-        currentProcess.PriorityClass = ProcessPriorityClass.High;
-        logger.LogInformation("Setting process priority to High.");
+    /// <summary>
+    /// Raises the process priority to <see cref="ProcessPriorityClass.High"/> through <paramref name="setPriority"/>,
+    /// best effort (see <see cref="EnsureProgramIsHighPriority(ILogger)"/>).
+    /// </summary>
+    /// <param name="logger">The logger to use for logging information.</param>
+    /// <param name="setPriority">Applies the priority to the process.</param>
+    /// <returns><see langword="true"/> when the priority was raised; otherwise <see langword="false"/>.</returns>
+    public static bool EnsureProgramIsHighPriority(ILogger logger, Action<ProcessPriorityClass> setPriority)
+    {
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(setPriority);
+
+        try
+        {
+            setPriority(ProcessPriorityClass.High);
+            logger.LogInformation("Process priority set to High.");
+            return true;
+        }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or PlatformNotSupportedException or InvalidOperationException)
+        {
+            logger.LogWarning(ex, "Could not raise the process priority to High; continuing at normal priority.");
+            return false;
+        }
     }
 
     /// <summary>

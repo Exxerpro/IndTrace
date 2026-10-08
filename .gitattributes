@@ -26,7 +26,7 @@ setup.py  text
 # --- SQL / Scripts ---
 *.sql     text
 *.ps1     text
-*.sh      text
+*.sh      text eol=lf
 *.cmd     text
 *.bat     text
 

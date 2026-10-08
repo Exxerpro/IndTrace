@@ -5,7 +5,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using IndTrace.Monitor.Data;
+using IndTrace.Identity.Data;
 
 namespace IndTrace.Monitor.Components.Account;
 

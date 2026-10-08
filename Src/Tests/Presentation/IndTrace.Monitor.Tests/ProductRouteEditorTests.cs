@@ -43,6 +43,31 @@ public sealed class ProductRouteEditorTests : IDisposable
     };
 
     /// <summary>
+    /// Each node card and edge option names its machine id. Razor read the former <c>(M@node.MachineId)</c> and
+    /// <c>(M@machine.Key)</c> as e-mail addresses and printed them literally instead of "(M20)".
+    /// </summary>
+    [Fact]
+    public void NodeCardsAndEdgeOptions_ShowTheMachineId()
+    {
+        var editor = this.context.Render<ProductRouteEditor>(p => p
+            .Add(x => x.ProductId, 4471)
+            .Add(x => x.ProductName, "PN-4471")
+            .Add(x => x.AvailableMachines, ThreeMachines));
+
+        editor.Find("button[data-testid='add-machine-20']").Click();
+
+        var card = editor.Find("[data-testid='node-0']").TextContent;
+        card.ShouldContain("(M20)");
+        card.ShouldNotContain("@node");
+
+        // The edge-target options name their machine the same way.
+        editor.Find("button[data-testid='add-branch-0']").Click();
+        var options = editor.FindAll("select[data-testid='edge-target-0-0'] option").Select(o => o.TextContent).ToList();
+        options.ShouldContain("Test (M30)");
+        options.ShouldAllBe(o => !o.Contains("@machine"));
+    }
+
+    /// <summary>
     /// Authors a diverter through the UI: add machine 20 as a node, click "+ branch" twice, point the two edges at
     /// machines 30 and 31, submit. The emitted route's node for machine 20 must have <c>Outgoing.Count == 2</c>.
     /// </summary>

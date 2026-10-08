@@ -7,6 +7,7 @@ namespace IndTrace.Devices.Tests;
 
 using IndTrace.Devices.Plc;
 using IndTrace.Devices.Scanning;
+using IndTrace.Domain.Interfaces;
 using IndTrace.Domain.Models;
 using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.DependencyInjection;
@@ -86,7 +87,7 @@ public class CommunityDefaultsTests(ITestOutputHelper output)
         public IndQuestResults.Result<IIndTraceControllerRx> Create(
             IndTrace.Application.Plcs.Queries.GetDetail.PlcDto plc,
             Microsoft.Extensions.Logging.ILogger logger,
-            DateTimeMachine dateTimeMachine) =>
+            IDateTimeMachine dateTimeMachine) =>
             IndQuestResults.Result<IIndTraceControllerRx>.WithFailure("double");
 
         public bool IsControllerUnreachable(Exception exception) => true;

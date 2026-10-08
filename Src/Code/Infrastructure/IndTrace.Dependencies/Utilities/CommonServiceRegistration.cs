@@ -266,6 +266,11 @@ public static class CommonServiceRegistration
         // DbContext Ignore<FlowStatus>()s it; the persisted twin is FlowStatusEntity).
         services.AddRepository<IRepository<ShiftsCatalog>, Repository<ShiftsCatalog>, ShiftsCatalog>(lifeTime);
 
+        // OEE performance data written by the gateway's CreatePerformanceDataCommandHandler. Both entities are mapped
+        // in IndTraceDbContext but had no repository registration, so the gateway could not start under ValidateOnBuild.
+        services.AddRepository<IRepository<OeeRegister>, Repository<OeeRegister>, OeeRegister>(lifeTime);
+        services.AddRepository<IRepository<KpiOee>, Repository<KpiOee>, KpiOee>(lifeTime);
+
         // #41: operation-scoped aggregate UoW for a product's routing (two-flush transactional replace +
         // rowversion concurrency token). Registered at the same lifetime as the per-entity repositories.
         services.Add(new ServiceDescriptor(

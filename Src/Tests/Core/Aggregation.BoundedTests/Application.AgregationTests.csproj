@@ -39,6 +39,10 @@
   <!-- ============================================================================ -->
   <!-- CONFIGURATION FILES -->
   <!-- ============================================================================ -->
+  <!-- The gateway host composition, compiled in so its container can be built under the host's validation options. -->
+  <ItemGroup Label="Linked Gateway Composition">
+    <Compile Include="..\..\..\Code\Infrastructure\IndTrace.Communications\GatewayServiceRegistration.cs" Link="Linked\GatewayServiceRegistration.cs" />
+  </ItemGroup>
   <ItemGroup Label="Configuration Files">
     <None Remove="appsettings.Development.json" />
     <None Remove="appsettings.json" />
@@ -137,7 +141,8 @@
     <ProjectReference Include="..\..\..\Code\Core\Domain\IndTrace.Domain.csproj" />
   </ItemGroup>
   <ItemGroup Label="Infrastructure References">
-    <!--<ProjectReference Include="..\..\..\Infrastructure\IndTrace.Gateway\IndTrace.Gateway.csproj" />-->
+    <!-- The gateway: needed by the linked gateway host composition (GatewayServiceRegistrationTests). -->
+    <ProjectReference Include="..\..\..\Code\Infrastructure\IndTrace.Gateway\IndTrace.Gateway.csproj" />
     <ProjectReference Include="..\..\..\Code\Infrastructure\IndTrace.Persistence\IndTrace.Persistence.csproj" />
     <!-- Issue #88: ErrorHandlingMiddleware moved here from Core; needed to compile ErrorHandlingMiddlewareTests. -->
     <ProjectReference Include="..\..\..\Code\Infrastructure\IndTrace.Dependencies\IndTrace.Dependencies.csproj" />
