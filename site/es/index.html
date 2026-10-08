@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IndTrace — Trazabilidad de manufactura de código abierto para líneas con PLC</title>
+<meta name="description" content="IndTrace registra cada pieza serializada a lo largo de una línea de producción conectada a PLC y valida cada llegada contra la ruta de la pieza. Código abierto (AGPL), .NET 10, Blazor, SQL Server.">
+<link rel="canonical" href="https://exxerpro.github.io/IndTrace/es/">
+<link rel="alternate" hreflang="en" href="https://exxerpro.github.io/IndTrace/">
+<link rel="alternate" hreflang="es" href="https://exxerpro.github.io/IndTrace/es/">
+<link rel="alternate" hreflang="x-default" href="https://exxerpro.github.io/IndTrace/">
+<meta name="theme-color" content="#1e2428">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="IndTrace">
+<meta property="og:title" content="IndTrace — Trazabilidad de manufactura de código abierto">
+<meta property="og:description" content="Cada pieza, cada estación, registrada. IndTrace rastrea piezas en líneas con PLC y valida cada llegada contra su ruta.">
+<meta property="og:url" content="https://exxerpro.github.io/IndTrace/es/">
+<meta property="og:image" content="https://exxerpro.github.io/IndTrace/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_MX">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&family=Libre+Barcode+128+Text&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "IndTrace",
+  "description": "Trazabilidad de manufactura de código abierto para líneas de producción conectadas a PLC: registra piezas, ciclos y valores de proceso, y valida cada llegada contra la ruta de la pieza.",
+  "codeRepository": "https://github.com/Exxerpro/IndTrace",
+  "url": "https://exxerpro.github.io/IndTrace/es/",
+  "inLanguage": "es",
+  "programmingLanguage": ["C#", "Razor"],
+  "runtimePlatform": ".NET 10",
+  "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+  "keywords": "traceability, manufacturing, MES, PLC, Industry 4.0, OEE, Blazor, SignalR, SQL Server",
+  "author": { "@type": "Person", "name": "Abel Briones Ramírez", "url": "https://hebelmx.github.io/abel-briones/" },
+  "publisher": { "@type": "Organization", "name": "Exxerpro Solutions SA de CV" }
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Ir al contenido</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="Inicio de IndTrace">
+      <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="5" width="20" height="12" rx="2" fill="#f0b92b" stroke="currentColor" stroke-width="2"/><path d="M5 8v6M8 8v6M10 8v6M13 8v6M16 8v6" stroke="currentColor" stroke-width="1.6"/></svg>
+      IndTrace
+    </a>
+    <nav class="head-nav" aria-label="Principal">
+      <a href="#how">Cómo funciona</a>
+      <a href="#screens">Pantallas</a>
+      <a href="#start">Primeros pasos</a>
+      <a href="https://github.com/Exxerpro/IndTrace">GitHub</a>
+      <a href="../" hreflang="en" lang="en">English</a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar entre tema claro y oscuro">Tema</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="hero">
+    <div class="wrap">
+      <h1>Cada pieza, cada estación, registrada.</h1>
+      <p class="lead">IndTrace registra lo que le pasa a cada pieza serializada mientras recorre una línea de producción conectada a PLC, y revisa cada llegada contra la ruta de la pieza. Sus máquinas y operadores siguen al mando. IndTrace guarda el historial y señala lo que no debió ocurrir.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="https://github.com/Exxerpro/IndTrace">Ver el código en GitHub</a>
+        <a class="btn btn-plain" href="#screens">Ver las pantallas</a>
+      </div>
+    </div>
+    <div class="line" data-line>
+      <div class="wrap">
+        <ol class="stations" aria-label="Ejemplo: una pieza que se reporta en cinco estaciones">
+          <li class="station"><span class="station-post"></span><span class="station-id">WS100</span><span class="station-name">Impresión de etiqueta</span><span class="tag-slot"></span><span class="verdict"></span></li>
+          <li class="station"><span class="station-post"></span><span class="station-id">WS200</span><span class="station-name">Ensamble</span><span class="tag-slot"></span><span class="verdict"></span></li>
+          <li class="station"><span class="station-post"></span><span class="station-id">WS300</span><span class="station-name">Prueba de fuga</span><span class="tag-slot"></span><span class="verdict"></span></li>
+          <li class="station"><span class="station-post"></span><span class="station-id">WS400</span><span class="station-name">Inspección por visión</span><span class="tag-slot"></span><span class="verdict"></span></li>
+          <li class="station"><span class="station-post"></span><span class="station-id">WS500</span><span class="station-name">Empaque final</span><span class="tag-slot"></span><span class="verdict"></span></li>
+        </ol>
+        <p class="line-caption">La pieza L1AL100003 se reporta en cada estación. WS200 y WS300 son pasos siguientes válidos, así que IndTrace los registra. Cuando la pieza llega a WS500 sin haber pasado por WS400, IndTrace registra la llegada como rechazada y se lo informa a la línea.</p>
+      </div>
+    </div>
+    <script type="application/json" id="line-script">
+      [
+        { "part": "a", "label": "L1AL100003", "station": 0, "ok": true,  "text": "Etiqueta registrada" },
+        { "part": "a", "label": "L1AL100003", "station": 1, "ok": true,  "text": "Paso siguiente válido" },
+        { "part": "a", "label": "L1AL100003", "station": 2, "ok": true,  "text": "Paso siguiente válido" },
+        { "part": "a", "label": "L1AL100003", "station": 4, "ok": false, "text": "Saltó WS400: registrada como rechazada" }
+      ]
+    </script>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <h2>Rastrea. No controla.</h2>
+      <div class="prose">
+        <p>Muchos problemas de trazabilidad vienen de sistemas que intentan manejar la línea. IndTrace no lo hace. El equipo decide a dónde va una pieza; IndTrace determina si ese movimiento fue válido y guarda la evidencia.</p>
+      </div>
+      <div class="split">
+        <div>
+          <h3>La línea decide</h3>
+          <ul>
+            <li>El PLC y el operador mueven la pieza y ejecutan el proceso.</li>
+            <li>Cada estación evalúa su propio ciclo: pasa o no pasa.</li>
+            <li>Cuando una pieza llega a una estación, el PLC la reporta.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>IndTrace registra y valida</h3>
+          <ul>
+            <li>Guarda el código de barras, la estación, el resultado del ciclo, los valores de proceso y la hora.</li>
+            <li>Revisa la llegada contra la ruta del producto: ¿esta estación es un paso siguiente válido?</li>
+            <li>Responde al PLC con un acuse y un resultado de validación.</li>
+          </ul>
+          <p class="note">Nunca envía una orden de "ir a la máquina X".</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <h2>Qué hace, operación por operación</h2>
+      <div class="route-card">
+        <div class="route-card-head"><span>Hoja de ruta: IndTrace</span><span>Rev. edición comunitaria</span></div>
+        <table>
+          <thead><tr><th scope="col">Op</th><th scope="col">Qué hace IndTrace</th><th scope="col">Dónde lo ve</th></tr></thead>
+          <tbody>
+            <tr><td class="op">010</td><td class="what"><strong>Identificar la pieza</strong>Registra un código de barras principal por pieza. Las etiquetas de componentes y adyacentes se guardan con él, así que la genealogía es una consulta, no una búsqueda.</td><td class="where">BarCode, Reports</td></tr>
+            <tr><td class="op">020</td><td class="what"><strong>Validar cada llegada</strong>Revisa cada llegada reportada contra los sucesores válidos en la ruta del producto y contra el resultado de la estación anterior.</td><td class="where">Monitor, Results</td></tr>
+            <tr><td class="op">030</td><td class="what"><strong>Registrar el ciclo</strong>Guarda los resultados de ciclo, el estado OK y NOK de la pieza, el estado de flujo y las variables de proceso que reporta cada estación.</td><td class="where">Reports</td></tr>
+            <tr><td class="op">040</td><td class="what"><strong>Configurar la ruta</strong>Productos, flujos, máquinas y PLC son datos que se editan en las pantallas de configuración, no código.</td><td class="where">Configuration</td></tr>
+            <tr><td class="op">050</td><td class="what"><strong>Ver la línea en vivo</strong>El estado de las estaciones, las piezas y los resultados llegan al navegador por SignalR conforme se reportan.</td><td class="where">Dashboard</td></tr>
+            <tr><td class="op">060</td><td class="what"><strong>Buscar y exportar el historial</strong>Filtre por fecha, producto, cliente, turno o estado, abra el historial completo de una pieza y expórtelo.</td><td class="where">Reports</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <h2>Las pantallas</h2>
+      <div class="prose"><p>Capturadas de la edición comunitaria con una base de datos de demostración. Todas las empresas, productos y números de parte que aparecen son ficticios.</p></div>
+      <div class="shots">
+        <figure class="shot wide">
+          <button type="button" data-zoom="../assets/screens/reports-1600.webp" aria-label="Ampliar: Reportes">
+            <div class="frame"><img src="../assets/screens/reports-1600.webp" srcset="../assets/screens/reports-800.webp 800w, ../assets/screens/reports-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 1180px" width="1600" height="1000" alt="Pantalla de reportes con 189 códigos de barras, su fecha de creación, estado OK o NOK, estado de flujo y número de ciclos, con filtros por fecha, producto, cliente, turno y estado."></div>
+          </button>
+          <figcaption><strong>Reportes.</strong> Cada pieza serializada con su estado, filtrada por fecha, producto, cliente, turno o estado, lista para exportar.</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom="../assets/screens/routing-1600.webp" aria-label="Ampliar: Configuración de rutas">
+            <div class="frame"><img src="../assets/screens/routing-800.webp" srcset="../assets/screens/routing-800.webp 800w, ../assets/screens/routing-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" width="800" height="500" loading="lazy" alt="Pantalla de configuración, pestaña Workflow: cada fila relaciona un producto con una máquina y su siguiente máquina válida."></div>
+          </button>
+          <figcaption><strong>Rutas.</strong> Cada fila de flujo indica qué máquina puede seguir a cuál, por producto. Contra esto se revisan las llegadas.</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom="../assets/screens/dashboard-1600.webp" aria-label="Ampliar: Tablero de línea">
+            <div class="frame"><img src="../assets/screens/dashboard-800.webp" srcset="../assets/screens/dashboard-800.webp 800w, ../assets/screens/dashboard-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" width="800" height="500" loading="lazy" alt="Tablero de línea con una tarjeta por estación, de WS100 a WS800, con número de parte, código de barras, evento, resultado, estado de ciclo y siguiente máquina."></div>
+          </button>
+          <figcaption><strong>Tablero de línea.</strong> Una tarjeta por estación, actualizada en vivo desde el gateway de PLC.</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom="../assets/screens/machines-1600.webp" aria-label="Ampliar: Máquinas">
+            <div class="frame"><img src="../assets/screens/machines-800.webp" srcset="../assets/screens/machines-800.webp 800w, ../assets/screens/machines-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" width="800" height="500" loading="lazy" alt="Lista de máquinas: estaciones con su estado y tipo (impresora inicial, proceso, final)."></div>
+          </button>
+          <figcaption><strong>Máquinas.</strong> Las estaciones de una línea y el papel de cada una en la ruta.</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom="../assets/screens/products-1600.webp" aria-label="Ampliar: Productos">
+            <div class="frame"><img src="../assets/screens/products-800.webp" srcset="../assets/screens/products-800.webp 800w, ../assets/screens/products-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" width="800" height="500" loading="lazy" alt="Lista de productos con número de parte interno, cliente y número de parte del cliente."></div>
+          </button>
+          <figcaption><strong>Productos.</strong> Números de parte internos y del cliente, por cliente.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="videos">
+    <div class="wrap">
+      <h2>Recorridos en video</h2>
+      <div class="prose"><p>Estamos grabando videos cortos de la edición comunitaria. Aparecerán aquí.</p></div>
+      <div class="videos">
+        <figure class="video">
+          <div class="video-slot"><img src="../assets/screens/dashboard-800.webp" alt="" loading="lazy" width="800" height="500"><span>Próximamente</span></div>
+          <h3>El recorrido de una pieza</h3>
+          <p>Una pieza recorre una línea simulada y cada llegada se valida en el tablero.</p>
+        </figure>
+        <figure class="video">
+          <div class="video-slot"><img src="../assets/screens/routing-800.webp" alt="" loading="lazy" width="800" height="500"><span>Próximamente</span></div>
+          <h3>Definir una ruta</h3>
+          <p>Configure un producto, sus estaciones y el orden válido entre ellas.</p>
+        </figure>
+        <figure class="video">
+          <div class="video-slot"><img src="../assets/screens/reports-800.webp" alt="" loading="lazy" width="800" height="500"><span>Próximamente</span></div>
+          <h3>Rastrear una pieza</h3>
+          <p>Parta de un código de barras y encuentre cada estación, resultado y valor que registró.</p>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="wrap">
+      <h2>Cómo está construido</h2>
+      <div class="prose"><p>Una solución hexagonal en .NET 10. Los drivers de cada fabricante quedan detrás de un contrato de dispositivos pequeño, así que el núcleo nunca depende de una marca de PLC.</p></div>
+      <div class="arch">
+        <svg viewBox="0 0 1100 380" role="img" aria-labelledby="arch-title arch-desc">
+          <title id="arch-title">Arquitectura de IndTrace</title>
+          <desc id="arch-desc">El equipo de línea reporta al gateway a través del contrato de dispositivos. El gateway llama a la capa de aplicación, que guarda los datos en SQL Server, y publica eventos en el hub de SignalR, que alimenta el monitor en Blazor.</desc>
+          <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z"/></marker></defs>
+          <rect class="box" x="20" y="60" width="200" height="100" rx="6"/>
+          <text class="t-title" x="40" y="98">Equipo de línea</text>
+          <text class="t-dim" x="40" y="124">PLC, lectores de código</text>
+          <line class="seam" x1="284" y1="20" x2="284" y2="360"/>
+          <text class="t-dim" x="294" y="352">Contrato de dispositivos (IndTrace.Devices)</text>
+          <rect class="box" x="300" y="60" width="230" height="100" rx="6"/>
+          <text class="t-title" x="320" y="98">Gateway</text>
+          <text class="t-dim" x="320" y="124">Recibe reportes, valida</text>
+          <text class="t-dim" x="320" y="142">y responde</text>
+          <rect class="box-accent" x="590" y="60" width="230" height="100" rx="6"/>
+          <text class="t-title on-tag" x="610" y="98">Aplicación</text>
+          <text class="t-dim on-tag" x="610" y="124">Handlers CQRS, reglas de ruta,</text>
+          <text class="t-dim on-tag" x="610" y="142">errores con Result&lt;T&gt;</text>
+          <rect class="box" x="880" y="60" width="200" height="100" rx="6"/>
+          <text class="t-title" x="900" y="98">SQL Server</text>
+          <text class="t-dim" x="900" y="124">Persistencia con EF Core</text>
+          <rect class="box" x="590" y="240" width="230" height="90" rx="6"/>
+          <text class="t-title" x="610" y="276">Hub</text>
+          <text class="t-dim" x="610" y="302">Flujo de eventos SignalR</text>
+          <rect class="box" x="880" y="240" width="200" height="90" rx="6"/>
+          <text class="t-title" x="900" y="276">Monitor</text>
+          <text class="t-dim" x="900" y="302">Interfaz Blazor</text>
+          <path class="flow" d="M222 96H296"/>
+          <text class="t-dim" x="228" y="86">reporte</text>
+          <path class="flow" d="M298 126H226"/>
+          <text class="t-dim" x="228" y="148">acuse</text>
+          <path class="flow" d="M532 110H586"/>
+          <path class="flow" d="M822 110H876"/>
+          <path class="flow" d="M415 162V285H586"/>
+          <path class="flow" d="M822 285H876"/>
+          <path class="flow" d="M960 238V164"/>
+          <text class="t-dim" x="968" y="206">consultas</text>
+        </svg>
+      </div>
+      <div class="arch-notes">
+        <div><h3>Edición comunitaria</h3><p>Incluye un controlador de PLC simulado en memoria, para correr todo el sistema sin hardware.</p></div>
+        <div><h3>Drivers intercambiables</h3><p>En la edición comercial, los drivers de Siemens S7 y Cognex DataMan implementan el mismo contrato.</p></div>
+        <div><h3>Dos despachadores</h3><p>El tráfico de PLC y las peticiones de la interfaz pasan por despachadores CQRS separados, cada uno con su propio contexto.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quality">
+    <div class="wrap">
+      <h2>Hecho para piso de planta</h2>
+      <div class="prose"><p>Un registro equivocado puede detener una línea o dejar salir una pieza mala, así que cada cambio pasa por un control estricto.</p></div>
+      <div class="facts">
+        <div class="fact"><b>10,895</b><span>pruebas automatizadas en CI en cada pull request</span></div>
+        <div class="fact"><b>0</b><span>advertencias del compilador permitidas; cada advertencia es un error</span></div>
+        <div class="fact"><b>Result&lt;T&gt;</b><span>los errores viajan como valores, nunca como excepciones entre capas</span></div>
+        <div class="fact"><b>AGPL-3.0</b><span>libre de usar, estudiar, modificar y compartir</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="start">
+    <div class="wrap">
+      <h2>Primeros pasos</h2>
+      <ol class="steps">
+        <li><div><p>Instale el <a href="https://dotnet.microsoft.com/download/dotnet/10.0">SDK de .NET 10</a>, clone el repositorio y compile. La compilación trata las advertencias como errores.</p>
+<pre><code>git clone https://github.com/Exxerpro/IndTrace.git
+cd IndTrace
+dotnet build Src/IndTrace.sln</code></pre></div></li>
+        <li><div><p>Ejecute una suite de pruebas. Las suites usan Microsoft Testing Platform, así que use <code>dotnet run</code>.</p>
+<pre><code>dotnet run --project Src/Tests/Core/Aggregation.BoundedTests/Application.AgregationTests.csproj</code></pre></div></li>
+        <li><div><p>Configure los hosts con un SQL Server e inícielos. Una guía paso a paso para una base de datos vacía y una línea simulada está en preparación en el <a href="https://github.com/Exxerpro/IndTrace/issues/1">issue #1</a>.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="author">
+    <div class="wrap author">
+      <div>
+        <h2>Quién lo construye</h2>
+      </div>
+      <div class="prose">
+        <p>IndTrace es diseñado y dirigido por <strong>Abel Briones Ramírez</strong> en Exxerpro Solutions, con más de 25 años de experiencia en automatización y trazabilidad para plantas automotrices y de manufactura. Nació como un sistema para una planta y creció hasta ser una plataforma para muchas.</p>
+        <div class="links">
+          <a href="https://hebelmx.github.io/abel-briones/projects/industrial-traceability-platform.html">El proyecto en el portafolio de Abel</a>
+          <a href="https://github.com/hebelmx">Abel en GitHub</a>
+          <a href="https://github.com/Exxerpro/IndTrace/blob/main/CONTRIBUTING.md">Contribuir a IndTrace</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div>
+      <p>IndTrace es software libre bajo la <a href="https://github.com/Exxerpro/IndTrace/blob/main/LICENSE">GNU AGPL v3.0 o posterior</a>. Copyright Exxerpro Solutions SA de CV.</p>
+      <p>Los nombres de empresas en los datos de ejemplo son ficticios y no implican afiliación. Vea el <a href="https://github.com/Exxerpro/IndTrace/blob/main/NOTICE.md">aviso</a>.</p>
+    </div>
+    <p><a href="https://github.com/Exxerpro/IndTrace/security/policy">Reportar una vulnerabilidad</a></p>
+  </div>
+</footer>
+
+<dialog class="lightbox" aria-label="Captura ampliada">
+  <form method="dialog"><button type="submit">Cerrar</button></form>
+  <img src="" alt="">
+</dialog>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>

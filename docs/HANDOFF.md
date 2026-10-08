@@ -35,8 +35,9 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
   AGPL license headers and adds the root templates (README, LICENSE, CONTRIBUTING, NOTICE, `Src/nuget.config`,
   `.gitignore`). It then runs gates: a deny-list scan, gitleaks, an isolated clean-clone build, and tests.
   Any gate failure aborts the export.
-- **Owned by this repository** (never written by the export, safe to edit here): `docs/**` and `.github/**`
-  (CI, community health files, issue and PR templates). Root files such as `README.md`, `NOTICE.md` and
+- **Owned by this repository** (never written by the export, safe to edit here): `docs/**`, `.github/**`
+  (CI, community health files, issue and PR templates) and `site/**` (the GitHub Pages project website,
+  English at `/` and Spanish at `/es/`, deployed by `.github/workflows/pages.yml`). Root files such as `README.md`, `NOTICE.md` and
   `CONTRIBUTING.md` are export templates: edit them in the enterprise repository.
 - **Sync procedure** (from the enterprise repository, .NET 10 SDK on `PATH`; this clone checked out next to
   it as `../IndTrace-oss`):
@@ -47,7 +48,7 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
   ```
 
   `sync.sh` exports into a separate staging directory (`../IndTrace-oss-export`) and mirrors it into this
-  clone, keeping `.git`, `docs/` and `.github/`. It refuses a clone that is dirty, is not `Exxerpro/IndTrace`,
+  clone, keeping `.git`, `docs/`, `.github/` and `site/`. It refuses a clone that is dirty, is not `Exxerpro/IndTrace`,
   or commits with a non-noreply e-mail. `export.py` refuses to write into a git checkout, because `--force`
   deletes its output directory. Do not re-run `git init` or force-push: later syncs are ordinary commits on
   top of `main`.
