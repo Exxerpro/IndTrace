@@ -42,6 +42,56 @@
   "publisher": { "@type": "Organization", "name": "Exxerpro Solutions SA de CV" }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "VideoObject",
+        "name": "A part's journey",
+        "description": "Five simulated stations report a part's arrivals; each one is validated. A second part skips the vision check and its arrival at final pack is refused as an illegal successor.",
+        "thumbnailUrl": "https://exxerpro.github.io/IndTrace/assets/video/part-journey-poster.webp",
+        "contentUrl": "https://exxerpro.github.io/IndTrace/assets/video/part-journey.mp4",
+        "uploadDate": "2026-10-08",
+        "duration": "PT44S",
+        "inLanguage": "en"
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Define a routing",
+        "description": "Create a product, add its five stations, connect them in order and mark the first and last station. The new route appears in the configuration.",
+        "thumbnailUrl": "https://exxerpro.github.io/IndTrace/assets/video/define-routing-poster.webp",
+        "contentUrl": "https://exxerpro.github.io/IndTrace/assets/video/define-routing.mp4",
+        "uploadDate": "2026-10-08",
+        "duration": "PT42S",
+        "inLanguage": "en"
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Trace a part",
+        "description": "Find one barcode and open its history: every station, cycle time, result and recorded value.",
+        "thumbnailUrl": "https://exxerpro.github.io/IndTrace/assets/video/trace-part-poster.webp",
+        "contentUrl": "https://exxerpro.github.io/IndTrace/assets/video/trace-part.mp4",
+        "uploadDate": "2026-10-08",
+        "duration": "PT22S",
+        "inLanguage": "en"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -185,22 +235,28 @@
   <section id="videos">
     <div class="wrap">
       <h2>Walkthroughs</h2>
-      <div class="prose"><p>Short recordings of the community edition are being produced. They will appear here.</p></div>
+      <div class="prose"><p>Recorded on the community edition with a simulated line and fictitious demo data. No audio.</p></div>
       <div class="videos">
         <figure class="video">
-          <div class="video-slot"><img src="assets/screens/dashboard-800.webp" alt="" loading="lazy" width="800" height="500"><span>Recording soon</span></div>
+          <video controls preload="none" playsinline poster="assets/video/part-journey-poster.webp" width="1280" height="800" aria-label="A part's journey">
+            <source src="assets/video/part-journey.mp4" type="video/mp4">
+          </video>
           <h3>A part's journey</h3>
-          <p>A part travels a simulated line, and each arrival is validated on the dashboard.</p>
+          <p>Five simulated stations report a part's arrivals; each one is validated. A second part skips the vision check and its arrival at final pack is refused as an illegal successor.</p>
         </figure>
         <figure class="video">
-          <div class="video-slot"><img src="assets/screens/routing-800.webp" alt="" loading="lazy" width="800" height="500"><span>Recording soon</span></div>
+          <video controls preload="none" playsinline poster="assets/video/define-routing-poster.webp" width="1280" height="800" aria-label="Define a routing">
+            <source src="assets/video/define-routing.mp4" type="video/mp4">
+          </video>
           <h3>Define a routing</h3>
-          <p>Set up a product, its stations and the legal order between them.</p>
+          <p>Create a product, add its five stations, connect them in order and mark the first and last station. The new route appears in the configuration.</p>
         </figure>
         <figure class="video">
-          <div class="video-slot"><img src="assets/screens/reports-800.webp" alt="" loading="lazy" width="800" height="500"><span>Recording soon</span></div>
+          <video controls preload="none" playsinline poster="assets/video/trace-part-poster.webp" width="1280" height="800" aria-label="Trace a part">
+            <source src="assets/video/trace-part.mp4" type="video/mp4">
+          </video>
           <h3>Trace a part</h3>
-          <p>Start from one barcode and find every station, result and value it collected.</p>
+          <p>Find one barcode and open its history: every station, cycle time, result and recorded value.</p>
         </figure>
       </div>
     </div>
