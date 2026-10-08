@@ -13,7 +13,7 @@ namespace IndTrace.Devices.Plc;
 public sealed class SimulatedPlcControllerFactory : IPlcControllerFactory
 {
     /// <inheritdoc/>
-    public Result<IIndTraceControllerRx> Create(PlcDto plc, ILogger logger, DateTimeMachine dateTimeMachine)
+    public Result<IIndTraceControllerRx> Create(PlcDto plc, ILogger logger, IDateTimeMachine dateTimeMachine)
     {
         if (plc is null || logger is null || dateTimeMachine is null)
         {

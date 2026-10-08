@@ -26,7 +26,7 @@ public static class PlcExtensions
         ILogger logger,
         IndTrace.HubConnection.Abstractions.IHubConnection hubConnection,
         IndTrace.HubConnection.Abstractions.IHubConnectionFactory connectionFactory,
-        DateTimeMachine dateTimeMachine,
+        IDateTimeMachine dateTimeMachine,
         CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)

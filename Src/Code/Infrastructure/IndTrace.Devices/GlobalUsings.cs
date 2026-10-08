@@ -16,5 +16,6 @@ global using IndTrace.Application.Plcs.Queries.GetDetail;
 global using IndTrace.Application.UI.Models;
 global using IndTrace.Domain.Entities;
 global using IndTrace.Domain.Enum;
+global using IndTrace.Domain.Interfaces;
 global using IndTrace.Domain.Models;
 global using Microsoft.Extensions.Logging;

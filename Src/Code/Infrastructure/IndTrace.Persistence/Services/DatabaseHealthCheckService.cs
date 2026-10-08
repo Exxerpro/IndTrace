@@ -42,7 +42,8 @@ public class DatabaseHealthCheckService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using (var scope = this.serviceProvider.CreateScope())
+        // Async scope: the Scoped IIndTraceDbContextFactory implements only IAsyncDisposable.
+        await using (var scope = this.serviceProvider.CreateAsyncScope())
         {
             try
             {

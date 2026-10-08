@@ -10,14 +10,14 @@ namespace IndTrace.Application.Cycles.Commands.UpdateCyclesOk;
 /// </summary>
 public class UpdateCyclesOkCommandValidator : AbstractValidator<UpdateCyclesOkCommand>
 {
-    private readonly DateTimeMachine dateTimeMachine;
+    private readonly IDateTimeMachine dateTimeMachine;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UpdateCyclesOkCommandValidator"/> class.
     /// Initializes a new instance of the class.
     /// </summary>
     /// <param name="dateTimeMachine">The dateTimeMachine.</param>
-    public UpdateCyclesOkCommandValidator(DateTimeMachine? dateTimeMachine = default)
+    public UpdateCyclesOkCommandValidator(IDateTimeMachine? dateTimeMachine = default)
     {
         this.dateTimeMachine = dateTimeMachine ?? new DateTimeMachine();
 

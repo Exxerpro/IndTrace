@@ -18,6 +18,10 @@
     <!-- Language Features -->
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Override the repo-wide InvariantGlobalization=true (Src/Directory.Build.props): Microsoft.Data.SqlClient
+         throws "Globalization Invariant Mode is not supported." on connection open, so the gateway cannot read
+         its configuration. Same override as IndTrace.Monitor; this host must run with full ICU globalization. -->
+    <InvariantGlobalization>false</InvariantGlobalization>
     <!-- Application Startup -->
     <StartupObject>IndTrace.Communications.Program</StartupObject>
     <ApplicationIcon>Communications.ico</ApplicationIcon>

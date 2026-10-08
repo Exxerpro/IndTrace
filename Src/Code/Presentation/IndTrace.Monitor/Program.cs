@@ -119,6 +119,7 @@ public partial class Program
         if (!builder.Environment.IsEnvironment("Test"))
         {
             builder.Services.AddIndTraceIdentity(configuration, logger, builder.Environment);
+            builder.Services.AddAccountPageServices();
         }
 
         builder.Services.AddBlazorDownloadFile();
@@ -207,7 +208,8 @@ public partial class Program
         //Reason: [DI Registration] - Changed IndTraceConfigurationService to Scoped only (was registered as both Singleton and Scoped)
         builder.Services.AddScoped<IndTraceConfigurationService>();
 
-        builder.Services.AddSingleton<IndTraceEventsService>();
+        // Singleton with its own Singleton clock (the host clock is Scoped; see MonitorServiceRegistration).
+        builder.Services.AddIndTraceEventsService();
 
         //[Fix] 
         //CLAUDE

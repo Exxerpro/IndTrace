@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using IndTrace.Monitor.Components.Account.Pages;
 using IndTrace.Monitor.Components.Account.Pages.Manage;
-using IndTrace.Monitor.Data;
+using IndTrace.Identity.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
