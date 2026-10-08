@@ -126,16 +126,9 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
   3. **Trace a part** (`trace-part.mp4`, 22 s): search a barcode and open its history.
 - **Screenshots** must show neutral names. The Products screenshot was re-shot after the demo database's
   customers were renamed to fictitious ones.
-- **Re-recording.** The recording scripts (Playwright) are not in the repository yet. The test fixtures need
-  preparation before they can run a part through a simulated line:
-  - **Variables:** load them from the full fixture (`Variables.json`), because the raw variable data is
-    stripped.
-  - **PLCs:** add and enable PLCs for every station, not just the first.
-  - **Registers:** delete the boundary-test rows with ids near `int.MaxValue`, and reseed the identity.
-  - **Routes:** delete the `WorkFlows` rows with 0 endpoints, or route authoring refuses to save.
-  - **Product:** use a product with a unique part number and a label rule.
-  - **Recipe:** set its minimum cycle time below the simulated cycle.
-  - **Customers:** rename brand-name customers to fictitious names before any recording.
+- **Re-recording.** `docs/site-media/` has the scripts that build the demo database, run the simulated line, and
+  record and encode the videos and screenshots. Its `README.md` gives the steps. They were verified end to end
+  on 2026-10-08 against a database seeded from the public fixtures.
 
 ## Deliberately NOT in this repository
 
@@ -159,24 +152,26 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
   - repository topics.
 - **Contribution policy:** inbound = outbound AGPL, with a DCO `Signed-off-by:` line on every commit. No CLA.
 - **Repository size:** the shared UI images now live once, in `IndTrace.Components`.
+- **Recording scripts:** in `docs/site-media/`.
 - **Going public:** done 2026-10-08.
 
 ## Open items
 
 1. **Getting-started docs** (#1). Add a database bootstrap guide (EF migrations or schema scripts for an empty
-   SQL Server) and a "simulate a part through a line" walkthrough, including the fixture preparation listed
-   under "Re-recording" above.
-2. **Recording scripts.** Add the Playwright scripts that produced the videos and screenshots, so they can be
-   re-recorded after UI changes.
-3. **Test fixtures that block a demo**, best fixed in the enterprise repository:
+   SQL Server) and a "simulate a part through a line" walkthrough. `docs/site-media/` already covers both for a
+   demo database built from the fixtures.
+2. **Test fixtures that block a demo**, best fixed in the enterprise repository:
    - the stripped variable data;
    - the zero-endpoint `WorkFlows` rows;
    - the boundary register ids;
    - a part number shared by two products;
-   - only one enabled PLC.
-4. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
+   - only one enabled PLC;
+   - no event or reference tags in the public variables fixture.
+
+   `docs/site-media/demo-db/prepare-demo.sql` works around all of these.
+3. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
    pages. The Monitor routes its own copy, so the duplicate should be removed.
-5. **Clock follow-ups** (testability only, where a test needs to control time):
+4. **Clock follow-ups** (testability only, where a test needs to control time):
    - the `static` clock in `GatewayTasks`;
    - the `?? new DateTimeMachine()` fallbacks in some entities, view models and services.
 
