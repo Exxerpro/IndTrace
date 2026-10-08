@@ -43,6 +43,56 @@
   "publisher": { "@type": "Organization", "name": "Exxerpro Solutions SA de CV" }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "VideoObject",
+        "name": "El recorrido de una pieza",
+        "description": "Cinco estaciones simuladas reportan las llegadas de una pieza y cada una se valida. Una segunda pieza se salta la inspección visual y su llegada al empaque final se rechaza por no ser un sucesor legal.",
+        "thumbnailUrl": "https://exxerpro.github.io/IndTrace/assets/video/part-journey-poster.webp",
+        "contentUrl": "https://exxerpro.github.io/IndTrace/assets/video/part-journey.mp4",
+        "uploadDate": "2026-10-08",
+        "duration": "PT44S",
+        "inLanguage": "es"
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Definir una ruta",
+        "description": "Crea un producto, agrega sus cinco estaciones, conéctalas en orden y marca la primera y la última. La ruta nueva aparece en la configuración.",
+        "thumbnailUrl": "https://exxerpro.github.io/IndTrace/assets/video/define-routing-poster.webp",
+        "contentUrl": "https://exxerpro.github.io/IndTrace/assets/video/define-routing.mp4",
+        "uploadDate": "2026-10-08",
+        "duration": "PT42S",
+        "inLanguage": "es"
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "VideoObject",
+        "name": "Rastrear una pieza",
+        "description": "Busca un código de barras y abre su historial: cada estación, tiempo de ciclo, resultado y valor registrado.",
+        "thumbnailUrl": "https://exxerpro.github.io/IndTrace/assets/video/trace-part-poster.webp",
+        "contentUrl": "https://exxerpro.github.io/IndTrace/assets/video/trace-part.mp4",
+        "uploadDate": "2026-10-08",
+        "duration": "PT22S",
+        "inLanguage": "es"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Ir al contenido</a>
@@ -186,22 +236,28 @@
   <section id="videos">
     <div class="wrap">
       <h2>Recorridos en video</h2>
-      <div class="prose"><p>Estamos grabando videos cortos de la edición comunitaria. Aparecerán aquí.</p></div>
+      <div class="prose"><p>Grabados en la edición comunitaria con una línea simulada y datos de demostración ficticios. Sin audio.</p></div>
       <div class="videos">
         <figure class="video">
-          <div class="video-slot"><img src="../assets/screens/dashboard-800.webp" alt="" loading="lazy" width="800" height="500"><span>Próximamente</span></div>
+          <video controls preload="none" playsinline poster="../assets/video/part-journey-poster.webp" width="1280" height="800" aria-label="El recorrido de una pieza">
+            <source src="../assets/video/part-journey.mp4" type="video/mp4">
+          </video>
           <h3>El recorrido de una pieza</h3>
-          <p>Una pieza recorre una línea simulada y cada llegada se valida en el tablero.</p>
+          <p>Cinco estaciones simuladas reportan las llegadas de una pieza y cada una se valida. Una segunda pieza se salta la inspección visual y su llegada al empaque final se rechaza por no ser un sucesor legal.</p>
         </figure>
         <figure class="video">
-          <div class="video-slot"><img src="../assets/screens/routing-800.webp" alt="" loading="lazy" width="800" height="500"><span>Próximamente</span></div>
+          <video controls preload="none" playsinline poster="../assets/video/define-routing-poster.webp" width="1280" height="800" aria-label="Definir una ruta">
+            <source src="../assets/video/define-routing.mp4" type="video/mp4">
+          </video>
           <h3>Definir una ruta</h3>
-          <p>Configure un producto, sus estaciones y el orden válido entre ellas.</p>
+          <p>Crea un producto, agrega sus cinco estaciones, conéctalas en orden y marca la primera y la última. La ruta nueva aparece en la configuración.</p>
         </figure>
         <figure class="video">
-          <div class="video-slot"><img src="../assets/screens/reports-800.webp" alt="" loading="lazy" width="800" height="500"><span>Próximamente</span></div>
+          <video controls preload="none" playsinline poster="../assets/video/trace-part-poster.webp" width="1280" height="800" aria-label="Rastrear una pieza">
+            <source src="../assets/video/trace-part.mp4" type="video/mp4">
+          </video>
           <h3>Rastrear una pieza</h3>
-          <p>Parta de un código de barras y encuentre cada estación, resultado y valor que registró.</p>
+          <p>Busca un código de barras y abre su historial: cada estación, tiempo de ciclo, resultado y valor registrado.</p>
         </figure>
       </div>
     </div>
