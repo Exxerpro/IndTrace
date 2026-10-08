@@ -35,18 +35,22 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
   AGPL license headers and adds the root templates (README, LICENSE, CONTRIBUTING, NOTICE, `Src/nuget.config`,
   `.gitignore`). It then runs gates: a deny-list scan, gitleaks, an isolated clean-clone build, and tests.
   Any gate failure aborts the export.
-- **Owned by this repository** (never written by the export, safe to edit here): `docs/**`, and later
-  `.github/**`.
-- **Sync procedure** (from the enterprise repository, .NET 10 SDK on `PATH`):
+- **Owned by this repository** (never written by the export, safe to edit here): `docs/**` and `.github/**`
+  (CI, community health files, issue and PR templates). Root files such as `README.md`, `NOTICE.md` and
+  `CONTRIBUTING.md` are export templates: edit them in the enterprise repository.
+- **Sync procedure** (from the enterprise repository, .NET 10 SDK on `PATH`; this clone checked out next to
+  it as `../IndTrace-oss`):
 
   ```bash
-  python3 tools/oss-export/export.py --out ../IndTrace-oss-export --force   # all gates must pass
-  # Mirror the export into a clone of THIS repository, keeping its history and its own folders:
-  rsync -a --delete --exclude .git --exclude docs/ --exclude .github/ ../IndTrace-oss-export/ ../IndTrace/
-  cd ../IndTrace && git add -A && git commit -m "sync: community edition $(date +%F)" && git push
+  tools/oss-export/sync.sh --commit   # export (all gates must pass) -> mirror -> commit; never pushes
+  git -C ../IndTrace-oss push
   ```
 
-  Do not re-run `git init` or force-push: later syncs are ordinary commits on top of `main`.
+  `sync.sh` exports into a separate staging directory (`../IndTrace-oss-export`) and mirrors it into this
+  clone, keeping `.git`, `docs/` and `.github/`. It refuses a clone that is dirty, is not `Exxerpro/IndTrace`,
+  or commits with a non-noreply e-mail. `export.py` refuses to write into a git checkout, because `--force`
+  deletes its output directory. Do not re-run `git init` or force-push: later syncs are ordinary commits on
+  top of `main`.
 
 ## Architecture essentials for contributors
 

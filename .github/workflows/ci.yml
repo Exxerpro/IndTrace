@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Src/Directory.Packages.props', 'Src/**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore Src/IndTrace.sln
+
+      # Warnings are errors (Src/Directory.Build.props).
+      - name: Build
+        id: build
+        run: dotnet build Src/IndTrace.sln --no-restore -v:m
+
+      # Test suites run on Microsoft Testing Platform (xUnit v3) as executables via `dotnet run`;
+      # `dotnet test` is unreliable for them on .NET 10. Every suite runs even if an earlier one fails.
+      - name: Test Devices
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Infrastructure/IndTrace.Devices.Tests/IndTrace.Devices.Tests.csproj
+
+      - name: Test Architecture
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Architecture/Architecture.Tests.csproj
+
+      - name: Test Domain
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Core/Domain.UnitTests/Domain.UnitTests.csproj
+
+      - name: Test Application
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Core/Application.UnitTests/Application.UnitTests.csproj
+
+      - name: Test HubConnection
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Core/HubConnection.Tests/HubConnection.Tests.csproj
+
+      - name: Test Monitor
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Presentation/IndTrace.Monitor.Tests/IndTrace.Monitor.Tests.csproj
+
+      - name: Test Identity
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Infrastructure/Identity.UnitTests/Identity.UnitTests.csproj
+
+      - name: Test Aggregation
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Core/Aggregation.BoundedTests/Application.AgregationTests.csproj
