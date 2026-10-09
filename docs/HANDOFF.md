@@ -30,6 +30,11 @@ Status as of 2026-10-09. This is where the open-sourcing effort stands, so the n
 
 ## What changed on 2026-10-09
 
+Five pull requests merged today: #7 (recording scripts), #8 (sync), #9 (scripts switched to the demo database
+tool), #10 (new videos and screenshots) and this handoff update.
+
+- **Recording scripts** (#7): `docs/site-media/` holds the scripts that build a demo database, run the
+  simulated line, and record and encode the website's videos and screenshots.
 - **Demo database tool** (synced in #8): `Src/Code/Infrastructure/IndTrace.DemoSeed` creates a demo-ready
   database with `dotnet run -r linux-x64 --project Src/Code/Infrastructure/IndTrace.DemoSeed -- --reset`.
   - It writes a small, invented line through the domain's public factories:
@@ -39,9 +44,16 @@ Status as of 2026-10-09. This is where the open-sourcing effort stands, so the n
     - a demo Administrator user.
   - The unit-test fixtures stay as they are, shaped for tests.
   - Its test suite checks every PLC against the real simulated controller and runs in CI.
-- **Site-media scripts use it.** `docs/site-media/` no longer builds a database from the fixtures:
+- **Site-media scripts use it** (#9). `docs/site-media/` no longer builds a database from the fixtures:
   `prepare-demo.sql`, `reset-media.sql` and the fixture seeder are gone. Recording again means rerunning the
   seeder with `--reset`.
+- **New videos and screenshots** (#10), recorded from a fresh `IndTrace.DemoSeed` database:
+  - all three videos and every screenshot were replaced, and the `VideoObject` durations on both language pages
+    updated (45 s, 40 s, 22 s);
+  - the Pages deploy succeeded, and the live files were checked against the committed ones.
+- **`env.sh` guard** (#10). Sourced from zsh outside the repository root, `env.sh` used to resolve the wrong
+  `REPO_ROOT`, so the encoder wrote into another checkout. It now stops with an error unless `REPO_ROOT` is this
+  repository. Source it from bash, or from the repository root.
 
 ## What changed on 2026-10-08
 
