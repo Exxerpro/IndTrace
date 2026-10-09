@@ -22,7 +22,7 @@ encode() {
     echo "$1.mp4 $(ffprobe -v error -show_entries format=duration -of csv=p=0 "$video_out/$1.mp4")s"
 }
 encode part-journey 1.2 44
-encode define-routing 3.0 44
+encode define-routing 3.0 30
 encode trace-part 3.0 14
 
 for png in "$MEDIA_WORK"/screens/*.png; do

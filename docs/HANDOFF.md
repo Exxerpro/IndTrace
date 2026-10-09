@@ -136,17 +136,16 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
   is Spanish. Both carry SEO metadata and JSON-LD, including a `VideoObject` list for the videos.
 - **Videos:** in `site/assets/video/`, each an H.264 MP4 with a WebP poster. They have no audio and were
   recorded on the community edition with a simulated line and fictitious demo data:
-  1. **A part's journey** (`part-journey.mp4`, 44 s): one part passes five stations, and a second part that
+  1. **A part's journey** (`part-journey.mp4`, 45 s): one part passes five stations, and a second part that
      skips a station is refused on arrival.
-  2. **Define a routing** (`define-routing.mp4`, 42 s): create a product, connect its stations and save.
+  2. **Define a routing** (`define-routing.mp4`, 40 s): create a product, connect its stations and save.
   3. **Trace a part** (`trace-part.mp4`, 22 s): search a barcode and open its history.
-- **Screenshots** must show neutral names. The Products screenshot was re-shot after the demo database's
-  customers were renamed to fictitious ones.
+- **Screenshots** must show neutral names. The `IndTrace.DemoSeed` data is invented; check anything typed into
+  the Monitor while recording.
 - **Re-recording.** `docs/site-media/` has the scripts that build the demo database (with `IndTrace.DemoSeed`),
   run the simulated line, and record and encode the videos and screenshots. Its `README.md` gives the steps.
   They were verified end to end on 2026-10-09 against a freshly seeded database.
-- **The current videos and screenshots** were recorded on 2026-10-08 from the earlier fixture-based demo
-  database. The next recording will show the `IndTrace.DemoSeed` line.
+- **The current videos and screenshots** were recorded on 2026-10-09 from a fresh `IndTrace.DemoSeed` database.
 
 ## Deliberately NOT in this repository
 

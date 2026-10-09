@@ -15,6 +15,8 @@ export HUB_URL="${HUB_URL:-http://localhost:5200}"
 
 # Repository root and a work directory for the gateway console, recordings and screenshots.
 export REPO_ROOT="${REPO_ROOT:-$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)}"
+# zsh has no BASH_SOURCE, so sourcing from zsh outside the repository finds the wrong root; refuse it.
+[[ -f "$REPO_ROOT/docs/site-media/env.sh" ]] || { echo "REPO_ROOT=$REPO_ROOT is not this repository; source env.sh from bash, or from the repository root" >&2; return 1; }
 export MEDIA_WORK="${MEDIA_WORK:-$REPO_ROOT/artifacts/site-media}"
 mkdir -p "$MEDIA_WORK"
 
