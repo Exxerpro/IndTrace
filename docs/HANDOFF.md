@@ -1,6 +1,6 @@
 # Handoff: IndTrace community edition
 
-Status as of 2026-10-08. This is where the open-sourcing effort stands, so the next session can pick it up.
+Status as of 2026-10-09. This is where the open-sourcing effort stands, so the next session can pick it up.
 
 ## Current state
 
@@ -14,11 +14,12 @@ Status as of 2026-10-08. This is where the open-sourcing effort stands, so the n
   later code changes arrive as sync commits. The enterprise history is not and will not be published.
 - **Project website:** <https://exxerpro.github.io/IndTrace/>, English at `/` and Spanish at `/es/`. It has
   screenshots and three walkthrough videos, described under "Project website" below.
-- **Latest sync:** 2026-10-08 (`sync: community edition 2026-10-08`, #5). Test results from that export's gates:
+- **Latest sync:** 2026-10-09 (`sync: community edition 2026-10-09`, #8). Test results from that export's gates:
 
   | Suite | Passed / total |
   |---|---|
   | `IndTrace.Devices.Tests` | 26/26 |
+  | `IndTrace.DemoSeed.Tests` | 11/11 |
   | Architecture | 86/86 |
   | Domain | 2,733/2,733 |
   | Application | 7,031/7,032 (1 skipped) |
@@ -26,6 +27,21 @@ Status as of 2026-10-08. This is where the open-sourcing effort stands, so the n
   | Monitor | 54/54 |
   | Identity | 3/3 |
   | Aggregation | 815/843 (28 skipped) |
+
+## What changed on 2026-10-09
+
+- **Demo database tool** (synced in #8): `Src/Code/Infrastructure/IndTrace.DemoSeed` creates a demo-ready
+  database with `dotnet run -r linux-x64 --project Src/Code/Infrastructure/IndTrace.DemoSeed -- --reset`.
+  - It writes a small, invented line through the domain's public factories:
+    - nine stations, each with an enabled simulated PLC and the tags the simulated controller requires;
+    - six products with unique part numbers, linear routes, label rules, master labels and recipes;
+    - seven customers;
+    - a demo Administrator user.
+  - The unit-test fixtures stay as they are, shaped for tests.
+  - Its test suite checks every PLC against the real simulated controller and runs in CI.
+- **Site-media scripts use it.** `docs/site-media/` no longer builds a database from the fixtures:
+  `prepare-demo.sql`, `reset-media.sql` and the fixture seeder are gone. Recording again means rerunning the
+  seeder with `--reset`.
 
 ## What changed on 2026-10-08
 
@@ -98,7 +114,7 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
     the tree. In this repository it is always `false`, so `*.Enterprise.cs` files and driver references never
     exist here. Keep new code free of vendor types.
 - **Running the gateway** needs simulation mode: `GatewaySimulationOptions__EnableSimulation=true`. See
-  `README.md`.
+  `README.md`. For a database it can run against, use `IndTrace.DemoSeed` (see "What changed on 2026-10-09").
   - Its console accepts simulated PLC events, one per line, but only when attached to a terminal (TTY).
     Format: `m <machine> pn <part number> bc <label|NEW> cmd <code> ps <0|1> cs <0|1>`.
   - Command codes: 4 create barcode, 8 read barcode, 16 create cycle, 32 cycle OK, 64 cycle not OK,
@@ -126,9 +142,11 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
   3. **Trace a part** (`trace-part.mp4`, 22 s): search a barcode and open its history.
 - **Screenshots** must show neutral names. The Products screenshot was re-shot after the demo database's
   customers were renamed to fictitious ones.
-- **Re-recording.** `docs/site-media/` has the scripts that build the demo database, run the simulated line, and
-  record and encode the videos and screenshots. Its `README.md` gives the steps. They were verified end to end
-  on 2026-10-08 against a database seeded from the public fixtures.
+- **Re-recording.** `docs/site-media/` has the scripts that build the demo database (with `IndTrace.DemoSeed`),
+  run the simulated line, and record and encode the videos and screenshots. Its `README.md` gives the steps.
+  They were verified end to end on 2026-10-09 against a freshly seeded database.
+- **The current videos and screenshots** were recorded on 2026-10-08 from the earlier fixture-based demo
+  database. The next recording will show the `IndTrace.DemoSeed` line.
 
 ## Deliberately NOT in this repository
 
@@ -153,25 +171,24 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
 - **Contribution policy:** inbound = outbound AGPL, with a DCO `Signed-off-by:` line on every commit. No CLA.
 - **Repository size:** the shared UI images now live once, in `IndTrace.Components`.
 - **Recording scripts:** in `docs/site-media/`.
+- **Demo database:** `IndTrace.DemoSeed` replaces the fixture workarounds (2026-10-09).
 - **Going public:** done 2026-10-08.
 
 ## Open items
 
-1. **Getting-started docs** (#1). Add a database bootstrap guide (EF migrations or schema scripts for an empty
-   SQL Server) and a "simulate a part through a line" walkthrough. `docs/site-media/` already covers both for a
-   demo database built from the fixtures.
-2. **Test fixtures that block a demo**, best fixed in the enterprise repository:
-   - the stripped variable data;
-   - the zero-endpoint `WorkFlows` rows;
-   - the boundary register ids;
-   - a part number shared by two products;
-   - only one enabled PLC;
-   - no event or reference tags in the public variables fixture.
-
-   `docs/site-media/demo-db/prepare-demo.sql` works around all of these.
-3. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
+1. **Getting-started docs** (#1). Add a database bootstrap guide and a "simulate a part through a line"
+   walkthrough. `IndTrace.DemoSeed` and `docs/site-media/` already cover a demo database and the simulated line.
+   The bootstrap guide waits on item 2.
+2. **Data migrations lag the model.** `MigrateAsync` on an empty database fails with
+   `PendingModelChangesWarning`. Until a migration catches up, `IndTrace.DemoSeed` creates the data schema
+   with `EnsureCreated`; the sign-in database migrates normally. Tracked in the enterprise repository.
+3. **One product per customer.** `Products.CustomerId` has a unique index, so adding a second product for a
+   customer fails. It looks unintended. Tracked in the enterprise repository.
+4. **Products added in the Monitor cannot get barcodes.** Barcode creation needs a master label containing the
+   part number, and creating a product does not add one. Tracked in the enterprise repository.
+5. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
    pages. The Monitor routes its own copy, so the duplicate should be removed.
-4. **Clock follow-ups** (testability only, where a test needs to control time):
+6. **Clock follow-ups** (testability only, where a test needs to control time):
    - the `static` clock in `GatewayTasks`;
    - the `?? new DateTimeMachine()` fallbacks in some entities, view models and services.
 
