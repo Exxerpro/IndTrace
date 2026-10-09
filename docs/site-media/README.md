@@ -2,7 +2,7 @@
 
 These scripts produce the project website's walkthrough videos (`site/assets/video/`) and screenshots
 (`site/assets/screens/`). They run the community edition against a local SQL Server container, with a demo
-database built from the repository's fictitious test fixtures and a simulated production line.
+database written by `IndTrace.DemoSeed` and a simulated production line.
 
 They live under `docs/` because the export sync never touches `docs/`, and nothing here is published by the
 Pages workflow (it deploys `site/` only). Recordings, screenshots and the gateway console go to
@@ -40,23 +40,22 @@ source docs/site-media/env.sh
 docker run -d --name "$DEMO_SQL_CONTAINER" -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD="$DEMO_PASSWORD" \
     -p "$DEMO_SQL_PORT:1433" mcr.microsoft.com/mssql/server:2022-latest
 
-dotnet run --project docs/site-media/demo-db            # recreates both databases and the demo user
-demo_sql < docs/site-media/demo-db/prepare-demo.sql     # makes the fixtures runnable as a line (idempotent)
+dotnet run -r linux-x64 --project Src/Code/Infrastructure/IndTrace.DemoSeed -- --reset
 ```
 
-`DemoSeeder` deletes and recreates `DEMO_DB` and `DEMO_IDENTITY_DB`, loads every fixture, and creates the demo
-user. `-- --only <Fixture>` reloads a single fixture and keeps the rest.
+`IndTrace.DemoSeed` reads the connection strings and `DEMO_PASSWORD` that `env.sh` exports. With `--reset` it
+deletes and recreates `DEMO_DB` and `DEMO_IDENTITY_DB`. Without it, it refuses a database that already holds
+stations. It writes a small, fictitious line and creates the demo user `DEMO_USER` in the Administrator role:
 
-`prepare-demo.sql` closes the gaps between unit-test fixtures and a running line:
-- **PLCs:** 100–900, one per station, enabled and bound to their machine.
-- **Tags:** the simulated controller needs, per PLC, exactly 4 event tags (group 1), at least one register tag
-  (group 128) and at least one reference tag (group 256). It adds the missing event and reference tags.
-- **Registers:** removes the boundary-test rows near `int.MaxValue`, and reseeds the identity.
-- **Routes:** removes `WorkFlows` rows with a 0 endpoint, or route authoring refuses to save.
-- **Demo product:** part number `L100003`, routed WS100 → WS500, with a label rule and a recipe minimum cycle
-  time of 0. Cycle times are whole seconds and the minimum is exclusive.
-- **Customers:** renames them to fictitious names and strips the former names from product text. At the end it
-  lists any former name still present. That list must be empty before anything is recorded.
+- **Stations:** WS100 to WS900, each with an enabled simulated PLC (PLC id = machine id) and the tags the
+  simulated controller needs.
+- **Products:** six products with unique part numbers, each with a linear route, a label rule at WS100, a master
+  label and recipes. The walkthrough uses `L100003`, routed WS100 → WS500. Recipe minimum cycle times are 0, so
+  short simulated cycles are accepted.
+- **Customers:** seven invented names. `Apex Lighting` has no product yet, because a customer can have only one;
+  `define-routing.js` adds one for it.
+
+The database holds no history. Parts, cycles and reports come from running parts through the line (step 3).
 
 ## 2. Run the line
 
@@ -104,14 +103,14 @@ node screenshots.js      # dashboard, routing, products, machines and reports sc
 ./encode.sh              # writes site/assets/video/* and site/assets/screens/*
 ```
 
-- **Order:** run `journey.js` before `trace.js`, which reads part A's label from `$MEDIA_WORK/labels.txt`.
-- **Recording again:** `define-routing.js` needs TL-2040 not to exist yet.
-  `demo_sql < docs/site-media/demo-db/reset-media.sql` removes it.
-- **The journey video** shows whatever the Monitor already holds. For a clean first frame, record it on a
-  freshly seeded database.
+- **Order:** run `journey.js` before `trace.js`, which reads part A's label from `$MEDIA_WORK/labels.txt`, and
+  before `screenshots.js`, so the dashboard and reports have parts to show.
+- **Recording again:** stop the three run scripts, rerun the seeder with `--reset`, and start them again. That
+  removes TL-2040 (`define-routing.js` needs it not to exist) and gives the journey video a clean first frame.
 - **`encode.sh`:** trims each recording's first seconds and takes the poster frame at a fixed second.
   Check the posters, and adjust the `encode` lines if a recording's timing changed.
-- **Screenshots:** check them for real brand names before publishing.
+- **Screenshots:** check them before publishing. The demo data is invented, but anything typed into the Monitor
+  while recording shows up too.
 
 Then review `site/assets/` and update the video descriptions and durations in `site/index.html` and
 `site/es/index.html` (including the `VideoObject` JSON-LD) if they changed.

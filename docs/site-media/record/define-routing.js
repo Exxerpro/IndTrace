@@ -1,6 +1,6 @@
 // Video 2, "Define a routing": create a product, connect its five stations, save, and show the new route on
 // the Configuration page. Needs a signed-in session (login.js). The product TL-2040 must not exist yet;
-// demo-db/reset-media.sql removes it after a previous run.
+// rerunning IndTrace.DemoSeed with --reset removes it after a previous run.
 const { monitor, launch, pause, recordingContext } = require('./common');
 
 (async () => {
