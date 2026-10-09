@@ -50,6 +50,10 @@ jobs:
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: dotnet run --no-build --project Src/Tests/Infrastructure/IndTrace.Devices.Tests/IndTrace.Devices.Tests.csproj
 
+      - name: Test DemoSeed
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet run --no-build --project Src/Tests/Infrastructure/IndTrace.DemoSeed.Tests/IndTrace.DemoSeed.Tests.csproj
+
       - name: Test Architecture
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: dotnet run --no-build --project Src/Tests/Architecture/Architecture.Tests.csproj
