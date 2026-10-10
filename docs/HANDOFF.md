@@ -1,6 +1,6 @@
 # Handoff: IndTrace community edition
 
-Status as of 2026-10-09. This is where the open-sourcing effort stands, so the next session can pick it up.
+Status as of 2026-10-10. This is where the open-sourcing effort stands, so the next session can pick it up.
 
 ## Current state
 
@@ -14,19 +14,37 @@ Status as of 2026-10-09. This is where the open-sourcing effort stands, so the n
   later code changes arrive as sync commits. The enterprise history is not and will not be published.
 - **Project website:** <https://exxerpro.github.io/IndTrace/>, English at `/` and Spanish at `/es/`. It has
   screenshots and three walkthrough videos, described under "Project website" below.
-- **Latest sync:** 2026-10-09 (`sync: community edition 2026-10-09`, #8). Test results from that export's gates:
+- **Latest sync:** 2026-10-10 (`sync: community edition 2026-10-10`, #12). Test results from that export's gates:
 
   | Suite | Passed / total |
   |---|---|
   | `IndTrace.Devices.Tests` | 26/26 |
   | `IndTrace.DemoSeed.Tests` | 11/11 |
-  | Architecture | 86/86 |
+  | Architecture | 88/88 |
   | Domain | 2,733/2,733 |
   | Application | 7,031/7,032 (1 skipped) |
   | HubConnection | 136/137 (1 skipped) |
   | Monitor | 54/54 |
   | Identity | 3/3 |
-  | Aggregation | 815/843 (28 skipped) |
+  | Aggregation | 813/841 (28 skipped) |
+
+## What changed on 2026-10-10
+
+- **EF migrations catch up with the model** (synced in #12):
+  - **The problem:** the migration snapshot was still the 2023 initial schema, so `Database.MigrateAsync()` on
+    an empty database failed with `PendingModelChangesWarning`.
+  - **The fix:** the migration chain is replaced by one baseline, `20261010154030_Baseline`, generated from the
+    current model. A new database is now created by migrating:
+    ```bash
+    dotnet ef database update --project Src/Code/Infrastructure/IndTrace.Persistence/IndTrace.Persistence.csproj \
+      --connection "<connection string>"
+    ```
+  - **The guard:** `Architecture.Tests` `MigrationsCoverModelTests` fails when the model has changes no
+    migration covers. After changing the model, add a migration with `dotnet ef migrations add <Name>
+    --project Src/Code/Infrastructure/IndTrace.Persistence/IndTrace.Persistence.csproj --output-dir Migrations`.
+  - **`IndTrace.DemoSeed`** migrates both databases now. A demo database made by the earlier version has no
+    migration history, so recreate it with `--reset`.
+  - **Removed:** `FlowTransitionLogMigrationAdditiveTests` inspected a migration that is now part of the baseline.
 
 ## What changed on 2026-10-09
 
@@ -183,23 +201,21 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
 - **Repository size:** the shared UI images now live once, in `IndTrace.Components`.
 - **Recording scripts:** in `docs/site-media/`.
 - **Demo database:** `IndTrace.DemoSeed` replaces the fixture workarounds (2026-10-09).
+- **Database creation by migration:** one baseline migration matches the model, guarded by a test (2026-10-10).
 - **Going public:** done 2026-10-08.
 
 ## Open items
 
 1. **Getting-started docs** (#1). Add a database bootstrap guide and a "simulate a part through a line"
    walkthrough. `IndTrace.DemoSeed` and `docs/site-media/` already cover a demo database and the simulated line.
-   The bootstrap guide waits on item 2.
-2. **Data migrations lag the model.** `MigrateAsync` on an empty database fails with
-   `PendingModelChangesWarning`. Until a migration catches up, `IndTrace.DemoSeed` creates the data schema
-   with `EnsureCreated`; the sign-in database migrates normally. Tracked in the enterprise repository.
-3. **One product per customer.** `Products.CustomerId` has a unique index, so adding a second product for a
+   The bootstrap guide is unblocked: migrations now create a new database (see "What changed on 2026-10-10").
+2. **One product per customer.** `Products.CustomerId` has a unique index, so adding a second product for a
    customer fails. It looks unintended. Tracked in the enterprise repository.
-4. **Products added in the Monitor cannot get barcodes.** Barcode creation needs a master label containing the
+3. **Products added in the Monitor cannot get barcodes.** Barcode creation needs a master label containing the
    part number, and creating a product does not add one. Tracked in the enterprise repository.
-5. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
+4. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
    pages. The Monitor routes its own copy, so the duplicate should be removed.
-6. **Clock follow-ups** (testability only, where a test needs to control time):
+5. **Clock follow-ups** (testability only, where a test needs to control time):
    - the `static` clock in `GatewayTasks`;
    - the `?? new DateTimeMachine()` fallbacks in some entities, view models and services.
 
