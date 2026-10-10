@@ -4,7 +4,6 @@ using IndTrace.Persistence.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,20 +11,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IndTrace.Persistence.Migrations
 {
     [DbContext(typeof(IndTraceDbContext))]
-    [Migration("20230827231414_InitialCreate")]
-    partial class InitialCreate
+    partial class IndTraceDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.10")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("IndTrace.Domain.Entities.BarCode", b =>
+            modelBuilder.Entity("IndTrace.Domain.Entities.BarCodes.BarCode", b =>
                 {
                     b.Property<int>("BarCodeId")
                         .ValueGeneratedOnAdd()
@@ -65,6 +62,13 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ProductId");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion")
+                        .HasColumnName("RowVersion");
+
                     b.HasKey("BarCodeId")
                         .HasName("PK.IndTraceData.BarCodes.BarCodeId");
 
@@ -72,7 +76,8 @@ namespace IndTrace.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("IDX.IndTraceData.BarCodes.BarCodeId");
 
-                    b.HasIndex("FlowStatus");
+                    b.HasIndex("CreatedOn")
+                        .HasDatabaseName("IDX.IndTraceData.BarCodes.CreatedOn");
 
                     b.HasIndex("Label")
                         .IsUnique()
@@ -80,11 +85,40 @@ namespace IndTrace.Persistence.Migrations
 
                     b.HasIndex("MachineId");
 
-                    b.HasIndex("PartStatus");
-
                     b.HasIndex("ProductId");
 
                     b.ToTable("BarCodes", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.BarCodes.CycleCompletion", b =>
+                {
+                    b.Property<int>("CycleCompletionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("CycleCompletionId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CycleCompletionId"));
+
+                    b.Property<DateTime>("CompletedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CompletedOn");
+
+                    b.Property<int>("CycleId")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleId");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
+                    b.HasKey("CycleCompletionId")
+                        .HasName("PK.IndTraceData.CycleCompletion.CycleCompletionId");
+
+                    b.HasIndex("CycleId")
+                        .IsUnique()
+                        .HasDatabaseName("UX.IndTraceData.CycleCompletion.CycleId");
+
+                    b.ToTable("CycleCompletion", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.ConfigApp", b =>
@@ -104,11 +138,18 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnName("Client");
 
                     b.Property<string>("ConfigAppId")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("ConfigAppId");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2(7)")
@@ -128,20 +169,34 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("Line");
 
+                    b.Property<string>("Machine")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("Machine");
+
                     b.Property<int>("MachineId")
                         .HasColumnType("int")
                         .HasColumnName("MachineId");
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
 
-                    b.Property<DateTime>("ModifiedOn")
+                    b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2(7)")
                         .HasColumnName("ModifiedOn");
 
-                    b.Property<int>("Pc")
-                        .HasColumnType("int");
+                    b.Property<string>("Pc")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("Pc");
 
                     b.Property<int>("PlcId")
                         .HasColumnType("int")
@@ -176,7 +231,7 @@ namespace IndTrace.Persistence.Migrations
                     b.Property<int>("DatabaseLogId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("DatabaseLogID");
+                        .HasColumnName("DatabaseLogId");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DatabaseLogId"));
 
@@ -196,7 +251,7 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<DateTime>("PostTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Schema")
                         .IsRequired()
@@ -205,11 +260,13 @@ namespace IndTrace.Persistence.Migrations
 
                     b.Property<string>("Tsql")
                         .IsRequired()
+                        .HasMaxLength(8000)
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("TSQL");
+                        .HasColumnName("Tsql");
 
                     b.Property<string>("XmlEvent")
                         .IsRequired()
+                        .HasMaxLength(8000)
                         .HasColumnType("xml");
 
                     b.HasKey("DatabaseLogId")
@@ -222,6 +279,13 @@ namespace IndTrace.Persistence.Migrations
 
             modelBuilder.Entity("IndTrace.Domain.Entities.ConfigDb", b =>
                 {
+                    b.Property<int>("SystemInformationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("SystemInformationId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SystemInformationId"));
+
                     b.Property<string>("DatabaseVersion")
                         .IsRequired()
                         .HasMaxLength(80)
@@ -229,23 +293,31 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnName("Database Version");
 
                     b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SystemInformationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("SystemInformationID");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SystemInformationId"));
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ModifiedDate");
 
                     b.Property<DateTime>("VersionDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("VersionDate");
+
+                    b.HasKey("SystemInformationId");
 
                     b.ToTable("ConfigDbs", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.ConnectionStatus", b =>
                 {
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CreatedOn");
+
                     b.Property<int>("MachineId")
                         .HasColumnType("int")
                         .HasColumnName("MachineId");
@@ -257,8 +329,16 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("Message");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("ModifiedOn");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -266,6 +346,54 @@ namespace IndTrace.Persistence.Migrations
                     b.HasIndex("MachineId");
 
                     b.ToTable("StatusConnections", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.Customer", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("CustomerId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CreatedOn");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsActive");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("ModifiedOn");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("Name");
+
+                    b.HasKey("CustomerId")
+                        .HasName("PK.IndTraceData.Customer.CustomerId");
+
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.Cycle", b =>
@@ -289,6 +417,9 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("CycleTime");
 
+                    b.Property<int>("CyclesOk")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("FinishedOn")
                         .HasColumnType("datetime2(7)")
                         .HasColumnName("FinishedOn");
@@ -300,6 +431,13 @@ namespace IndTrace.Persistence.Migrations
                     b.Property<int>("PartStatus")
                         .HasColumnType("int")
                         .HasColumnName("PartStatus");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion")
+                        .HasColumnName("RowVersion");
 
                     b.Property<DateTime>("StartedOn")
                         .HasColumnType("datetime2(7)")
@@ -317,13 +455,9 @@ namespace IndTrace.Persistence.Migrations
 
                     b.HasIndex("CycleId")
                         .IsUnique()
-                        .HasDatabaseName("IDX.IndTraceData.Cycles.CicloId");
-
-                    b.HasIndex("CycleStatus");
+                        .HasDatabaseName("IDX.IndTraceData.Cycles.CycleId");
 
                     b.HasIndex("MachineId");
-
-                    b.HasIndex("PartStatus");
 
                     b.ToTable("Cycles", (string)null);
                 });
@@ -394,7 +528,8 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnName("Comment");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedOn");
 
                     b.Property<int>("DefectId")
                         .HasColumnType("int")
@@ -412,10 +547,12 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnName("MachineId");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ModifiedOn");
 
                     b.Property<decimal>("PartsQuantity")
-                        .HasColumnType("decimal(18, 4)")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)")
                         .HasColumnName("PartsQuantity");
 
                     b.Property<byte[]>("TimeStamp")
@@ -437,93 +574,228 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("DefectsRegister", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Entities.Edge", b =>
+            modelBuilder.Entity("IndTrace.Domain.Entities.DistinctRegister", b =>
                 {
-                    b.Property<int>("EdgeId")
-                        .HasColumnType("int")
-                        .HasColumnName("EdgeId");
+                    b.Property<string>("Name")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("FromMachineId")
+                    b.Property<int>("VariableId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ToMachineId")
+                    b.Property<int>("MachineId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Weight")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1)
-                        .HasColumnName("Weight");
+                    b.HasKey("Name", "VariableId", "MachineId");
 
-                    b.Property<int?>("WorkFlowId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EdgeId")
-                        .HasName("PK.IndTraceData.Edges.EdgeId");
-
-                    b.HasIndex("EdgeId")
-                        .IsUnique()
-                        .HasDatabaseName("IDX.IndTraceData.Edges.EdgeId");
-
-                    b.HasIndex("FromMachineId");
-
-                    b.HasIndex("ToMachineId");
-
-                    b.HasIndex("WorkFlowId");
-
-                    b.ToTable("Edges", (string)null);
+                    b.ToTable("DistinctRegisters", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Entities.EpDaqHealth", b =>
+            modelBuilder.Entity("IndTrace.Domain.Entities.FlowTransitionLog", b =>
                 {
-                    b.Property<int>("RegisterEpDaqHealtId")
+                    b.Property<int>("FlowTransitionLogId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("RegisterEpDaqHealtId");
+                        .HasColumnName("FlowTransitionLogId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RegisterEpDaqHealtId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FlowTransitionLogId"));
 
-                    b.Property<DateTime>("FechaHoraRegistro")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("BarCodeId")
+                        .HasColumnType("int")
+                        .HasColumnName("BarCodeId");
 
-                    b.Property<byte[]>("TimeStamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion")
+                    b.Property<int>("CycleId")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleId");
+
+                    b.Property<int>("From")
+                        .HasColumnType("int")
+                        .HasColumnName("From");
+
+                    b.Property<int>("FromCycleStatus")
+                        .HasColumnType("int")
+                        .HasColumnName("FromCycleStatus");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
+                    b.Property<int>("Path")
+                        .HasColumnType("int")
+                        .HasColumnName("Path");
+
+                    b.Property<int>("ResultValidation")
+                        .HasColumnType("int")
+                        .HasColumnName("ResultValidation");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2")
                         .HasColumnName("TimeStamp");
 
-                    b.HasKey("RegisterEpDaqHealtId")
-                        .HasName("PK.IndTraceData.EpDaqHealth.RegisterEpDaqHealtId");
+                    b.Property<int>("To")
+                        .HasColumnType("int")
+                        .HasColumnName("To");
 
-                    b.ToTable("EpDaqHealth", (string)null);
+                    b.Property<int>("Trigger")
+                        .HasColumnType("int")
+                        .HasColumnName("Trigger");
+
+                    b.HasKey("FlowTransitionLogId")
+                        .HasName("PK_FlowTransitionLog_FlowTransitionLogId");
+
+                    b.HasIndex("BarCodeId")
+                        .HasDatabaseName("IDX_FlowTransitionLog_BarCodeId");
+
+                    b.HasIndex("MachineId")
+                        .HasDatabaseName("IDX_FlowTransitionLog_MachineId");
+
+                    b.HasIndex("TimeStamp")
+                        .HasDatabaseName("IDX_FlowTransitionLog_TimeStamp");
+
+                    b.ToTable("FlowTransitionLog", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.IndTraceUser", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CreatedOn");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("ModifiedOn");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.HasKey("UserId")
+                        .HasName("PK_Users");
+
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.KpiOee", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("KpiOeeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("KpiOeeId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KpiOeeId"));
 
                     b.Property<decimal>("Availability")
-                        .HasColumnType("decimal(12, 4)");
+                        .HasColumnType("decimal(12, 4)")
+                        .HasColumnName("Availability");
 
                     b.Property<decimal>("Oee")
                         .HasColumnType("decimal(12, 4)")
-                        .HasColumnName("OEE");
+                        .HasColumnName("Oee");
+
+                    b.Property<int>("OeeRegisterId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Performance")
-                        .HasColumnType("decimal(12, 4)");
+                        .HasColumnType("decimal(12, 4)")
+                        .HasColumnName("Performance");
 
                     b.Property<decimal>("Quality")
-                        .HasColumnType("decimal(12, 4)");
+                        .HasColumnType("decimal(12, 4)")
+                        .HasColumnName("Quality");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("TimeStamp");
 
-                    b.ToTable("KPI.OEE", (string)null);
+                    b.HasKey("KpiOeeId")
+                        .HasName("PK.IndTraceData.KpiOee.KpiOeeId");
+
+                    b.HasIndex("KpiOeeId")
+                        .IsUnique()
+                        .HasDatabaseName("IDX.IndTraceData.KpiOee.KpiOeeId");
+
+                    b.HasIndex("OeeRegisterId")
+                        .IsUnique();
+
+                    b.ToTable("KpiOees", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.Line", b =>
+                {
+                    b.Property<int>("LineId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("LineId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LineId"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CreatedOn");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(240)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(240)")
+                        .HasColumnName("Description");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("ModifiedOn");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("Name");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("Status");
+
+                    b.HasKey("LineId")
+                        .HasName("PK.IndTraceData.Line.LineId");
+
+                    b.ToTable("Lines", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.Machine", b =>
@@ -534,7 +806,10 @@ namespace IndTrace.Persistence.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("Description");
 
                     b.Property<int>("EnableAppTraceability")
                         .ValueGeneratedOnAdd()
@@ -564,7 +839,13 @@ namespace IndTrace.Persistence.Migrations
                         .HasMaxLength(80)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(80)")
-                        .HasColumnName("Description");
+                        .HasColumnName("Name");
+
+                    b.Property<int>("Retry")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Retry")
+                        .HasDefaultValueSql("((1))");
 
                     b.Property<int>("RuleId")
                         .HasColumnType("int")
@@ -584,23 +865,16 @@ namespace IndTrace.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("IDX.IndTraceData.Machines.MachineId");
 
-                    b.HasIndex("MachineType");
-
                     b.HasIndex("WorkFlowId");
 
-                    b.HasIndex("WorkFlowType");
-
-                    b.ToTable("Machines", null, t =>
-                        {
-                            t.Property("Description")
-                                .HasColumnName("Description1");
-                        });
+                    b.ToTable("Machines", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.MachinePlc", b =>
                 {
                     b.Property<int>("MachineId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
 
                     b.Property<int>("PlcId")
                         .HasColumnType("int");
@@ -617,7 +891,8 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnName("CreatedOn");
 
                     b.Property<int>("IsActive")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("IsActive");
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
@@ -626,7 +901,7 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("ModifiedBy");
 
-                    b.Property<DateTime>("ModifiedOn")
+                    b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2(7)")
                         .HasColumnName("ModifiedOn");
 
@@ -639,21 +914,27 @@ namespace IndTrace.Persistence.Migrations
 
             modelBuilder.Entity("IndTrace.Domain.Entities.MachineStatus", b =>
                 {
+                    b.Property<int>("StatusMachineId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("StatusMachineId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusMachineId"));
+
                     b.Property<decimal>("BreakDownTime")
-                        .HasColumnType("Decimal(18,4)")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)")
                         .HasColumnName("BreakDownTime");
 
                     b.Property<int>("MachineId")
                         .HasColumnType("int")
                         .HasColumnName("MachineId");
 
-                    b.Property<int>("StatusMachineId")
-                        .HasColumnType("int")
-                        .HasColumnName("StatusMachine");
-
                     b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("Datetime2(7)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("UpdatedOn");
+
+                    b.HasKey("StatusMachineId");
 
                     b.HasIndex("MachineId");
 
@@ -662,7 +943,14 @@ namespace IndTrace.Persistence.Migrations
 
             modelBuilder.Entity("IndTrace.Domain.Entities.MasterLabel", b =>
                 {
-                    b.Property<string>("Descripcion")
+                    b.Property<int>("MasterLabelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("MasterLabelId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MasterLabelId"));
+
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(240)
                         .IsUnicode(true)
@@ -676,76 +964,229 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("MasterLabelCode");
 
-                    b.Property<int>("MasterLabelId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("MasterLabelId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MasterLabelId"));
+                    b.HasKey("MasterLabelId");
 
                     b.ToTable("MasterLabel", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Entities.Order", b =>
+            modelBuilder.Entity("IndTrace.Domain.Entities.OeeRegister", b =>
                 {
-                    b.Property<int>("LeaderId")
+                    b.Property<int>("OeeRegisterId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("LeaderId");
+                        .HasColumnName("OeeRegisterId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OeeRegisterId"));
+
+                    b.Property<double>("ActualCycleTime")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float");
+
+                    b.Property<int>("ApplicationFlag")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Availability")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float")
+                        .HasColumnName("Availability");
+
+                    b.Property<int>("CurrentTime")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EventCounter")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FaultedTime")
+                        .HasColumnType("int");
 
                     b.Property<int>("MachineId")
                         .HasColumnType("int")
                         .HasColumnName("MachineId");
 
-                    b.Property<int>("OperatorId")
+                    b.Property<double>("Oee")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float")
+                        .HasColumnName("Oee");
+
+                    b.Property<double>("Performance")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float")
+                        .HasColumnName("Performance");
+
+                    b.Property<double>("PlanedProductionTime")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float");
+
+                    b.Property<int>("PlcId")
                         .HasColumnType("int")
-                        .HasColumnName("OperatorID");
-
-                    b.Property<DateTime>("OrderEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int")
-                        .HasColumnName("OrderID");
-
-                    b.Property<int>("OrderSize")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("OrderStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderTime")
-                        .HasColumnType("int");
+                        .HasColumnName("PlcId");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("ProductID");
-
-                    b.Property<int>("ProgrammerId")
-                        .HasColumnType("int")
-                        .HasColumnName("ProgrammerID");
-
-                    b.Property<int>("ResultsId")
-                        .HasColumnType("int")
-                        .HasColumnName("ResultsID");
-
-                    b.Property<int>("TimeStamp")
                         .HasColumnType("int");
 
-                    b.Property<int>("ToolingId")
-                        .HasColumnType("int")
-                        .HasColumnName("ToolingId");
+                    b.Property<double>("ProductionNoK")
+                        .HasColumnType("float");
 
-                    b.HasIndex("OrderId")
+                    b.Property<double>("ProductionOk")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Quality")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float")
+                        .HasColumnName("Quality");
+
+                    b.Property<int>("RejectEventCounter")
+                        .HasColumnType("int");
+
+                    b.Property<double>("RejectQuantityUnits")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RunningTime")
+                        .HasColumnType("int");
+
+                    b.Property<double>("StandardCycleTime")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float");
+
+                    b.Property<int>("StatusFaultReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatusReject")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoppedTime")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("TimeStamp");
+
+                    b.Property<double>("TotalProduction")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float");
+
+                    b.HasKey("OeeRegisterId")
+                        .HasName("PK.IndTraceData.OeeRegisters.OeeRegisterId");
+
+                    b.HasIndex("OeeRegisterId")
                         .IsUnique()
-                        .HasDatabaseName("IDX.IndTraceData.Orders.OrderId");
+                        .HasDatabaseName("IDX.IndTraceData.OeeRegisters.RegisterId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.HasIndex("TimeStamp")
+                        .HasDatabaseName("IX_OeeRegisters_TimeStamp");
+
+                    b.HasIndex("PlcId", "MachineId")
+                        .HasDatabaseName("IX_OeeRegisters_Name_MachineId");
+
+                    b.ToTable("OeeRegisters", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.PerformanceData", b =>
+                {
+                    b.Property<long>("PerformanceDataId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("PerformanceDataId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PerformanceDataId"));
+
+                    b.Property<double>("ActualCycleTime")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ApplicationFlag")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BarCodeId")
+                        .HasColumnType("int")
+                        .HasColumnName("BarCodeId");
+
+                    b.Property<int>("CurrentTime")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CycleId")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleId");
+
+                    b.Property<int>("EventCounter")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FaultedTime")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
+                    b.Property<double>("PlanedProductionTime")
+                        .HasColumnType("float");
+
+                    b.Property<int>("PlcId")
+                        .HasColumnType("int")
+                        .HasColumnName("PlcId");
+
+                    b.Property<double>("ProductionNoK")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float");
+
+                    b.Property<double>("ProductionOk")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float");
+
+                    b.Property<int>("RejectEventCounter")
+                        .HasColumnType("int");
+
+                    b.Property<double>("RejectQuantityUnits")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RunningTime")
+                        .HasColumnType("int");
+
+                    b.Property<double>("StandardCycleTime")
+                        .HasColumnType("float");
+
+                    b.Property<int>("StatusFaultReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatusFaultReject")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatusReject")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoppedTime")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("TimeStamp");
+
+                    b.Property<double>("TotalProduction")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("float");
+
+                    b.HasKey("PerformanceDataId")
+                        .HasName("PK.IndTraceData.PerformanceDatas.PerformanceDataId");
+
+                    b.HasIndex("CycleId");
+
+                    b.HasIndex("TimeStamp")
+                        .HasDatabaseName("IX_PerformanceDatas_TimeStamp");
+
+                    b.HasIndex("MachineId", "PlcId")
+                        .HasDatabaseName("IX_PerformanceDatas_MachineId_PlcId");
+
+                    b.ToTable("PerformanceDatas", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.PerformanceSpec", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
 
                     b.ToTable("PerformanceSpecs", (string)null);
                 });
@@ -772,6 +1213,12 @@ namespace IndTrace.Persistence.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("CommLibrary");
+
+                    b.Property<int>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("Enabled");
 
                     b.Property<string>("IpAddress")
                         .IsRequired()
@@ -848,6 +1295,17 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("datetime2(7)")
                         .HasColumnName("CreatedOn");
 
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int")
+                        .HasColumnName("CustomerId");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(240)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(240)")
+                        .HasColumnName("CustomerName");
+
                     b.Property<string>("CustomerPartNumber")
                         .IsRequired()
                         .HasMaxLength(80)
@@ -866,6 +1324,10 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("IsActive");
 
+                    b.Property<int>("LineId")
+                        .HasColumnType("int")
+                        .HasColumnName("LineId");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasMaxLength(80)
@@ -873,7 +1335,7 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("ModifiedBy");
 
-                    b.Property<DateTime>("ModifiedOn")
+                    b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2(7)")
                         .HasColumnName("ModifiedOn");
 
@@ -902,6 +1364,10 @@ namespace IndTrace.Persistence.Migrations
                     b.HasKey("ProductId")
                         .HasName("PK.IndTraceData.Products.ProductId");
 
+                    b.HasIndex("CustomerId")
+                        .IsUnique()
+                        .HasDatabaseName("IDX.IndTraceData.Customer.CustomerId");
+
                     b.HasIndex("ProductId")
                         .IsUnique()
                         .HasDatabaseName("IDX.IndTraceData.Products.ProductId");
@@ -911,6 +1377,13 @@ namespace IndTrace.Persistence.Migrations
 
             modelBuilder.Entity("IndTrace.Domain.Entities.ProductSpec", b =>
                 {
+                    b.Property<int>("ProductSpecId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ProductSpecId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductSpecId"));
+
                     b.Property<int>("MachineId")
                         .HasColumnType("int")
                         .HasColumnName("MachineId");
@@ -930,10 +1403,6 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ProductId");
 
-                    b.Property<int>("ProductSpecId")
-                        .HasColumnType("int")
-                        .HasColumnName("ProductSpecId");
-
                     b.Property<int>("RecipeId")
                         .HasColumnType("int")
                         .HasColumnName("RecipeId");
@@ -949,6 +1418,8 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ToolId");
 
+                    b.HasKey("ProductSpecId");
+
                     b.HasIndex("MachineId");
 
                     b.HasIndex("ProductId");
@@ -962,17 +1433,51 @@ namespace IndTrace.Persistence.Migrations
 
             modelBuilder.Entity("IndTrace.Domain.Entities.Recipe", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("RecipeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("Id");
+                        .HasColumnName("RecipeId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecipeId"));
 
-                    b.HasKey("Id")
-                        .HasName("PK.IndTraceData.Recipes.Id");
+                    b.Property<int>("CycleTimeMaximum")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleTimeMaximum");
 
-                    b.ToTable("Recipe", (string)null);
+                    b.Property<int>("CycleTimeMinimum")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleTimeMinimum");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
+                    b.Property<int>("MaxCyclesNOk")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(5)
+                        .HasColumnName("MaxCyclesNOk");
+
+                    b.Property<int>("MaxCyclesOk")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(3)
+                        .HasColumnName("MaxCyclesOk");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductId");
+
+                    b.Property<int>("Retry")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("Retry");
+
+                    b.HasKey("RecipeId")
+                        .HasName("PK.IndTraceData.Recipes.RecipeId");
+
+                    b.ToTable("Recipes", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.Register", b =>
@@ -997,7 +1502,10 @@ namespace IndTrace.Persistence.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(240)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(240)")
+                        .HasColumnName("Description");
 
                     b.Property<int>("MachineId")
                         .HasColumnType("int");
@@ -1013,6 +1521,10 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("StatusValueId");
 
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("TimeStamp");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(80)
@@ -1022,7 +1534,7 @@ namespace IndTrace.Persistence.Migrations
 
                     b.Property<int>("VariableId")
                         .HasColumnType("int")
-                        .HasColumnName("VariableID");
+                        .HasColumnName("VariableId");
 
                     b.HasKey("RegisterId")
                         .HasName("PK.IndTraceData.Registers.RegisterId");
@@ -1033,16 +1545,92 @@ namespace IndTrace.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("IDX.IndTraceData.Registers.RegisterId");
 
-                    b.HasIndex("VariableId");
+                    b.HasIndex("TimeStamp")
+                        .HasDatabaseName("IX_Registers_TimeStamp");
+
+                    b.HasIndex("VariableId")
+                        .HasDatabaseName("IX_Registers_VariableID");
+
+                    b.HasIndex("Name", "MachineId")
+                        .HasDatabaseName("IX_Registers_Name_MachineId");
 
                     b.ToTable("Registers", (string)null);
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.RoutingNodeRow", b =>
+                {
+                    b.Property<int>("RoutingNodeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("RoutingNodeId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoutingNodeId"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CreatedOn");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("ModifiedOn");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductId");
+
+                    b.Property<int>("RoleValue")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnName("Role");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion")
+                        .HasColumnName("RowVersion");
+
+                    b.HasKey("RoutingNodeId")
+                        .HasName("PK.IndTraceData.RoutingNodes.RoutingNodeId");
+
+                    b.HasIndex("MachineId");
+
+                    b.HasIndex("ProductId", "MachineId")
+                        .IsUnique()
+                        .HasDatabaseName("UX.IndTraceData.RoutingNodes.ProductId.MachineId");
+
+                    b.ToTable("RoutingNodes", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.Rule", b =>
                 {
                     b.Property<int>("RuleId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("RuleID");
+                        .HasColumnName("RuleId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RuleId"));
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -1064,6 +1652,10 @@ namespace IndTrace.Persistence.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasMaxLength(80)
@@ -1071,7 +1663,7 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("ModifiedBy");
 
-                    b.Property<DateTime>("ModifiedOn")
+                    b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2(7)")
                         .HasColumnName("ModifiedOn");
 
@@ -1080,6 +1672,10 @@ namespace IndTrace.Persistence.Migrations
                         .HasMaxLength(80)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(80)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductId");
 
                     b.Property<string>("RuleJson")
                         .IsRequired()
@@ -1092,6 +1688,10 @@ namespace IndTrace.Persistence.Migrations
 
                     b.HasKey("RuleId")
                         .HasName("PK_Rules");
+
+                    b.HasIndex("MachineId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Rules", (string)null);
                 });
@@ -1128,6 +1728,134 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("Settings", (string)null);
                 });
 
+            modelBuilder.Entity("IndTrace.Domain.Entities.Shift", b =>
+                {
+                    b.Property<int>("ShiftId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ShiftId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShiftId"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CreatedOn");
+
+                    b.Property<int>("CyclesOk")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("EndTime");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
+                    b.Property<TimeSpan>("MaxDuration")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("MinDuration")
+                        .HasColumnType("time");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("ModifiedOn");
+
+                    b.Property<TimeSpan>("NormalDuration")
+                        .HasColumnType("time");
+
+                    b.Property<string>("ShiftType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("ShiftType");
+
+                    b.Property<DateTime>("StartBy")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("StartBy");
+
+                    b.HasKey("ShiftId")
+                        .HasName("PK.IndTraceData.Shifts.ShiftID");
+
+                    b.HasIndex("MachineId", "StartBy")
+                        .IsUnique()
+                        .HasDatabaseName("UX.IndTraceData.Shifts.MachineId_StartBy");
+
+                    b.ToTable("Shifts", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.ShiftsCatalog", b =>
+                {
+                    b.Property<int>("ShiftCatalogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShiftCatalogId"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CreatedOn");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("ModifiedOn");
+
+                    b.Property<int>("PlantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShiftName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<TimeSpan>("StartBy")
+                        .HasColumnType("time");
+
+                    b.HasKey("ShiftCatalogId");
+
+                    b.ToTable("ShiftsCatalog", (string)null);
+                });
+
             modelBuilder.Entity("IndTrace.Domain.Entities.StatusConfiguration", b =>
                 {
                     b.Property<int>("MachineId")
@@ -1142,7 +1870,7 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnName("Message");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("Datetime2")
+                        .HasColumnType("datetime2")
                         .HasColumnName("ModifiedOn");
 
                     b.Property<int>("Status")
@@ -1180,10 +1908,14 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("MaxValue")
-                        .HasColumnType("decimal(18, 4)");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)")
+                        .HasColumnName("MaxValue");
 
                     b.Property<decimal?>("MinValue")
-                        .HasColumnType("decimal(18, 4)");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)")
+                        .HasColumnName("MinValue");
 
                     b.Property<string>("ShortName")
                         .IsRequired()
@@ -1262,7 +1994,8 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnName("StoppageId");
 
                     b.Property<decimal>("StoppedTime")
-                        .HasColumnType("decimal(10, 4)")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("decimal(10,4)")
                         .HasColumnName("StoppedTime");
 
                     b.Property<byte[]>("TimeStamp")
@@ -1282,6 +2015,167 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("RegisterStoppages", (string)null);
                 });
 
+            modelBuilder.Entity("IndTrace.Domain.Entities.TaskGatewayRequest", b =>
+                {
+                    b.Property<int>("CommandId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("CommandId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommandId"));
+
+                    b.Property<int>("BarCodeId")
+                        .HasColumnType("int")
+                        .HasColumnName("BarCodeId");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Comment");
+
+                    b.Property<int>("CycleId")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleId");
+
+                    b.Property<int>("CycleStatus")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleStatus");
+
+                    b.Property<int>("FlowStatus")
+                        .HasColumnType("int")
+                        .HasColumnName("FlowStatus");
+
+                    b.Property<int>("GatewayTask")
+                        .HasColumnType("int")
+                        .HasColumnName("GatewayTask");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
+                    b.Property<int>("PartStatus")
+                        .HasColumnType("int")
+                        .HasColumnName("PartStatus");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResultValidation")
+                        .HasColumnType("int")
+                        .HasColumnName("ResultValidation");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("TimeStamp");
+
+                    b.HasKey("CommandId")
+                        .HasName("PK.IndTraceData.TaskGatewayRequests.CommandId");
+
+                    b.HasIndex("BarCodeId")
+                        .HasDatabaseName("IDX.IndTraceData.TaskGatewayRequests.BarCodeId");
+
+                    b.HasIndex("CycleId")
+                        .HasDatabaseName("IDX.IndTraceData.TaskGatewayRequests.CycleId");
+
+                    b.ToTable("TaskGatewayRequests", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.TaskGatewayResponse", b =>
+                {
+                    b.Property<int>("ResponseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ResponseId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseId"));
+
+                    b.Property<int>("BarCodeId")
+                        .HasColumnType("int")
+                        .HasColumnName("BarCodeId");
+
+                    b.Property<int>("CommandId")
+                        .HasColumnType("int")
+                        .HasColumnName("CommandId");
+
+                    b.Property<int>("CycleId")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleId");
+
+                    b.Property<int>("CycleStatus")
+                        .HasColumnType("int")
+                        .HasColumnName("CycleStatus");
+
+                    b.Property<int>("CyclesOk")
+                        .HasColumnType("int")
+                        .HasColumnName("CyclesOk");
+
+                    b.Property<string>("Error")
+                        .IsRequired()
+                        .HasMaxLength(240)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(240)")
+                        .HasColumnName("Error");
+
+                    b.Property<int>("FlowStatus")
+                        .HasColumnType("int")
+                        .HasColumnName("FlowStatus");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("Label");
+
+                    b.Property<int>("LastMachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("LastMachineId");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("MachineId");
+
+                    b.Property<int>("NextMachineId")
+                        .HasColumnType("int")
+                        .HasColumnName("NextMachineId");
+
+                    b.Property<string>("PartNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("PartNumber");
+
+                    b.Property<int>("PartStatus")
+                        .HasColumnType("int")
+                        .HasColumnName("PartStatus");
+
+                    b.Property<int>("ResultValidation")
+                        .HasColumnType("int")
+                        .HasColumnName("ResultValidation");
+
+                    b.Property<int>("ShiftId")
+                        .HasColumnType("int")
+                        .HasColumnName("ShiftId");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("TimeStamp");
+
+                    b.HasKey("ResponseId")
+                        .HasName("PK.IndTraceData.TaskGatewayResponses.ResponseId");
+
+                    b.HasIndex("CommandId")
+                        .IsUnique();
+
+                    b.ToTable("TaskGatewayResponses", (string)null);
+                });
+
             modelBuilder.Entity("IndTrace.Domain.Entities.Tooling", b =>
                 {
                     b.Property<int>("ToolId")
@@ -1296,33 +2190,15 @@ namespace IndTrace.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(80)
                         .IsUnicode(true)
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("nvarchar(80)")
                         .HasColumnName("Name");
 
                     b.HasKey("ToolId")
-                        .HasName("PK.IndTraceData.Tooling.ToolId");
+                        .HasName("PK.IndTraceData.Toolings.ToolId");
 
                     b.ToTable("Toolings", (string)null);
-                });
-
-            modelBuilder.Entity("IndTrace.Domain.Entities.User", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("UserID");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(120)");
-
-                    b.HasKey("UserId")
-                        .HasName("PK_Users");
-
-                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.Variable", b =>
@@ -1348,6 +2224,17 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("Alias");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CreatedOn");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(240)
@@ -1371,26 +2258,23 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("MachineId");
 
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("ModifiedOn");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(80)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("Name");
-
-                    b.Property<string>("NativeAddress")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(80)")
-                        .HasColumnName("NativeAddress");
-
-                    b.Property<string>("NativeType")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(80)")
-                        .HasColumnName("NativeType");
 
                     b.Property<string>("NetType")
                         .IsRequired()
@@ -1402,34 +2286,20 @@ namespace IndTrace.Persistence.Migrations
                     b.Property<int>("PlcId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TagStatus")
-                        .HasColumnType("int")
-                        .HasColumnName("TagStatus");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(80)")
-                        .HasColumnName("Value");
-
                     b.Property<int>("VariableGroupId")
                         .HasColumnType("int")
                         .HasColumnName("VariableGroupId");
 
-                    b.Property<int?>("VariableSpecId")
-                        .IsRequired()
-                        .HasColumnType("int")
-                        .HasColumnName("VariableSpecId");
-
                     b.HasKey("VariableId")
-                        .HasName("PK.IndTraceData.Variables.VariableId");
-
-                    b.HasIndex("VariableGroupId");
+                        .HasName("PK.IndTraceData.Variables.EntitieId");
 
                     b.HasIndex("VariableId")
                         .IsUnique()
-                        .HasDatabaseName("IDX.IndTraceData.Variables.VariableId");
+                        .HasDatabaseName("IDX.IndTraceData.Variables.EntitieId");
+
+                    b.HasIndex("MachineId", "PlcId", "Name", "Address", "VariableGroupId")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_MachinePlcNameAddressVariableGroup");
 
                     b.ToTable("Variables", (string)null);
                 });
@@ -1487,7 +2357,7 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("ModifiedBy");
 
-                    b.Property<DateTime>("ModifiedOn")
+                    b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2(7)")
                         .HasColumnName("ModifiedOn");
 
@@ -1498,6 +2368,13 @@ namespace IndTrace.Persistence.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int")
                         .HasColumnName("ProductId");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion")
+                        .HasColumnName("RowVersion");
 
                     b.Property<int>("RuleId")
                         .HasColumnType("int")
@@ -1513,7 +2390,7 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("WorkFlows", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Enum.CycleStatusEntity", b =>
+            modelBuilder.Entity("IndTrace.Domain.Enum.LookUpTable.CycleStatusEntity", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
@@ -1534,12 +2411,12 @@ namespace IndTrace.Persistence.Migrations
                         .HasColumnName("Name");
 
                     b.HasKey("Id")
-                        .HasName("PK.IndTraceData.CycleStatus.Id");
+                        .HasName("PK.IndTraceData.CycleStatus.id");
 
                     b.ToTable("CycleStatus", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Enum.FlowStatusEntity", b =>
+            modelBuilder.Entity("IndTrace.Domain.Enum.LookUpTable.FlowStatusEntity", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
@@ -1564,7 +2441,33 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("FlowStatus", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Enum.MachineTypeEntity", b =>
+            modelBuilder.Entity("IndTrace.Domain.Enum.LookUpTable.GatewayTaskEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("DisplayName");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(80)")
+                        .HasColumnName("Name");
+
+                    b.HasKey("Id")
+                        .HasName("PK.IndTraceData.GatewayTask.RecipeId");
+
+                    b.ToTable("GatewayTask", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Enum.LookUpTable.MachineTypeEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1591,7 +2494,7 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("MachineType", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Enum.PartStatusEntity", b =>
+            modelBuilder.Entity("IndTrace.Domain.Enum.LookUpTable.PartStatusEntity", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
@@ -1616,7 +2519,7 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("PartStatus", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Enum.ResultValidationEntity", b =>
+            modelBuilder.Entity("IndTrace.Domain.Enum.LookUpTable.TagsGroupEntity", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
@@ -1624,29 +2527,10 @@ namespace IndTrace.Persistence.Migrations
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(120)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar")
-                        .HasColumnName("Name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ResultValidation", (string)null);
-                });
-
-            modelBuilder.Entity("IndTrace.Domain.Enum.TagsGroupEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("Id");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnName("DisplayName");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1660,7 +2544,7 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("TagsGroups", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Enum.WorkFlowTypeEntity", b =>
+            modelBuilder.Entity("IndTrace.Domain.Enum.LookUpTable.WorkFlowTypeEntity", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
@@ -1685,15 +2569,33 @@ namespace IndTrace.Persistence.Migrations
                     b.ToTable("WorkFlowType", (string)null);
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Entities.BarCode", b =>
+            modelBuilder.Entity("IndTrace.Domain.Enum.ResultValidationEntity", b =>
                 {
-                    b.HasOne("IndTrace.Domain.Enum.FlowStatusEntity", null)
-                        .WithMany()
-                        .HasForeignKey("FlowStatus")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK.IndTraceData.BarCodes.FlowStatus");
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
 
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar")
+                        .HasColumnName("DisplayName");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar")
+                        .HasColumnName("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ResultValidation", (string)null);
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.BarCodes.BarCode", b =>
+                {
                     b.HasOne("IndTrace.Domain.Entities.Machine", null)
                         .WithMany()
                         .HasForeignKey("MachineId")
@@ -1701,19 +2603,22 @@ namespace IndTrace.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK.IndTraceData.BarCodes.Machines");
 
-                    b.HasOne("IndTrace.Domain.Enum.PartStatusEntity", null)
-                        .WithMany()
-                        .HasForeignKey("PartStatus")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK.IndTraceData.BarCodes.PartStatus");
-
                     b.HasOne("IndTrace.Domain.Entities.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK.IndTraceData.BarCodes.Products");
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.BarCodes.CycleCompletion", b =>
+                {
+                    b.HasOne("IndTrace.Domain.Entities.Cycle", null)
+                        .WithMany()
+                        .HasForeignKey("CycleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK.IndTraceData.CycleCompletion.Cycles");
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.ConnectionStatus", b =>
@@ -1728,19 +2633,12 @@ namespace IndTrace.Persistence.Migrations
 
             modelBuilder.Entity("IndTrace.Domain.Entities.Cycle", b =>
                 {
-                    b.HasOne("IndTrace.Domain.Entities.BarCode", null)
+                    b.HasOne("IndTrace.Domain.Entities.BarCodes.BarCode", null)
                         .WithMany()
                         .HasForeignKey("BarCodeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK.IndTraceData.Cycles.BarCodes");
-
-                    b.HasOne("IndTrace.Domain.Enum.CycleStatusEntity", null)
-                        .WithMany()
-                        .HasForeignKey("CycleStatus")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK.IndTraceData.Cycles.CycleStatus");
 
                     b.HasOne("IndTrace.Domain.Entities.Machine", null)
                         .WithMany()
@@ -1748,18 +2646,11 @@ namespace IndTrace.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK.IndTraceData.Cycles.Machines");
-
-                    b.HasOne("IndTrace.Domain.Enum.PartStatusEntity", null)
-                        .WithMany()
-                        .HasForeignKey("PartStatus")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK.IndTraceData.Cycles.PartStatus");
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.DefectRegister", b =>
                 {
-                    b.HasOne("IndTrace.Domain.Entities.BarCode", null)
+                    b.HasOne("IndTrace.Domain.Entities.BarCodes.BarCode", null)
                         .WithMany()
                         .HasForeignKey("BarCodeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1781,48 +2672,22 @@ namespace IndTrace.Persistence.Migrations
                         .HasConstraintName("FK.IndTraceData.DefectsRegister.MachineId");
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Entities.Edge", b =>
+            modelBuilder.Entity("IndTrace.Domain.Entities.KpiOee", b =>
                 {
-                    b.HasOne("IndTrace.Domain.Entities.Machine", "FromMachine")
-                        .WithMany("FromEdges")
-                        .HasForeignKey("FromMachineId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("IndTrace.Domain.Entities.OeeRegister", "OeeRegister")
+                        .WithOne("KpiOee")
+                        .HasForeignKey("IndTrace.Domain.Entities.KpiOee", "OeeRegisterId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IndTrace.Domain.Entities.Machine", "ToMachine")
-                        .WithMany("ToEdges")
-                        .HasForeignKey("ToMachineId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("IndTrace.Domain.Entities.WorkFlow", null)
-                        .WithMany("Edges")
-                        .HasForeignKey("WorkFlowId");
-
-                    b.Navigation("FromMachine");
-
-                    b.Navigation("ToMachine");
+                    b.Navigation("OeeRegister");
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.Machine", b =>
                 {
-                    b.HasOne("IndTrace.Domain.Enum.MachineTypeEntity", null)
-                        .WithMany()
-                        .HasForeignKey("MachineType")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK.IndTraceData.Machines.MachineType");
-
                     b.HasOne("IndTrace.Domain.Entities.WorkFlow", null)
                         .WithMany("Machine")
                         .HasForeignKey("WorkFlowId");
-
-                    b.HasOne("IndTrace.Domain.Enum.WorkFlowTypeEntity", null)
-                        .WithMany()
-                        .HasForeignKey("WorkFlowType")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK.IndTraceData.Machines.WorkFlowType");
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.MachinePlc", b =>
@@ -1848,6 +2713,16 @@ namespace IndTrace.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK.IndTraceData.MachineStatus.MachineId");
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.PerformanceData", b =>
+                {
+                    b.HasOne("IndTrace.Domain.Entities.Cycle", null)
+                        .WithMany()
+                        .HasForeignKey("CycleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK.IndTraceData.PerformanceDatas.Cycles");
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.ProductSpec", b =>
@@ -1906,6 +2781,33 @@ namespace IndTrace.Persistence.Migrations
                         .HasConstraintName("FK.IndTraceData.Registers.Variables");
                 });
 
+            modelBuilder.Entity("IndTrace.Domain.Entities.RoutingNodeRow", b =>
+                {
+                    b.HasOne("IndTrace.Domain.Entities.Machine", null)
+                        .WithMany()
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK.IndTraceData.RoutingNodes.Machines.MachineId");
+                });
+
+            modelBuilder.Entity("IndTrace.Domain.Entities.Rule", b =>
+                {
+                    b.HasOne("IndTrace.Domain.Entities.Machine", null)
+                        .WithMany()
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK.IndTraceData.Rules.Machines");
+
+                    b.HasOne("IndTrace.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK.IndTraceData.Rules.Products");
+                });
+
             modelBuilder.Entity("IndTrace.Domain.Entities.Setting", b =>
                 {
                     b.HasOne("IndTrace.Domain.Entities.Machine", null)
@@ -1943,16 +2845,14 @@ namespace IndTrace.Persistence.Migrations
                         .HasConstraintName("FK.IndTraceData.RegisterStoppages.StoppageId");
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Entities.Variable", b =>
+            modelBuilder.Entity("IndTrace.Domain.Entities.TaskGatewayResponse", b =>
                 {
-                    b.HasOne("IndTrace.Domain.Entities.VariablesGroup", "VariablesGroups")
-                        .WithMany()
-                        .HasForeignKey("VariableGroupId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("IndTrace.Domain.Entities.TaskGatewayRequest", null)
+                        .WithOne()
+                        .HasForeignKey("IndTrace.Domain.Entities.TaskGatewayResponse", "CommandId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK.IndTraceData.Variables.VariableGroupId");
-
-                    b.Navigation("VariablesGroups");
+                        .HasConstraintName("FK.IndTraceData.TaskGatewayResponses.CommandId");
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.WorkFlow", b =>
@@ -1972,17 +2872,13 @@ namespace IndTrace.Persistence.Migrations
                         .HasConstraintName("FK.IndTraceData.WorkFlows.Machines.NextMachineId");
                 });
 
-            modelBuilder.Entity("IndTrace.Domain.Entities.Machine", b =>
+            modelBuilder.Entity("IndTrace.Domain.Entities.OeeRegister", b =>
                 {
-                    b.Navigation("FromEdges");
-
-                    b.Navigation("ToEdges");
+                    b.Navigation("KpiOee");
                 });
 
             modelBuilder.Entity("IndTrace.Domain.Entities.WorkFlow", b =>
                 {
-                    b.Navigation("Edges");
-
                     b.Navigation("Machine");
                 });
 #pragma warning restore 612, 618
