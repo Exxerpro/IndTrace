@@ -14,7 +14,7 @@ Status as of 2026-10-10. This is where the open-sourcing effort stands, so the n
   later code changes arrive as sync commits. The enterprise history is not and will not be published.
 - **Project website:** <https://exxerpro.github.io/IndTrace/>, English at `/` and Spanish at `/es/`. It has
   screenshots and three walkthrough videos, described under "Project website" below.
-- **Latest sync:** 2026-10-10 (`sync: community edition 2026-10-10 (upstream ba4e939e0)`, #14). Test results from that export's gates:
+- **Latest sync:** 2026-10-10 (`sync: community edition 2026-10-10 (upstream 1e7df3151)`, #16). Test results from that export's gates:
 
   | Suite | Passed / total |
   |---|---|
@@ -22,7 +22,7 @@ Status as of 2026-10-10. This is where the open-sourcing effort stands, so the n
   | `IndTrace.DemoSeed.Tests` | 11/11 |
   | Architecture | 89/89 |
   | Domain | 2,733/2,733 |
-  | Application | 7,031/7,032 (1 skipped) |
+  | Application | 7,033/7,034 (1 skipped) |
   | HubConnection | 136/137 (1 skipped) |
   | Monitor | 54/54 |
   | Identity | 3/3 |
@@ -52,6 +52,15 @@ Status as of 2026-10-10. This is where the open-sourcing effort stands, so the n
     database has the old index.
   - **The guard:** `ProductCustomerIndexTests` (Architecture) checks the model. EF InMemory, which the
     aggregation tests use, does not enforce unique indexes.
+- **Products added in the Monitor get barcodes** (synced in #16):
+  - **The problem:** barcode creation refused with `Failed to retrieve master labels.` when no master label
+    contained the part number, and creating a product does not add one.
+  - **The fix:** `MasterLabelService` returns an empty list in that case; only a failed lookup is an error. The
+    counter never came from the master label: it continues from the product's own highest barcode, or starts at
+    1. Master labels only cross-check the counter width.
+  - **Tests:** `MasterLabelServiceTests` and two `BarCodeServiceTests` cases without master labels.
+  - **Still open:** master labels are matched with `Contains(partNumber)`, so part number `A1` also picks up
+    `A12`'s labels; a different counter width there still refuses creation as ambiguous.
 
 ## What changed on 2026-10-09
 
@@ -210,6 +219,7 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
 - **Demo database:** `IndTrace.DemoSeed` replaces the fixture workarounds (2026-10-09).
 - **Database creation by migration:** one baseline migration matches the model, guarded by a test (2026-10-10).
 - **Several products per customer:** the unique index on `Products.CustomerId` is gone (2026-10-10).
+- **Barcodes without a master label:** products added in the Monitor get barcodes (2026-10-10).
 - **Going public:** done 2026-10-08.
 
 ## Open items
@@ -217,13 +227,16 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
 1. **Getting-started docs** (#1). Add a database bootstrap guide and a "simulate a part through a line"
    walkthrough. `IndTrace.DemoSeed` and `docs/site-media/` already cover a demo database and the simulated line.
    The bootstrap guide is unblocked: migrations now create a new database (see "What changed on 2026-10-10").
-2. **Products added in the Monitor cannot get barcodes.** Barcode creation needs a master label containing the
-   part number, and creating a product does not add one. Tracked in the enterprise repository.
-3. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
+2. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
    pages. The Monitor routes its own copy, so the duplicate should be removed.
-4. **Clock follow-ups** (testability only, where a test needs to control time):
+3. **Clock follow-ups** (testability only, where a test needs to control time):
    - the `static` clock in `GatewayTasks`;
    - the `?? new DateTimeMachine()` fallbacks in some entities, view models and services.
+4. **Before announcing the project** (each needs the owner's go-ahead):
+   - turn on secret scanning, push protection and Dependabot security updates (all off now);
+   - set the repository website to <https://exxerpro.github.io/IndTrace/>;
+   - publish a first release (no tags yet), for example `v0.1.0`;
+   - optionally enable Discussions and add a feature-request issue template.
 
 ## Known caveats
 
