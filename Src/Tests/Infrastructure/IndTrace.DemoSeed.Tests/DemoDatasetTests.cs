@@ -126,12 +126,11 @@ public class DemoDatasetTests(ITestOutputHelper output)
     }
 
     [Fact]
-    public void PartNumbers_AreUnique_AndEachCustomerHasAtMostOneProduct()
+    public void PartNumbers_AreUnique_AndOneCustomerHasNoProduct()
     {
         var dataset = Dataset();
 
         dataset.Products.Select(p => p.PartNumber).ShouldBeUnique();
-        dataset.Products.Select(p => p.CustomerId).ShouldBeUnique();
         var free = dataset.Customers.Single(c => c.Name == DemoDataset.CustomerWithoutProduct);
         dataset.Products.ShouldNotContain(p => p.CustomerId == free.CustomerId);
     }

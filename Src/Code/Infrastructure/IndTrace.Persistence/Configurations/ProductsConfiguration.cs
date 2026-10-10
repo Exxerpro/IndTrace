@@ -98,9 +98,9 @@ public class ProductsConfiguration : IEntityTypeConfiguration<Product>
             .HasDatabaseName("IDX.IndTraceData.Products.ProductId")
             .IsUnique();
 
+        // A customer has many products (#247): this index speeds lookups by customer and is not unique.
         builder.HasIndex(e => e.CustomerId)
-            .HasDatabaseName("IDX.IndTraceData.Customer.CustomerId")
-            .IsUnique();
+            .HasDatabaseName("IDX.IndTraceData.Products.CustomerId");
 
         builder.Property(e => e.CustomerName)
             .HasColumnName(nameof(Product.CustomerName))
