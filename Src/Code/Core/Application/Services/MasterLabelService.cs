@@ -27,7 +27,9 @@ public class MasterLabelService : IMasterLabelService
     /// </summary>
     /// <param name="partNumber">The part number to search for.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A list of master label codes, or a failure result if not found.</returns>
+    /// <returns>
+    /// The matching master label codes, empty when the part number has none; a failure only when the lookup fails.
+    /// </returns>
     public async Task<Result<List<string>>> GetMasterLabelByPartNumberAsync(string partNumber, CancellationToken cancellationToken)
     {
         try
@@ -39,11 +41,13 @@ public class MasterLabelService : IMasterLabelService
             var spec = new Specification<MasterLabel>(b => b.MasterLabelCode.Contains(partNumber));
             var masterLabels = await this.masterLabelRepository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
 
-            if (masterLabels.IsFailure || masterLabels.Value is null || !masterLabels.Value.Any())
+            if (masterLabels.IsFailure || masterLabels.Value is null)
             {
-                return Result<List<string>>.WithFailure("No master labels found matching the criteria");
+                return Result<List<string>>.WithFailure(new[] { "Failed to retrieve master labels." }.Concat(masterLabels.Errors).ToArray());
             }
 
+            // #248: a master label is optional. It only cross-checks the counter width, so a product created in the
+            // Monitor without one still gets barcodes; its counter starts from its own barcodes.
             var result = masterLabels.Value.Select(ml => ml.MasterLabelCode).ToList();
             return Result<List<string>>.Success(result);
         }
