@@ -48,7 +48,7 @@ public sealed class DemoDataset
         new(900, "Packing", MachineType.Final, WorkFlowType.Final, [("BoxCount", "System.Int16")]),
     ];
 
-    // Products.CustomerId is unique, so each customer has at most one product.
+    // One customer has no product, so the routing walkthrough can add one for it.
     private static readonly IReadOnlyList<string> CustomerNames =
     [
         "Northgate Auto", "Orion Components", "Harbor Drive Systems", "Summit Electric", "Lumen Optics", "Granite Axle",
