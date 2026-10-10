@@ -13,7 +13,7 @@
 //   DEMO_PASSWORD                          password of the demo user (required)
 //   DEMO_USER                              demo user name and e-mail (default demo@example.com)
 //
-// It creates the data schema, migrates the sign-in database, writes the demo line, and creates the demo user in the
+// It migrates both databases, writes the demo line, and creates the demo user in the
 // Administrator role. --reset deletes both databases first. Without it, a database that already holds stations is
 // refused.
 using IndTrace.DemoSeed;
@@ -55,9 +55,7 @@ if (reset)
     await identity.Database.EnsureDeletedAsync(cancellationToken);
 }
 
-// The data migrations lag the current model (EF reports pending model changes), so the data schema is created
-// from the model itself. The sign-in database is migrated normally.
-await data.Database.EnsureCreatedAsync(cancellationToken);
+await data.Database.MigrateAsync(cancellationToken);
 await identity.Database.MigrateAsync(cancellationToken);
 
 var dataset = DemoDataset.Create(services.GetRequiredService<IDateTimeMachine>());
