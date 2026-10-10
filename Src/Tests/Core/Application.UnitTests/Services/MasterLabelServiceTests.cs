@@ -59,8 +59,12 @@ public class MasterLabelServiceTests
         result.Value.Count.ShouldBe(2);
     }
 
+    /// <summary>
+    /// #248: a part number without master labels is not an error. A product created in the Monitor has none, and
+    /// barcode creation must still work for it.
+    /// </summary>
     [Fact]
-    public async Task GetMasterLabelByPartNumberAsync_WithNoMatches_ShouldReturnFailure()
+    public async Task GetMasterLabelByPartNumberAsync_WithNoMatches_ShouldReturnEmptySuccess()
     {
         // Arrange
         var partNumber = "NONEXISTENT";
@@ -73,8 +77,8 @@ public class MasterLabelServiceTests
         var result = await _service.GetMasterLabelByPartNumberAsync(partNumber, TestContext.Current.CancellationToken);
 
         // Assert
-        result.IsSuccess.ShouldBeFalse();
-        result.Errors.ShouldContain("No master labels found matching the criteria");
+        result.IsSuccess.ShouldBeTrue();
+        (result.Value?.Count).ShouldBe(0);
     }
 
     [Fact]
@@ -91,7 +95,8 @@ public class MasterLabelServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Errors.ShouldContain("No master labels found matching the criteria");
+        result.Errors.ShouldContain("Failed to retrieve master labels.");
+        result.Errors.ShouldContain("Database connection failed");
     }
 
     [Fact]

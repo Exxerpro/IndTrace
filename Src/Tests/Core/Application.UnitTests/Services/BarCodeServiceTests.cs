@@ -194,6 +194,46 @@ namespace Application.UnitTests.Services
         }
 
         /// <summary>
+        /// #248: a product without master labels (created in the Monitor) starts its sequence at the first
+        /// consecutive.
+        /// </summary>
+        [Fact]
+        public async Task GetConsecutiveByBarCodeLabelAsync_WithoutMasterLabels_EmptyScope_ShouldSeedAtFirstConsecutive()
+        {
+            // Arrange
+            GivenProduct(productId: 42);
+            _barCodeRepository.FirstOrDefaultAsync(Arg.Any<Specification<BarCode>>(), Arg.Any<CancellationToken>())
+                .Returns(Result<BarCode?>.Success((BarCode?)null));
+
+            // Act
+            var response = await _service.GetConsecutiveByBarCodeLabelAsync("PART-123", [], rule: null, TestContext.Current.CancellationToken);
+
+            // Assert
+            response.IsSuccess.ShouldBeTrue($"errors: [{string.Join(";", response.Errors ?? new List<string>())}]");
+            response.Value.ShouldBe(1);
+        }
+
+        /// <summary>
+        /// #248: without master labels the sequence continues from the product's own highest label.
+        /// </summary>
+        [Fact]
+        public async Task GetConsecutiveByBarCodeLabelAsync_WithoutMasterLabels_ShouldContinueFromHighestLabel()
+        {
+            // Arrange
+            GivenProduct(productId: 42);
+            var barCode = new BarCode { BarCodeId = new BarCodeId(7), Label = BarCodeLabel.FromPersisted("TEST-0100") };
+            _barCodeRepository.FirstOrDefaultAsync(Arg.Any<Specification<BarCode>>(), Arg.Any<CancellationToken>())
+                .Returns(Result<BarCode?>.Success(barCode));
+
+            // Act
+            var response = await _service.GetConsecutiveByBarCodeLabelAsync("PART-123", [], rule: null, TestContext.Current.CancellationToken);
+
+            // Assert
+            response.IsSuccess.ShouldBeTrue($"errors: [{string.Join(";", response.Errors ?? new List<string>())}]");
+            response.Value.ShouldBe(101);
+        }
+
+        /// <summary>
         /// Exhaustion fails LOUD: a scoped max ending in 9999 must NOT wrap to 0 (which would mint a duplicate
         /// identity) — it returns a failure so the caller widens the field or starts a new sequence.
         /// </summary>

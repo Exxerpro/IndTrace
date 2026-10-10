@@ -15,6 +15,8 @@ public interface IMasterLabelService
     /// </summary>
     /// <param name="partNumber">The part number to search for.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A list of master label codes, or a failure result if not found.</returns>
+    /// <returns>
+    /// The matching master label codes, empty when the part number has none; a failure only when the lookup fails.
+    /// </returns>
     Task<Result<List<string>>> GetMasterLabelByPartNumberAsync(string partNumber, CancellationToken cancellationToken);
 }
