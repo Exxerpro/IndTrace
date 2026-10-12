@@ -9,6 +9,8 @@ work="${MEDIA_WORK:-$(git -C "$(dirname "$0")" rev-parse --show-toplevel)/artifa
 start=$(wc -l < "$work/gateway.tty")
 printf '%s\n\n' "$1" >> "$work/gateway.in"
 sleep "${2:-5}"
-tail -n +"$start" "$work/gateway.tty" | sed 's/\x1b\[[0-9;]*m//g' \
-    | grep -E '^\[[0-9:]+ (INF|WRN|ERR)\] (Command [0-9]+=|Result:|.*(failed|FAIL|nvalid|eject|legal|successor))' \
-    | grep -v DbCommand | cut -c1-230 | sort -u | head -8 || true
+# The console prints each message on its own line, after a timestamp line; older builds put a "[hh:mm:ss INF] "
+# prefix on the same line. Strip colors and that prefix, then keep the command and result lines, in order.
+tail -n +"$start" "$work/gateway.tty" | tr -d '\r' | sed -E 's/\x1b\[[0-9;]*m//g; s/^\[[0-9:]+ (INF|WRN|ERR)\] //' \
+    | grep -E '^(Command [0-9]+=|Result: [A-Z])' | grep -v '^Result: Valid$' \
+    | cut -c1-230 | awk '!seen[$0]++' | head -8 || true

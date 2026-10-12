@@ -52,8 +52,7 @@ stations. It writes a small, fictitious line and creates the demo user `DEMO_USE
 - **Products:** six products with unique part numbers, each with a linear route, a label rule at WS100, a master
   label and recipes. The walkthrough uses `L100003`, routed WS100 → WS500. Recipe minimum cycle times are 0, so
   short simulated cycles are accepted.
-- **Customers:** seven invented names. `Apex Lighting` has no product yet, because a customer can have only one;
-  `define-routing.js` adds one for it.
+- **Customers:** seven invented names. `Apex Lighting` has no product yet; `define-routing.js` adds one for it.
 
 The database holds no history. Parts, cycles and reports come from running parts through the line (step 3).
 
