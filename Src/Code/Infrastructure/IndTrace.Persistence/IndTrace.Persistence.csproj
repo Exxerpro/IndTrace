@@ -17,6 +17,9 @@
     <FileVersion>2025.5.30.51</FileVersion>
     <!---->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Override the repo-wide InvariantGlobalization=true: `dotnet ef` runs this project with its own runtime
+         config, and Microsoft.Data.SqlClient refuses invariant mode. -->
+    <InvariantGlobalization>false</InvariantGlobalization>
     <!-- Fobiden to add global scoped NoWarn  violator to this rule will be prosecuted -->
   </PropertyGroup>
   
