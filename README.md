@@ -23,6 +23,12 @@ The community edition ships an **in-memory simulated PLC controller** and **no b
 Hardware drivers (e.g. Siemens S7, Cognex DataMan) are not part of this repository; they plug in through
 `IPlcControllerFactory` and `IBarCodeReader` in `IndTrace.Devices`.
 
+## Getting started
+
+[docs/getting-started.md](docs/getting-started.md) takes you from an empty SQL Server to a running line with a
+demo database and a signed-in Monitor. [docs/simulate-a-part.md](docs/simulate-a-part.md) then drives parts
+through that line with the simulated PLC controller.
+
 ## Build and test
 
 Requires the .NET 10 SDK.
