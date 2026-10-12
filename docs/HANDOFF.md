@@ -14,7 +14,7 @@ Status as of 2026-10-12. This is where the open-sourcing effort stands, so the n
   later code changes arrive as sync commits. The enterprise history is not and will not be published.
 - **Project website:** <https://exxerpro.github.io/IndTrace/>, English at `/` and Spanish at `/es/`. It has
   screenshots and three walkthrough videos, described under "Project website" below.
-- **Latest sync:** 2026-10-10 (`sync: community edition 2026-10-10 (upstream 1e7df3151)`, #16). Test results from that export's gates:
+- **Latest sync:** 2026-10-12 (`sync: community edition 2026-10-12 (upstream f6713276c)`, #20). Test results from that export's gates:
 
   | Suite | Passed / total |
   |---|---|
@@ -225,6 +225,8 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
 - **Getting-started docs** (#1, 2026-10-12): `docs/getting-started.md` (empty SQL Server to a signed-in
   Monitor) and `docs/simulate-a-part.md` (a good part, a skipped station, a failed and reworked part), both
   checked end to end on an empty SQL Server 2022 container. `run/send.sh` now prints the gateway's answer again.
+  Sync #20 made `dotnet ef database update` work on both databases (it failed in invariant globalization mode)
+  and linked the guides from the README.
 - **Repository security and website** (2026-10-12): secret scanning, push protection, Dependabot alerts and
   security updates are on, and the repository website points to the project site.
 
