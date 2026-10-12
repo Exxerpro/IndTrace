@@ -14,7 +14,7 @@ Status as of 2026-10-12. This is where the open-sourcing effort stands, so the n
   later code changes arrive as sync commits. The enterprise history is not and will not be published.
 - **Project website:** <https://exxerpro.github.io/IndTrace/>, English at `/` and Spanish at `/es/`. It has
   screenshots and three walkthrough videos, described under "Project website" below.
-- **Latest sync:** 2026-10-10 (`sync: community edition 2026-10-10 (upstream 1e7df3151)`, #16). Test results from that export's gates:
+- **Latest sync:** 2026-10-12 (`sync: community edition 2026-10-12 (upstream f6713276c)`, #20). Test results from that export's gates:
 
   | Suite | Passed / total |
   |---|---|
@@ -221,23 +221,26 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
 - **Several products per customer:** the unique index on `Products.CustomerId` is gone (2026-10-10).
 - **Barcodes without a master label:** products added in the Monitor get barcodes (2026-10-10).
 - **Going public:** done 2026-10-08.
+- **First release:** `v0.1.0` published 2026-10-12, tagged on `8bb581b`.
+- **Getting-started docs** (#1, 2026-10-12): `docs/getting-started.md` (empty SQL Server to a signed-in
+  Monitor) and `docs/simulate-a-part.md` (a good part, a skipped station, a failed and reworked part), both
+  checked end to end on an empty SQL Server 2022 container. `run/send.sh` now prints the gateway's answer again.
+  Sync #20 made `dotnet ef database update` work on both databases (it failed in invariant globalization mode)
+  and linked the guides from the README.
 - **Repository security and website** (2026-10-12): secret scanning, push protection, Dependabot alerts and
   security updates are on, and the repository website points to the project site.
 
 ## Open items
 
-1. **Getting-started docs** (#1). Add a database bootstrap guide and a "simulate a part through a line"
-   walkthrough. `IndTrace.DemoSeed` and `docs/site-media/` already cover a demo database and the simulated line.
-   The bootstrap guide is unblocked: migrations now create a new database (see "What changed on 2026-10-10").
-2. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
+1. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
    pages. The Monitor routes its own copy, so the duplicate should be removed.
-3. **Clock follow-ups** (testability only, where a test needs to control time):
+2. **Clock follow-ups** (testability only, where a test needs to control time):
    - the `static` clock in `GatewayTasks`;
    - the `?? new DateTimeMachine()` fallbacks in some entities, view models and services.
-4. **Before announcing the project** (each needs the owner's go-ahead):
-   - publish the first release: a `v0.1.0` draft with release notes is ready on the Releases page; publishing
-     it creates the tag on `main`;
-   - optionally enable Discussions and add a feature-request issue template.
+3. **Optional, before announcing the project** (owner's call): enable Discussions and add a feature-request
+   issue template.
+4. **Getting-started extras** (optional parts of #1): a `docker compose` file for SQL Server and the hosts, and
+   a CI job that seeds a database and runs the walkthrough as a smoke test.
 
 ## Known caveats
 
