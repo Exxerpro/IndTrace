@@ -1,6 +1,6 @@
 # Handoff: IndTrace community edition
 
-Status as of 2026-10-10. This is where the open-sourcing effort stands, so the next session can pick it up.
+Status as of 2026-10-12. This is where the open-sourcing effort stands, so the next session can pick it up.
 
 ## Current state
 
@@ -221,6 +221,8 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
 - **Several products per customer:** the unique index on `Products.CustomerId` is gone (2026-10-10).
 - **Barcodes without a master label:** products added in the Monitor get barcodes (2026-10-10).
 - **Going public:** done 2026-10-08.
+- **Repository security and website** (2026-10-12): secret scanning, push protection, Dependabot alerts and
+  security updates are on, and the repository website points to the project site.
 
 ## Open items
 
@@ -233,9 +235,8 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
    - the `static` clock in `GatewayTasks`;
    - the `?? new DateTimeMachine()` fallbacks in some entities, view models and services.
 4. **Before announcing the project** (each needs the owner's go-ahead):
-   - turn on secret scanning, push protection and Dependabot security updates (all off now);
-   - set the repository website to <https://exxerpro.github.io/IndTrace/>;
-   - publish a first release (no tags yet), for example `v0.1.0`;
+   - publish the first release: a `v0.1.0` draft with release notes is ready on the Releases page; publishing
+     it creates the tag on `main`;
    - optionally enable Discussions and add a feature-request issue template.
 
 ## Known caveats
