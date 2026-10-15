@@ -1,6 +1,6 @@
 # Handoff: IndTrace community edition
 
-Status as of 2026-10-12. This is where the open-sourcing effort stands, so the next session can pick it up.
+Status as of 2026-10-15. This is where the open-sourcing effort stands, so the next session can pick it up.
 
 ## Current state
 
@@ -14,7 +14,7 @@ Status as of 2026-10-12. This is where the open-sourcing effort stands, so the n
   later code changes arrive as sync commits. The enterprise history is not and will not be published.
 - **Project website:** <https://exxerpro.github.io/IndTrace/>, English at `/` and Spanish at `/es/`. It has
   screenshots and three walkthrough videos, described under "Project website" below.
-- **Latest sync:** 2026-10-12 (`sync: community edition 2026-10-12 (upstream f6713276c)`, #20). Test results from that export's gates:
+- **Latest sync:** 2026-10-15 (`sync: community edition 2026-10-15 (upstream 1304c1ef5)`). Test results from that export's gates:
 
   | Suite | Passed / total |
   |---|---|
@@ -27,6 +27,21 @@ Status as of 2026-10-12. This is where the open-sourcing effort stands, so the n
   | Monitor | 54/54 |
   | Identity | 3/3 |
   | Aggregation | 813/841 (28 skipped) |
+
+## What changed on 2026-10-15
+
+- **Security updates.** Advisories published 2026-10-13 made restore fail under warnings-as-errors:
+  `Microsoft.AspNetCore.SignalR.Common` up to 10.0.12 (GHSA-334f-vvp4-7g6p) and
+  `System.Security.Cryptography.Pkcs` up to 9.0.20 (GHSA-846f-f764-76mx, GHSA-2fmv-rv2c-59x7).
+  - Every Microsoft package that was on 10.0.9 is now on 10.0.13.
+  - `Src/Directory.Packages.props` sets `CentralPackageTransitivePinningEnabled`, so a version listed there
+    also wins over an older one a dependency asks for. `System.Security.Cryptography.Pkcs` (pulled in by
+    `Microsoft.Data.SqlClient`) is pinned at 9.0.21.
+  - The Roslyn `Workspaces` packages are pinned at 5.3.0, the same version as `Microsoft.CodeAnalysis.CSharp`.
+- **Duplicate account pages removed.** The Monitor routes its own account pages, so the copy in
+  `IndTrace.Identity`, and the rest of that project's never-served UI (layout, `/auth`, `/Error`, `/user`,
+  `/claims-principal-data`, `wwwroot`), are gone. `IndTrace.Identity` now holds only the sign-in data:
+  `ApplicationUser`, `IndTraceDbIdentity`, its migrations and `IndTraceUser`.
 
 ## What changed on 2026-10-10
 
@@ -227,19 +242,18 @@ direct edit to `Src/**` in this repository is overwritten by the next sync.
   checked end to end on an empty SQL Server 2022 container. `run/send.sh` now prints the gateway's answer again.
   Sync #20 made `dotnet ef database update` work on both databases (it failed in invariant globalization mode)
   and linked the guides from the README.
+- **Duplicate account pages** (2026-10-15): removed from `IndTrace.Identity`.
 - **Repository security and website** (2026-10-12): secret scanning, push protection, Dependabot alerts and
   security updates are on, and the repository website points to the project site.
 
 ## Open items
 
-1. **Duplicate account pages.** `IndTrace.Monitor` and `IndTrace.Identity` each carry a copy of the account
-   pages. The Monitor routes its own copy, so the duplicate should be removed.
-2. **Clock follow-ups** (testability only, where a test needs to control time):
+1. **Clock follow-ups** (testability only, where a test needs to control time):
    - the `static` clock in `GatewayTasks`;
    - the `?? new DateTimeMachine()` fallbacks in some entities, view models and services.
-3. **Optional, before announcing the project** (owner's call): enable Discussions and add a feature-request
+2. **Optional, before announcing the project** (owner's call): enable Discussions and add a feature-request
    issue template.
-4. **Getting-started extras** (optional parts of #1): a `docker compose` file for SQL Server and the hosts, and
+3. **Getting-started extras** (optional parts of #1): a `docker compose` file for SQL Server and the hosts, and
    a CI job that seeds a database and runs the walkthrough as a smoke test.
 
 ## Known caveats
