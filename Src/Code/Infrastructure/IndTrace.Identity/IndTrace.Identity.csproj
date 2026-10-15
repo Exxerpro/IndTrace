@@ -111,26 +111,6 @@
     <ProjectReference Include="..\\..\\Core\\Application\\IndTrace.Application.csproj" />
   </ItemGroup>
   <!-- ============================================================================ -->
-  <!-- STATIC WEB ASSETS -->
-  <!-- ============================================================================ -->
-  <ItemGroup Label="Static Web Assets">
-    <Content Update="wwwroot\\favicon.ico">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\\particles.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\\particles.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-  <!-- ============================================================================ -->
   <!-- MUDBLAZOR STATIC CONTENT -->
   <!-- ============================================================================ -->
   <ItemGroup Label="MudBlazor Static Content">
