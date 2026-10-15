@@ -121,6 +121,7 @@
       <p class="lead">IndTrace registra lo que le pasa a cada pieza serializada mientras recorre una línea de producción conectada a PLC, y revisa cada llegada contra la ruta de la pieza. Sus máquinas y operadores siguen al mando. IndTrace guarda el historial y señala lo que no debió ocurrir.</p>
       <div class="ctas">
         <a class="btn btn-primary" href="https://github.com/Exxerpro/IndTrace">Ver el código en GitHub</a>
+        <a class="btn btn-plain" href="https://github.com/Exxerpro/IndTrace/blob/main/docs/getting-started.md" hreflang="en">Primeros pasos</a>
         <a class="btn btn-plain" href="#screens">Ver las pantallas</a>
       </div>
     </div>
@@ -337,7 +338,8 @@ cd IndTrace
 dotnet build Src/IndTrace.sln</code></pre></div></li>
         <li><div><p>Ejecute una suite de pruebas. Las suites usan Microsoft Testing Platform, así que use <code>dotnet run</code>.</p>
 <pre><code>dotnet run --project Src/Tests/Core/Aggregation.BoundedTests/Application.AgregationTests.csproj</code></pre></div></li>
-        <li><div><p>Configure los hosts con un SQL Server e inícielos. Una guía paso a paso para una base de datos vacía y una línea simulada está en preparación en el <a href="https://github.com/Exxerpro/IndTrace/issues/1">issue #1</a>.</p></div></li>
+        <li><div><p>Cree una base de datos de demostración y ponga en marcha la línea. La <a href="https://github.com/Exxerpro/IndTrace/blob/main/docs/getting-started.md" hreflang="en">guía de primeros pasos</a> (en inglés) inicia SQL Server en un contenedor, crea una base de datos de demostración con una línea ficticia, arranca el hub, el gateway y el Monitor, e inicia sesión.</p></div></li>
+        <li><div><p>Envíe una pieza por la línea. En <a href="https://github.com/Exxerpro/IndTrace/blob/main/docs/simulate-a-part.md" hreflang="en">Simulate a part through the line</a> (en inglés) usted hace de PLC: una pieza buena pasa por todas las estaciones, una pieza que se salta una estación es rechazada al llegar y una pieza con falla se retrabaja.</p></div></li>
       </ol>
     </div>
   </section>
