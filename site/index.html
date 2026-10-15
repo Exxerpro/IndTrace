@@ -120,6 +120,7 @@
       <p class="lead">IndTrace records what happens to each serialized part as it moves through a PLC-connected production line, and checks every arrival against the part's routing. Your machines and operators stay in charge. IndTrace keeps the history and flags what should not have happened.</p>
       <div class="ctas">
         <a class="btn btn-primary" href="https://github.com/Exxerpro/IndTrace">View the source on GitHub</a>
+        <a class="btn btn-plain" href="https://github.com/Exxerpro/IndTrace/blob/main/docs/getting-started.md">Get started</a>
         <a class="btn btn-plain" href="#screens">See the screens</a>
       </div>
     </div>
@@ -336,7 +337,8 @@ cd IndTrace
 dotnet build Src/IndTrace.sln</code></pre></div></li>
         <li><div><p>Run a test suite. Suites run on Microsoft Testing Platform, so use <code>dotnet run</code>.</p>
 <pre><code>dotnet run --project Src/Tests/Core/Aggregation.BoundedTests/Application.AgregationTests.csproj</code></pre></div></li>
-        <li><div><p>Point the hosts at a SQL Server and start them. A step-by-step guide for an empty database and a simulated line is in progress in <a href="https://github.com/Exxerpro/IndTrace/issues/1">issue #1</a>.</p></div></li>
+        <li><div><p>Create a demo database and run the line. The <a href="https://github.com/Exxerpro/IndTrace/blob/main/docs/getting-started.md">getting-started guide</a> starts SQL Server in a container, creates a demo database with a fictitious line, starts the hub, gateway and Monitor, and signs you in.</p></div></li>
+        <li><div><p>Send a part down the line. In <a href="https://github.com/Exxerpro/IndTrace/blob/main/docs/simulate-a-part.md">Simulate a part through the line</a> you play the PLCs: a good part passes every station, a part that skips a station is refused on arrival, and a failed part is reworked.</p></div></li>
       </ol>
     </div>
   </section>
